@@ -1,5 +1,5 @@
 
-	$Id: ASCII-format.txt,v 1.1 2003/10/22 19:43:15 dan Exp $
+	$Id: ASCII-format.txt,v 1.2 2003/12/08 17:59:49 edavis Exp $
 
 This file describes the output format of the ASCII filter for DODS servers.
 The ASCII filters for DODS servers (analogous to the DDS or Data filters) are

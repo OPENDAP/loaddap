@@ -14,10 +14,6 @@
 #ifndef _ClientGrid_h
 #define _ClientGrid_h 1
 
-#ifdef _GNUG_
-#pragma interface
-#endif
-
 #include "Grid.h"
 #include "AttributeInterface.h"
 
@@ -41,8 +37,16 @@ public:
 };
 
 // $Log: ClientGrid.h,v $
-// Revision 1.1  2003/10/22 19:43:18  dan
-// Initial revision
+// Revision 1.2  2003/12/08 17:59:49  edavis
+// Merge release-3-4 into trunk
+//
+// Revision 1.1.1.1.2.1  2003/10/29 19:03:21  dan
+// Removed 'pragma interface' directive from all subclass
+// source files.
+//
+// Revision 1.1.1.1  2003/10/22 19:43:18  dan
+// Version of the Matlab CommandLine client which uses Matlab Structure
+// variables to maintain the shape of the underlying DODS data.
 //
 // Revision 1.10  2000/10/03 22:24:17  jimg
 // Reorganized the CVS Log entries.

@@ -341,8 +341,12 @@ LoaddodsProcessing::add_realname_attributes()
 }
 
 // $Log: LoaddodsProcessing.cc,v $
-// Revision 1.1  2003/10/22 19:43:32  dan
-// Initial revision
+// Revision 1.2  2003/12/08 17:59:49  edavis
+// Merge release-3-4 into trunk
+//
+// Revision 1.1.1.1  2003/10/22 19:43:32  dan
+// Version of the Matlab CommandLine client which uses Matlab Structure
+// variables to maintain the shape of the underlying DODS data.
 //
 // Revision 1.11  2003/05/02 17:16:17  jimg
 // I replaced the cast is ostream::write that was (void *) to (char *) to

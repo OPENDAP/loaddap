@@ -1,3 +1,7 @@
+2003-12-08  Yuan Ho  <yuanho@ucar.edu>
+
+        * Merge release-3-4 into trunk.
+
 2003-04-22  Dan Holloway     <d.holloway@gso.uri.edu>
 	* Fixed process_values to maintain DDS structure of 
 	data in the interned matlab variables.  Previous versions

@@ -1,6 +1,6 @@
 
 %
-% $Id: test_loaddods.m,v 1.1 2003/10/22 19:43:35 dan Exp $
+% $Id: test_loaddods.m,v 1.2 2003/12/08 17:59:50 edavis Exp $
 %
 % Run the matlab tests.
 

@@ -8,8 +8,16 @@
 //	jhrg,jimg	James Gallagher (jgallagher@gso.uri.edu)
 
 // $Log: name_map.h,v $
-// Revision 1.1  2003/10/22 19:43:33  dan
-// Initial revision
+// Revision 1.2  2003/12/08 17:59:50  edavis
+// Merge release-3-4 into trunk
+//
+// Revision 1.1.1.1.2.1  2003/10/29 19:03:21  dan
+// Removed 'pragma interface' directive from all subclass
+// source files.
+//
+// Revision 1.1.1.1  2003/10/22 19:43:33  dan
+// Version of the Matlab CommandLine client which uses Matlab Structure
+// variables to maintain the shape of the underlying DODS data.
 //
 // Revision 1.13  2003/05/02 17:16:17  jimg
 // I replaced the cast is ostream::write that was (void *) to (char *) to
@@ -76,10 +84,6 @@
 
 #ifndef _NAME_MAP_H
 #define _NAME_MAP_H
-
-#ifdef __GNUG__
-#pragma interface
-#endif
 
 #include <vector>
 #include <string>

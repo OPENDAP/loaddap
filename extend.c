@@ -19,7 +19,7 @@
    @author jhrg 3/5/97 
 */
 
-static char id[]={"$Id: extend.c,v 1.1 2003/10/22 19:43:30 dan Exp $"};
+static char id[]={"$Id: extend.c,v 1.2 2003/12/08 17:59:50 edavis Exp $"};
 
 #include <stdio.h>
 #include <string.h>
@@ -1016,8 +1016,12 @@ mexFunction(int nlhs, mxArray *plhs[], const int nrhs, mxArray *prhs[])
 
 /* 
  * $Log: extend.c,v $
- * Revision 1.1  2003/10/22 19:43:30  dan
- * Initial revision
+ * Revision 1.2  2003/12/08 17:59:50  edavis
+ * Merge release-3-4 into trunk
+ *
+ * Revision 1.1.1.1  2003/10/22 19:43:30  dan
+ * Version of the Matlab CommandLine client which uses Matlab Structure
+ * variables to maintain the shape of the underlying DODS data.
  *
  * Revision 1.30  2003/04/22 14:45:28  dan
  * Removed changes added to maintain DDS structure, these

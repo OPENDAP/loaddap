@@ -17,7 +17,7 @@
 
 #include "config_writedap.h"
 
-static char rcsid[] not_used = {"$Id: write_dap.cc,v 1.1 2003/10/23 18:55:48 dan Exp $"};
+static char rcsid[] not_used = {"$Id: write_dap.cc,v 1.2 2003/12/08 17:59:50 edavis Exp $"};
 
 #include <stdio.h>
 #include <string>
@@ -70,8 +70,8 @@ const char *VERSION = "unknown";
 
 const char *usage_msg = "\n\
 Usage:\n\
-Read from a URL: writeval [VvwfFgADat] -- [<url> [-c <expr>] [[-r <var>:<newvar>] ...] ...]\n\
-Read from stdin: writeval [VvwfFga] -- - [-r <var>:<newvar>]\n\
+Read from a URL: writedap [VvwfFgADat] -- [<url> [-c <expr>] [[-r <var>:<newvar>] ...] ...]\n\
+Read from stdin: writedap [VvwfFga] -- - [-r <var>:<newvar>]\n\
 \n\
 General options:\n\
       V: Print the version number of this program and exit.\n\
@@ -96,11 +96,11 @@ Per-URL options:\n\
 \n\
 Notes:\n\
 \n\
-By default writeval dereferences the URL and writes the data\n\
+By default writedap dereferences the URL and writes the data\n\
 in binary on stdout. Use the -D option to see the dataset's\n\
 DDS, and -A to request structured attribute information.\n\
 \n\
-Note that -D, -A, -r and -c work only when writeval is given\n\
+Note that -D, -A, -r and -c work only when writedap is given\n\
 one or more URLs.";
 
 static void
@@ -182,7 +182,7 @@ process_per_url_options(int &i, int argc, char *argv[])
 	    if (verbose)
 		cerr << "  Renaming: " << argv[i] << endl;
 	    // Note that NAMES is a global variable so that all the
-	    // writeval() mfuncs can access it without having to pass
+	    // writedap() mfuncs can access it without having to pass
 	    // it into each function call.
 	    names.add(argv[i]);
 	    break;
@@ -243,7 +243,7 @@ main(int argc, char * argv[])
   while ((option_char = getopt()) != EOF)
     switch (option_char) {
       // Genreal options
-    case 'V': {cerr << "writeval: " << VERSION << endl; exit(0);}
+    case 'V': {cerr << "writedap: " << VERSION << endl; exit(0);}
     case 'v': verbose = true; break;
     case 'w': warning = true; break;
     case 'n': translate = true; break;
@@ -304,7 +304,7 @@ main(int argc, char * argv[])
       cerr << "Assuming standard input is a DODS data stream." << endl;
 
     try {
-      url = new Connect("stdin", trace);
+      url = new Connect("stdin");
 
       process_per_url_options(getopt.optind, argc, argv);
 
@@ -391,7 +391,7 @@ main(int argc, char * argv[])
       continue;
     }
 
-    // If writeval is not reading from a pipe or a local file and is
+    // If writedap is not reading from a pipe or a local file and is
     // not being used to access the DAS or DDS, the caller must want
     // data. 
     {
@@ -433,7 +433,7 @@ main(int argc, char * argv[])
     cout.flush();
   } // end of the URL processing loop
 
-  DBG(cerr << "writeval exiting." << endl);
+  DBG(cerr << "writedap exiting." << endl);
   cerr.flush();
 
   delete url;
@@ -447,9 +447,12 @@ main(int argc, char * argv[])
 }
 
 // $Log: write_dap.cc,v $
-// Revision 1.1  2003/10/23 18:55:48  dan
-// Changed the names of the primary programs loaddods and writeval
-// to loaddap and writedap respectively
+// Revision 1.2  2003/12/08 17:59:50  edavis
+// Merge release-3-4 into trunk
+//
+// Revision 1.1.2.1  2003/10/27 16:59:42  dan
+// Modified versions of 'loaddods' and 'writeval' using
+// new naming conventions for 'loaddap' and 'writedap', respectively.
 //
 // Revision 1.1.1.1  2003/10/22 19:43:36  dan
 // Version of the Matlab CommandLine client which uses Matlab Structure

@@ -1,0 +1,5 @@
+/*  A GNU ld implicit linker script that will force GNU ld to link with
+    a static version of libc. This is only used when linking the Matlab
+    command line client on Linux. */
+GROUP(/usr/lib/libc_nonshared.a)
+

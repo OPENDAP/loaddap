@@ -13,10 +13,6 @@
 #ifndef _clientstructure_h
 #define _clientstructure_h 1
 
-#ifdef _GNUG_
-#pragma interface
-#endif
-
 #include "Structure.h"
 #include "AttributeInterface.h"
 
@@ -46,8 +42,16 @@ public:
 };
 
 // $Log: ClientStructure.h,v $
-// Revision 1.1  2003/10/22 19:43:20  dan
-// Initial revision
+// Revision 1.2  2003/12/08 17:59:49  edavis
+// Merge release-3-4 into trunk
+//
+// Revision 1.1.1.1.2.1  2003/10/29 19:03:21  dan
+// Removed 'pragma interface' directive from all subclass
+// source files.
+//
+// Revision 1.1.1.1  2003/10/22 19:43:20  dan
+// Version of the Matlab CommandLine client which uses Matlab Structure
+// variables to maintain the shape of the underlying DODS data.
 //
 // Revision 1.13  2003/01/29 15:43:52  dan
 // Resolved conflict on merge, caused by PWEST's removal

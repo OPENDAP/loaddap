@@ -19,7 +19,7 @@
 
     @author jhrg */
 
-static char id[]={"$Id: variable.c,v 1.1 2003/10/22 19:43:35 dan Exp $"};
+static char id[]={"$Id: variable.c,v 1.2 2003/12/08 17:59:50 edavis Exp $"};
 
 #include <stdio.h>
 #include <stddef.h>
@@ -201,8 +201,12 @@ free_vars(variable *vars)
 
 /* 
  * $Log: variable.c,v $
- * Revision 1.1  2003/10/22 19:43:35  dan
- * Initial revision
+ * Revision 1.2  2003/12/08 17:59:50  edavis
+ * Merge release-3-4 into trunk
+ *
+ * Revision 1.1.1.1  2003/10/22 19:43:35  dan
+ * Version of the Matlab CommandLine client which uses Matlab Structure
+ * variables to maintain the shape of the underlying DODS data.
  *
  * Revision 1.17  2003/04/22 14:47:25  dan
  * Removed changes added to maintain DDS structure, these

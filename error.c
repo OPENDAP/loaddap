@@ -305,8 +305,12 @@ main(int argc, char *argv[])
 
 /* 
  * $Log: error.c,v $
- * Revision 1.1  2003/10/22 19:43:29  dan
- * Initial revision
+ * Revision 1.2  2003/12/08 17:59:50  edavis
+ * Merge release-3-4 into trunk
+ *
+ * Revision 1.1.1.1  2003/10/22 19:43:29  dan
+ * Version of the Matlab CommandLine client which uses Matlab Structure
+ * variables to maintain the shape of the underlying DODS data.
  *
  * Revision 1.10  2001/08/27 18:06:57  jimg
  * Merged release-3-2-5.

@@ -4,7 +4,8 @@
 
 #ifdef HAVE_CONFIG_H
 
-/* *** CHANGE THIS CONSTANT IN config_writeval.h.in !!! */
+/* *** CHANGE THIS CONSTANT IN config_writedap
+.h.in !!! */
 #define MAX_QUEUE_LEN 8192
 
 /* Define this if building the server with Matlab 5 */
@@ -35,9 +36,12 @@
 
 /* 
  * $Log: config_writedap.h.in,v $
- * Revision 1.1  2003/10/23 18:55:48  dan
- * Changed the names of the primary programs loaddods and writeval
- * to loaddap and writedap respectively
+ * Revision 1.2  2003/12/08 17:59:50  edavis
+ * Merge release-3-4 into trunk
+ *
+ * Revision 1.1.2.1  2003/10/27 16:59:42  dan
+ * Modified versions of 'loaddods' and 'writeval' using
+ * new naming conventions for 'loaddap' and 'writedap', respectively.
  *
  * Revision 1.1.1.1  2003/10/22 19:43:28  dan
  * Version of the Matlab CommandLine client which uses Matlab Structure

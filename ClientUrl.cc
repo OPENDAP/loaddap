@@ -10,8 +10,16 @@
 // jhrg 1/12/95
 
 // $Log: ClientUrl.cc,v $
-// Revision 1.1  2003/10/22 19:43:20  dan
-// Initial revision
+// Revision 1.2  2003/12/08 17:59:49  edavis
+// Merge release-3-4 into trunk
+//
+// Revision 1.1.1.1.2.1  2003/10/29 19:03:21  dan
+// Removed 'pragma interface' directive from all subclass
+// source files.
+//
+// Revision 1.1.1.1  2003/10/22 19:43:20  dan
+// Version of the Matlab CommandLine client which uses Matlab Structure
+// variables to maintain the shape of the underlying DODS data.
 //
 // Revision 1.5  1999/03/24 06:23:43  brent
 // convert String.h to std lib <string>, convert to packages regex -- B^2
@@ -30,10 +38,6 @@
 //
 // Revision 1.1  1996/09/30 23:59:25  jimg
 // Added.
-
-#ifdef __GNUG__
-#pragma implementation
-#endif
 
 #include <string>
 

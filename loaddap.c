@@ -31,7 +31,7 @@
 
 #include "config_writedap.h"
 
-static char id[] not_used ={"$Id: loaddap.c,v 1.1 2003/10/23 18:55:48 dan Exp $"};
+static char id[] not_used ={"$Id: loaddap.c,v 1.2 2003/12/08 17:59:50 edavis Exp $"};
 
 /* I think that all gnu x86 compilers define __i386__. 9/22/2000 jhrg */
 #if defined(__i386__) && defined(__linux__) && defined(__GNUC__)
@@ -715,9 +715,12 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
 
 /* 
  * $Log: loaddap.c,v $
- * Revision 1.1  2003/10/23 18:55:48  dan
- * Changed the names of the primary programs loaddods and writeval
- * to loaddap and writedap respectively
+ * Revision 1.2  2003/12/08 17:59:50  edavis
+ * Merge release-3-4 into trunk
+ *
+ * Revision 1.1.2.1  2003/10/27 16:59:42  dan
+ * Modified versions of 'loaddods' and 'writeval' using
+ * new naming conventions for 'loaddap' and 'writedap', respectively.
  *
  * Revision 1.1.1.1  2003/10/22 19:43:31  dan
  * Version of the Matlab CommandLine client which uses Matlab Structure
@@ -975,7 +978,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
  * Release 2.14c fixes
  *
  * Revision 1.23.6.1  1997/09/19 19:11:22  jimg
- * Moved config_writeval.h so that -V4_COMPAT flag works.
+ * Moved config_writedap.h so that -V4_COMPAT flag works.
  *
  * Revision 1.24  1997/09/10 22:49:56  jimg
  * Fixed a bug that shows up on Solaris 2 where the pipe connecting this

@@ -9,11 +9,15 @@
 //
 // jhrg 9/26/96
 
+<<<<<<< ClientSequence.cc
 #ifdef __GNUG__
 #pragma implementation
 #endif
 
 #include "config_writedap.h"
+=======
+#include "config_writedap.h"
+>>>>>>> 1.1.1.1.2.2
 
 #include <assert.h>
 
@@ -174,15 +178,28 @@ ClientSequence::set_matlab_name(const string &name)
 }
 
 // $Log: ClientSequence.cc,v $
+// Revision 1.3  2003/12/08 17:59:49  edavis
+// Merge release-3-4 into trunk
+//
+// Revision 1.1.1.1  2003/10/22 19:43:19  dan
+// Version of the Matlab CommandLine client which uses Matlab Structure
+// variables to maintain the shape of the underlying DODS data.
+// Revision 1.1.1.1.2.2  2003/10/29 19:03:21  dan
+// Removed 'pragma interface' directive from all subclass
+// source files.
+//
+// Revision 1.1.1.1.2.1  2003/10/27 16:41:30  dan
+// Changed config include to 'config_writedap.h' to designate
+// new version of 'writeval' now called 'writedap'.  The only
+// substantive change in 'writedap' is that nested sequence
+// variables are now supported.
+//
 // Revision 1.2  2003/10/23 18:34:02  dan
 // Changed config include to config_writedap.h from config_writeval.h
 // This is to remain consistent with the renaming used from loaddods
 // to loaddap.  To support nested sequences writeval was modified
 // to send an end-of-sequence marker to delimit sequence instances.
 //
-// Revision 1.1.1.1  2003/10/22 19:43:19  dan
-// Version of the Matlab CommandLine client which uses Matlab Structure
-// variables to maintain the shape of the underlying DODS data.
 //
 // Revision 1.25  2003/04/22 14:40:29  dan
 // Removed changes added to maintain DDS structure, these
