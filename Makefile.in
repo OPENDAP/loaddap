@@ -1,5 +1,5 @@
 
-# $Id: Makefile.in,v 1.3 2003/12/08 17:59:49 edavis Exp $
+# $Id: Makefile.in,v 1.4 2004/02/19 19:42:51 jimg Exp $
 
 @SET_MAKE@
 
@@ -14,13 +14,8 @@
 # a url. In addition it can read and process DAS and DDS objects, displaying
 # the print representation on the screen.
 
-<<<<<<< Makefile.in
-# LOADDODS = loaddods.mex*
-PROG = writedap loaddap
-=======
 # LOADDAP = loaddap.mex*
 PROG = writedap loaddap
->>>>>>> 1.1.1.1.2.1
 
 DODS_ROOT = @dods_relative@
 MATLAB_ROOT = @MATLAB_ROOT@
@@ -92,12 +87,12 @@ CMEX = $(MATLAB_ROOT)/bin/mex
 DOCXX = doc++
 
 CLIENTSRCS = ClientByte.cc ClientInt32.cc ClientFloat64.cc ClientStr.cc \
-	ClientUrl.cc ClientArray.cc ClientStructure.cc ClientList.cc \
+	ClientUrl.cc ClientArray.cc ClientStructure.cc \
 	ClientSequence.cc ClientGrid.cc ClientUInt32.cc \
 	ClientInt16.cc ClientUInt16.cc ClientFloat32.cc
 
 CLIENTOBJS = ClientByte.o ClientInt32.o ClientFloat64.o ClientStr.o \
-	ClientUrl.o ClientArray.o ClientStructure.o ClientList.o \
+	ClientUrl.o ClientArray.o ClientStructure.o \
 	ClientSequence.o ClientGrid.o ClientUInt32.o \
 	ClientInt16.o ClientUInt16.o ClientFloat32.o
 
@@ -160,13 +155,8 @@ config_writedap.h: config_writedap.h.in
 
 check: writedap writedap-check 
 
-<<<<<<< Makefile.in
-writedap-check: writedap
-	${RUNTEST} ${RUNTESTFLAGS} --tool writeval --srcdir testsuite
-=======
 writedap-check: writedap
 	${RUNTEST} ${RUNTESTFLAGS} --tool writedap --srcdir testsuite
->>>>>>> 1.1.1.1.2.1
 
 extend: error.o
 	$(CC) -DTEST $(CFLAGS) $(CPPFLAGS) -c extend.c
@@ -204,17 +194,10 @@ collect-coverage-data:
 
 PURIFY = purify $(CC) 
 
-<<<<<<< Makefile.in
-loaddap-purify: writedap variable.o queue.o
-	$(CC)  -c -g $(CFLAGS) $(CPPFLAGS) -DTEST_LOADDODS loaddap.c
-	$(CC)  -c -g $(CFLAGS) $(CPPFLAGS) -DTEST_LOADDODS extend.c
-	$(PURIFY) $(LDFLAGS) -g -o test-ldods loaddap.o variable.o queue.o \
-=======
 loaddap-purify: writedap variable.o queue.o
 	$(CC)  -c -g $(CFLAGS) $(CPPFLAGS) -DTEST_LOADDAP loaddap.c
 	$(CC)  -c -g $(CFLAGS) $(CPPFLAGS) -DTEST_LOADDAP extend.c
 	$(PURIFY) $(LDFLAGS) -g -o test-ldods loaddap.o variable.o queue.o \
->>>>>>> 1.1.1.1.2.1
 		extend.o -lmx
 	-rm loaddap.o extend.o
 
@@ -303,142 +286,167 @@ tags:
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
 
 # DO NOT DELETE; depend depends on this line.
-ClientByte.o: ClientByte.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h ClientByte.h \
- ../../../include/Byte.h ../../../include/dods-datatypes.h \
- ../../../include/BaseType.h ../../../include/AttrTable.h \
- AttributeInterface.h name_map.h
-ClientInt32.o: ClientInt32.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h ClientInt32.h \
- ../../../include/Int32.h ../../../include/dods-datatypes.h \
- ../../../include/BaseType.h ../../../include/AttrTable.h \
- AttributeInterface.h name_map.h
+ClientByte.o: ClientByte.cc config_writedap.h ../../../include/Pix.h \
+  ../../../include/IteratorAdapter.h ../../../include/InternalErr.h \
+  ../../../include/Error.h ClientByte.h ../../../include/Byte.h \
+  ../../../include/dods-datatypes.h ../../../include/BaseType.h \
+  ../../../include/AttrTable.h AttributeInterface.h name_map.h
+ClientInt32.o: ClientInt32.cc config_writedap.h ../../../include/Pix.h \
+  ../../../include/IteratorAdapter.h ../../../include/InternalErr.h \
+  ../../../include/Error.h ClientInt32.h ../../../include/Int32.h \
+  ../../../include/dods-datatypes.h ../../../include/BaseType.h \
+  ../../../include/AttrTable.h AttributeInterface.h name_map.h
 ClientFloat64.o: ClientFloat64.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h \
- ClientFloat64.h ../../../include/Float64.h \
- ../../../include/dods-datatypes.h ../../../include/BaseType.h \
- ../../../include/AttrTable.h AttributeInterface.h name_map.h
-ClientStr.o: ClientStr.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h ClientStr.h \
- ../../../include/dods-limits.h ../../../include/Str.h \
- ../../../include/BaseType.h ../../../include/AttrTable.h \
- AttributeInterface.h name_map.h nan_hack.h
+  ../../../include/Pix.h ../../../include/IteratorAdapter.h \
+  ../../../include/InternalErr.h ../../../include/Error.h ClientFloat64.h \
+  ../../../include/Float64.h ../../../include/dods-datatypes.h \
+  ../../../include/BaseType.h ../../../include/AttrTable.h \
+  AttributeInterface.h name_map.h
+ClientStr.o: ClientStr.cc config_writedap.h ../../../include/Pix.h \
+  ../../../include/IteratorAdapter.h ../../../include/Regex.h \
+  ../../../include/InternalErr.h ../../../include/Error.h ClientStr.h \
+  ../../../include/dods-limits.h ../../../include/Str.h \
+  ../../../include/BaseType.h ../../../include/AttrTable.h \
+  ../../../include/dods-datatypes.h AttributeInterface.h name_map.h \
+  nan_hack.h
 ClientUrl.o: ClientUrl.cc ClientUrl.h ClientStr.h \
- ../../../include/dods-limits.h ../../../include/Str.h \
- ../../../include/BaseType.h ../../../include/InternalErr.h \
- ../../../include/Error.h ../../../include/AttrTable.h \
- AttributeInterface.h
-ClientArray.o: ClientArray.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h ClientArray.h \
- ../../../include/Array.h ../../../include/dods-limits.h \
- ../../../include/Vector.h ../../../include/BaseType.h \
- ../../../include/DDS.h ../../../include/Clause.h \
- ../../../include/expr.h ../../../include/RValue.h \
- AttributeInterface.h ../../../include/AttrTable.h name_map.h \
- ../../../include/debug.h
+  ../../../include/dods-limits.h ../../../include/Str.h \
+  ../../../include/BaseType.h ../../../include/AttrTable.h \
+  ../../../include/Pix.h ../../../include/IteratorAdapter.h \
+  ../../../include/Error.h ../../../include/InternalErr.h \
+  ../../../include/dods-datatypes.h AttributeInterface.h
+ClientArray.o: ClientArray.cc config_writedap.h ../../../include/Pix.h \
+  ../../../include/IteratorAdapter.h ../../../include/InternalErr.h \
+  ../../../include/Error.h ClientArray.h ../../../include/Array.h \
+  ../../../include/dods-limits.h ../../../include/Vector.h \
+  ../../../include/BaseType.h ../../../include/AttrTable.h \
+  ../../../include/dods-datatypes.h ../../../include/DDS.h \
+  ../../../include/DAS.h ../../../include/Clause.h \
+  ../../../include/expr.h ../../../include/RValue.h AttributeInterface.h \
+  name_map.h ../../../include/debug.h
 ClientStructure.o: ClientStructure.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h \
- ClientStructure.h ../../../include/Structure.h \
- ../../../include/BaseType.h ../../../include/Constructor.h \
- ../../../include/DDS.h ../../../include/Clause.h \
- ../../../include/expr.h ../../../include/RValue.h \
- AttributeInterface.h ../../../include/AttrTable.h ClientSequence.h \
- ../../../include/Sequence.h ClientArray.h ../../../include/Array.h \
- ../../../include/dods-limits.h ../../../include/Vector.h name_map.h
-ClientList.o: ClientList.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h ClientList.h \
- ../../../include/List.h ../../../include/dods-limits.h \
- ../../../include/Vector.h ../../../include/BaseType.h \
- ../../../include/DDS.h ../../../include/Clause.h \
- ../../../include/expr.h ../../../include/RValue.h \
- ../../../include/AttrTable.h AttributeInterface.h name_map.h
+  ../../../include/Pix.h ../../../include/IteratorAdapter.h \
+  ../../../include/InternalErr.h ../../../include/Error.h \
+  ClientStructure.h ../../../include/Structure.h \
+  ../../../include/BaseType.h ../../../include/AttrTable.h \
+  ../../../include/dods-datatypes.h ../../../include/Constructor.h \
+  ../../../include/DDS.h ../../../include/DAS.h ../../../include/Clause.h \
+  ../../../include/expr.h ../../../include/RValue.h AttributeInterface.h \
+  ClientSequence.h ../../../include/Sequence.h ClientArray.h \
+  ../../../include/Array.h ../../../include/dods-limits.h \
+  ../../../include/Vector.h name_map.h
 ClientSequence.o: ClientSequence.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h \
- ../../../include/debug.h ClientSequence.h ../../../include/Sequence.h \
- ../../../include/BaseType.h ../../../include/Constructor.h \
- AttributeInterface.h ../../../include/AttrTable.h name_map.h
-ClientGrid.o: ClientGrid.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h ClientGrid.h \
- ../../../include/Grid.h ../../../include/BaseType.h \
- ../../../include/Constructor.h AttributeInterface.h \
- ../../../include/AttrTable.h name_map.h
-ClientUInt32.o: ClientUInt32.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h \
- ClientUInt32.h ../../../include/UInt32.h \
- ../../../include/dods-datatypes.h ../../../include/BaseType.h \
- ../../../include/AttrTable.h AttributeInterface.h name_map.h
-ClientInt16.o: ClientInt16.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h ClientInt16.h \
- ../../../include/Int16.h ../../../include/dods-datatypes.h \
- ../../../include/BaseType.h ../../../include/AttrTable.h \
- AttributeInterface.h name_map.h
+  ../../../include/Pix.h ../../../include/IteratorAdapter.h \
+  ../../../include/InternalErr.h ../../../include/Error.h \
+  ../../../include/debug.h ClientSequence.h ../../../include/Sequence.h \
+  ../../../include/BaseType.h ../../../include/AttrTable.h \
+  ../../../include/dods-datatypes.h ../../../include/Constructor.h \
+  AttributeInterface.h name_map.h
+ClientGrid.o: ClientGrid.cc config_writedap.h ../../../include/Pix.h \
+  ../../../include/IteratorAdapter.h ../../../include/InternalErr.h \
+  ../../../include/Error.h ClientGrid.h ../../../include/Grid.h \
+  ../../../include/BaseType.h ../../../include/AttrTable.h \
+  ../../../include/dods-datatypes.h ../../../include/Constructor.h \
+  AttributeInterface.h name_map.h
+ClientUInt32.o: ClientUInt32.cc config_writedap.h ../../../include/Pix.h \
+  ../../../include/IteratorAdapter.h ../../../include/InternalErr.h \
+  ../../../include/Error.h ClientUInt32.h ../../../include/UInt32.h \
+  ../../../include/dods-datatypes.h ../../../include/BaseType.h \
+  ../../../include/AttrTable.h AttributeInterface.h name_map.h
+ClientInt16.o: ClientInt16.cc config_writedap.h ../../../include/Pix.h \
+  ../../../include/IteratorAdapter.h ../../../include/InternalErr.h \
+  ../../../include/Error.h ClientInt16.h ../../../include/Int16.h \
+  ../../../include/dods-datatypes.h ../../../include/BaseType.h \
+  ../../../include/AttrTable.h AttributeInterface.h name_map.h
 ClientUInt16.o: ClientUInt16.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h \
- ClientUInt16.h ../../../include/UInt16.h \
- ../../../include/dods-datatypes.h ../../../include/BaseType.h \
- ../../../include/AttrTable.h AttributeInterface.h name_map.h
+  ../../../include/InternalErr.h ../../../include/Error.h ClientUInt16.h \
+  ../../../include/UInt16.h ../../../include/dods-datatypes.h \
+  ../../../include/BaseType.h ../../../include/AttrTable.h \
+  ../../../include/Pix.h ../../../include/IteratorAdapter.h \
+  AttributeInterface.h name_map.h
 ClientFloat32.o: ClientFloat32.cc config_writedap.h \
- ../../../include/InternalErr.h ../../../include/Error.h \
- ../../../include/dods-limits.h ClientFloat32.h \
- ../../../include/Float32.h ../../../include/dods-datatypes.h \
- ../../../include/BaseType.h ../../../include/AttrTable.h \
- AttributeInterface.h name_map.h
-<<<<<<< Makefile.in
-write_dap.o: write_dap.cc config_writedap.h \
-=======
-write_val.o: write_val.cc config_writedap.h \
->>>>>>> 1.1.1.1.2.1
- ../../../include/BaseType.h ../../../include/InternalErr.h \
- ../../../include/Error.h ../../../include/Connect.h \
- ../../../include/DAS.h ../../../include/AttrTable.h \
- ../../../include/DDS.h ../../../include/Clause.h \
- ../../../include/expr.h ../../../include/RValue.h \
- ../../../include/util.h ../../../include/Byte.h \
- ../../../include/dods-datatypes.h ../../../include/Int16.h \
- ../../../include/UInt16.h ../../../include/Int32.h \
- ../../../include/UInt32.h ../../../include/Float32.h \
- ../../../include/Float64.h ../../../include/Str.h \
- ../../../include/dods-limits.h ../../../include/Url.h \
- ../../../include/Array.h ../../../include/Vector.h \
- ../../../include/List.h ../../../include/Structure.h \
- ../../../include/Constructor.h ../../../include/Sequence.h \
- ../../../include/Grid.h LoaddodsProcessing.h MetadataProcessing.h \
- ClientByte.h AttributeInterface.h ClientInt16.h ClientUInt16.h \
- ClientInt32.h ClientUInt32.h ClientFloat32.h ClientFloat64.h \
- ClientStr.h ClientUrl.h ClientList.h ClientArray.h ClientStructure.h \
- ClientSequence.h ClientGrid.h name_map.h ../../../include/debug.h
-name_map.o: name_map.cc config_writedap.h ../../../include/escaping.h \
- name_map.h
+  ../../../include/InternalErr.h ../../../include/Error.h \
+  ../../../include/dods-limits.h ClientFloat32.h \
+  ../../../include/Float32.h ../../../include/dods-datatypes.h \
+  ../../../include/BaseType.h ../../../include/AttrTable.h \
+  ../../../include/Pix.h ../../../include/IteratorAdapter.h \
+  AttributeInterface.h name_map.h
+write_dap.o: write_dap.cc config_writedap.h ../../../include/GetOpt.h \
+  ../../../include/Pix.h ../../../include/IteratorAdapter.h \
+  ../../../include/BaseType.h ../../../include/AttrTable.h \
+  ../../../include/Error.h ../../../include/InternalErr.h \
+  ../../../include/dods-datatypes.h ../../../include/Connect.h \
+  ../../../include/DAS.h ../../../include/DDS.h ../../../include/Clause.h \
+  ../../../include/expr.h ../../../include/RValue.h \
+  ../../../include/util.h ../../../include/Byte.h \
+  ../../../include/Int16.h ../../../include/UInt16.h \
+  ../../../include/Int32.h ../../../include/UInt32.h \
+  ../../../include/Float32.h ../../../include/Float64.h \
+  ../../../include/Str.h ../../../include/dods-limits.h \
+  ../../../include/Url.h ../../../include/Array.h \
+  ../../../include/Vector.h ../../../include/Structure.h \
+  ../../../include/Constructor.h ../../../include/Sequence.h \
+  ../../../include/Grid.h ../../../include/DataDDS.h \
+  ../../../include/HTTPConnect.h ../../../include/curl/curl.h \
+  ../../../include/curl/types.h ../../../include/curl/easy.h \
+  ../../../include/curl/multi.h ../../../include/RCReader.h \
+  ../../../include/ObjectType.h ../../../include/HTTPCache.h \
+  ../../../include/config_dap.h ../../../include/ResponseTooBigErr.h \
+  ../../../include/HTTPCacheDisconnectedMode.h \
+  ../../../include/HTTPResponse.h ../../../include/Response.h \
+  ../../../include/debug.h LoaddodsProcessing.h MetadataProcessing.h \
+  ClientByte.h AttributeInterface.h ClientInt16.h ClientUInt16.h \
+  ClientInt32.h ClientUInt32.h ClientFloat32.h ClientFloat64.h \
+  ClientStr.h ClientUrl.h ClientArray.h ClientStructure.h \
+  ClientSequence.h ClientGrid.h name_map.h
+name_map.o: name_map.cc config_writedap.h ../../../include/Regex.h \
+  ../../../include/escaping.h name_map.h
 MetadataProcessing.o: MetadataProcessing.cc ../../../include/debug.h \
- ../../../include/Pix.h ../../../include/Regex.h name_map.h \
- MetadataProcessing.h ../../../include/DAS.h \
- ../../../include/AttrTable.h ../../../include/Error.h \
- ../../../include/DDS.h ../../../include/BaseType.h \
- ../../../include/InternalErr.h ../../../include/Clause.h \
- ../../../include/expr.h ../../../include/RValue.h ClientArray.h \
- ../../../include/Array.h ../../../include/dods-limits.h \
- ../../../include/Vector.h AttributeInterface.h ClientStructure.h \
- ../../../include/Structure.h ../../../include/Constructor.h \
- ClientSequence.h ../../../include/Sequence.h ClientGrid.h \
- ../../../include/Grid.h
+  ../../../include/Pix.h ../../../include/IteratorAdapter.h \
+  ../../../include/Regex.h name_map.h MetadataProcessing.h \
+  ../../../include/DAS.h ../../../include/AttrTable.h \
+  ../../../include/Error.h ../../../include/DDS.h \
+  ../../../include/BaseType.h ../../../include/InternalErr.h \
+  ../../../include/dods-datatypes.h ../../../include/Clause.h \
+  ../../../include/expr.h ../../../include/RValue.h ClientArray.h \
+  ../../../include/Array.h ../../../include/dods-limits.h \
+  ../../../include/Vector.h AttributeInterface.h ClientStructure.h \
+  ../../../include/Structure.h ../../../include/Constructor.h \
+  ClientSequence.h ../../../include/Sequence.h ClientGrid.h \
+  ../../../include/Grid.h
 LoaddodsProcessing.o: LoaddodsProcessing.cc ../../../include/debug.h \
- ../../../include/Pix.h ../../../include/dods-datatypes.h \
- ../../../include/InternalErr.h ../../../include/Error.h name_map.h \
- LoaddodsProcessing.h ../../../include/DDS.h \
- ../../../include/BaseType.h ../../../include/Clause.h \
- ../../../include/expr.h ../../../include/RValue.h \
- MetadataProcessing.h ../../../include/DAS.h \
- ../../../include/AttrTable.h ClientArray.h ../../../include/Array.h \
- ../../../include/dods-limits.h ../../../include/Vector.h \
- AttributeInterface.h ClientStructure.h ../../../include/Structure.h \
- ../../../include/Constructor.h ClientSequence.h \
- ../../../include/Sequence.h ClientGrid.h ../../../include/Grid.h
-loaddap.o: loaddap.c config_writedap.h MLVars.h extend.h variable.h \
- queue.h defines.h
-variable.o: variable.c defines.h variable.h
+  ../../../include/Pix.h ../../../include/IteratorAdapter.h \
+  ../../../include/dods-datatypes.h ../../../include/InternalErr.h \
+  ../../../include/Error.h name_map.h LoaddodsProcessing.h \
+  ../../../include/DDS.h ../../../include/BaseType.h \
+  ../../../include/AttrTable.h ../../../include/DAS.h \
+  ../../../include/Clause.h ../../../include/expr.h \
+  ../../../include/RValue.h MetadataProcessing.h ClientArray.h \
+  ../../../include/Array.h ../../../include/dods-limits.h \
+  ../../../include/Vector.h AttributeInterface.h ClientStructure.h \
+  ../../../include/Structure.h ../../../include/Constructor.h \
+  ClientSequence.h ../../../include/Sequence.h ClientGrid.h \
+  ../../../include/Grid.h
+loaddap.o: loaddap.c config_writedap.h \
+  /usr/local/matlab6/extern/include/mex.h \
+  /usr/local/matlab6/extern/include/matrix.h \
+  /usr/local/matlab6/extern/include/tmwtypes.h MLVars.h extend.h \
+  variable.h queue.h defines.h
+variable.o: variable.c /usr/local/matlab6/extern/include/mex.h \
+  /usr/local/matlab6/extern/include/matrix.h \
+  /usr/local/matlab6/extern/include/tmwtypes.h defines.h variable.h
 queue.o: queue.c ../../../include/debug.h config_writedap.h queue.h
-extend.o: extend.c defines.h MLVars.h error.h
-error.o: error.c defines.h
-MLVars.o: MLVars.c MLVars.h defines.h
-process_values.o: process_values.c config_writedap.h variable.h \
- MLVars.h extend.h defines.h
+extend.o: extend.c /usr/local/matlab6/extern/include/mex.h \
+  /usr/local/matlab6/extern/include/matrix.h \
+  /usr/local/matlab6/extern/include/tmwtypes.h defines.h MLVars.h error.h
+error.o: error.c /usr/local/matlab6/extern/include/mex.h \
+  /usr/local/matlab6/extern/include/matrix.h \
+  /usr/local/matlab6/extern/include/tmwtypes.h defines.h
+MLVars.o: MLVars.c /usr/local/matlab6/extern/include/mex.h \
+  /usr/local/matlab6/extern/include/matrix.h \
+  /usr/local/matlab6/extern/include/tmwtypes.h MLVars.h defines.h
+process_values.o: process_values.c config_writedap.h \
+  /usr/local/matlab6/extern/include/mex.h \
+  /usr/local/matlab6/extern/include/matrix.h \
+  /usr/local/matlab6/extern/include/tmwtypes.h variable.h MLVars.h \
+  extend.h defines.h
