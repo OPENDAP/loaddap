@@ -53,6 +53,6 @@ function text = whodods(url)
 % AUTHOR: James Gallagher, URI
 %---------------------------------------------------------------------
 
-eval(['!./writeval -D -- ', url])
+eval(['!./writedap -D -- ', url])
 
 

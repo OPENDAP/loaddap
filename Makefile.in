@@ -1,5 +1,5 @@
 
-# $Id: Makefile.in,v 1.1 2003/10/22 19:43:33 dan Exp $
+# $Id: Makefile.in,v 1.2 2003/10/23 18:57:33 dan Exp $
 
 @SET_MAKE@
 
@@ -15,7 +15,7 @@
 # the print representation on the screen.
 
 # LOADDODS = loaddods.mex*
-PROG = writeval loaddods
+PROG = writedap loaddap
 
 DODS_ROOT = @dods_relative@
 MATLAB_ROOT = @MATLAB_ROOT@
@@ -99,22 +99,22 @@ CLIENTOBJS = ClientByte.o ClientInt32.o ClientFloat64.o ClientStr.o \
 WV_SRCS = write_val.cc name_map.cc MetadataProcessing.cc \
 	LoaddodsProcessing.cc
 
-WV_OBJS = write_val.o name_map.o MetadataProcessing.o LoaddodsProcessing.o
+WV_OBJS = write_dap.o name_map.o MetadataProcessing.o LoaddodsProcessing.o
 
-LD_SRCS = loaddods.c variable.c queue.c extend.c error.c MLVars.c \
+LD_SRCS = loaddap.c variable.c queue.c extend.c error.c MLVars.c \
 	process_values.c
 
-LD_OBJS = loaddods.o variable.o queue.o extend.o error.o MLVars.o \
+LD_OBJS = loaddap.o variable.o queue.o extend.o error.o MLVars.o \
 	process_values.o
 
 ALLSRCS = $(CLIENTSRCS) $(WV_SRCS) $(AV_SRCS) 
 
-all: $(PROG) loaddods
+all: $(PROG) loaddap
 
-writeval: $(WV_OBJS) $(CLIENTOBJS)
-	$(CXX) $(LDFLAGS) -o writeval $(WV_OBJS) $(CLIENTOBJS) $(LIBS)
+writedap: $(WV_OBJS) $(CLIENTOBJS)
+	$(CXX) $(LDFLAGS) -o writedap $(WV_OBJS) $(CLIENTOBJS) $(LIBS)
 
-loaddods: $(LD_OBJS)
+loaddap: $(LD_OBJS)
 	$(CMEX) $(LD_OBJS) @LINUX_HACK@
 
 # Standard targets with some customization for das-test and dds-test
@@ -125,12 +125,12 @@ install: install-client
 # versions (for different architectures matlab supports, e.g.,
 # o32/mips2 and 64/mips4). And install-sh doesn't support install
 # of multiple files (though GNU install does). erd 2001/12/26
-install-client: writeval loaddods
-	$(INSTALL_PROGRAM) -s writeval $(bindir)
-	for f in loaddods.mex*; do \
+install-client: writedap loaddap
+	$(INSTALL_PROGRAM) -s writedap $(bindir)
+	for f in loaddap.mex*; do \
 	  $(INSTALL_PROGRAM) $$f $(bindir); \
 	done
-	$(INSTALL_PROGRAM) loaddods.m $(bindir)
+	$(INSTALL_PROGRAM) loaddap.m $(bindir)
 	$(INSTALL_PROGRAM) whodods.m $(bindir)
 	$(INSTALL_DATA) INSTALL-matlab-client $(etcdir)
 
@@ -145,7 +145,7 @@ Makefile: Makefile.in
 	    ./configure; \
 	fi
 
-config_writeval.h: config_writeval.h.in
+config_writedap.h: config_writedap.h.in
 	if [ -x ./config.status ]; \
 	then \
 	    ${SHELL} ./config.status; \
@@ -153,16 +153,16 @@ config_writeval.h: config_writeval.h.in
 	    ./configure; \
 	fi
 
-check: writeval writeval-check 
+check: writedap writedap-check 
 
-writeval-check: writeval
+writedap-check: writedap
 	${RUNTEST} ${RUNTESTFLAGS} --tool writeval --srcdir testsuite
 
 extend: error.o
 	$(CC) -DTEST $(CFLAGS) $(CPPFLAGS) -c extend.c
 	$(CMEX) $(CMEXFLAGS) -g extend.o $^
 
-loaddods-check:
+loaddap-check:
 	@echo "Disabled"
 
 # Unit test driver. Run unit tests like `TestRunner name_map_test'. 8/25/2000
@@ -194,18 +194,18 @@ collect-coverage-data:
 
 PURIFY = purify $(CC) 
 
-loaddods-purify: writeval variable.o queue.o
-	$(CC)  -c -g $(CFLAGS) $(CPPFLAGS) -DTEST_LOADDODS loaddods.c
+loaddap-purify: writedap variable.o queue.o
+	$(CC)  -c -g $(CFLAGS) $(CPPFLAGS) -DTEST_LOADDODS loaddap.c
 	$(CC)  -c -g $(CFLAGS) $(CPPFLAGS) -DTEST_LOADDODS extend.c
-	$(PURIFY) $(LDFLAGS) -g -o test-ldods loaddods.o variable.o queue.o \
+	$(PURIFY) $(LDFLAGS) -g -o test-ldods loaddap.o variable.o queue.o \
 		extend.o -lmx
-	-rm loaddods.o extend.o
+	-rm loaddap.o extend.o
 
 # these tests all fail when das-test is linked with -lnew_debug.
 
 clean:	
 	-rm -f *.o *.sum *.log *~ core
-	-rm -f $(PROG) loaddods.mex* extend.mexsol name_map TestRunner
+	-rm -f $(PROG) loaddap.mex* extend.mexsol name_map TestRunner
 
 distclean: clean
 	-rm -f config.status config.log config.cache *.bb *.bbg *.da
@@ -247,8 +247,8 @@ binary-tar:
             --file DODS-ml-cmdln-$(version)-$(host).tar.gz \
             DODS/NEWS \
             DODS/docs/README DODS/docs/README-ml-cmdln \
-            DODS/bin/loaddods.m DODS/bin/loaddods.mex* DODS/bin/whodods.m \
-	    DODS/bin/geturl DODS/bin/writeval
+            DODS/bin/loaddap.m DODS/bin/loaddap.mex* DODS/bin/whodods.m \
+	    DODS/bin/geturl DODS/bin/writedap
 
 .PHONY: update-version
 update-version: check-version
@@ -286,22 +286,22 @@ tags:
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
 
 # DO NOT DELETE; depend depends on this line.
-ClientByte.o: ClientByte.cc config_writeval.h \
+ClientByte.o: ClientByte.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h ClientByte.h \
  ../../../include/Byte.h ../../../include/dods-datatypes.h \
  ../../../include/BaseType.h ../../../include/AttrTable.h \
  AttributeInterface.h name_map.h
-ClientInt32.o: ClientInt32.cc config_writeval.h \
+ClientInt32.o: ClientInt32.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h ClientInt32.h \
  ../../../include/Int32.h ../../../include/dods-datatypes.h \
  ../../../include/BaseType.h ../../../include/AttrTable.h \
  AttributeInterface.h name_map.h
-ClientFloat64.o: ClientFloat64.cc config_writeval.h \
+ClientFloat64.o: ClientFloat64.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h \
  ClientFloat64.h ../../../include/Float64.h \
  ../../../include/dods-datatypes.h ../../../include/BaseType.h \
  ../../../include/AttrTable.h AttributeInterface.h name_map.h
-ClientStr.o: ClientStr.cc config_writeval.h \
+ClientStr.o: ClientStr.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h ClientStr.h \
  ../../../include/dods-limits.h ../../../include/Str.h \
  ../../../include/BaseType.h ../../../include/AttrTable.h \
@@ -311,7 +311,7 @@ ClientUrl.o: ClientUrl.cc ClientUrl.h ClientStr.h \
  ../../../include/BaseType.h ../../../include/InternalErr.h \
  ../../../include/Error.h ../../../include/AttrTable.h \
  AttributeInterface.h
-ClientArray.o: ClientArray.cc config_writeval.h \
+ClientArray.o: ClientArray.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h ClientArray.h \
  ../../../include/Array.h ../../../include/dods-limits.h \
  ../../../include/Vector.h ../../../include/BaseType.h \
@@ -319,7 +319,7 @@ ClientArray.o: ClientArray.cc config_writeval.h \
  ../../../include/expr.h ../../../include/RValue.h \
  AttributeInterface.h ../../../include/AttrTable.h name_map.h \
  ../../../include/debug.h
-ClientStructure.o: ClientStructure.cc config_writeval.h \
+ClientStructure.o: ClientStructure.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h \
  ClientStructure.h ../../../include/Structure.h \
  ../../../include/BaseType.h ../../../include/Constructor.h \
@@ -328,45 +328,45 @@ ClientStructure.o: ClientStructure.cc config_writeval.h \
  AttributeInterface.h ../../../include/AttrTable.h ClientSequence.h \
  ../../../include/Sequence.h ClientArray.h ../../../include/Array.h \
  ../../../include/dods-limits.h ../../../include/Vector.h name_map.h
-ClientList.o: ClientList.cc config_writeval.h \
+ClientList.o: ClientList.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h ClientList.h \
  ../../../include/List.h ../../../include/dods-limits.h \
  ../../../include/Vector.h ../../../include/BaseType.h \
  ../../../include/DDS.h ../../../include/Clause.h \
  ../../../include/expr.h ../../../include/RValue.h \
  ../../../include/AttrTable.h AttributeInterface.h name_map.h
-ClientSequence.o: ClientSequence.cc config_writeval.h \
+ClientSequence.o: ClientSequence.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h \
  ../../../include/debug.h ClientSequence.h ../../../include/Sequence.h \
  ../../../include/BaseType.h ../../../include/Constructor.h \
  AttributeInterface.h ../../../include/AttrTable.h name_map.h
-ClientGrid.o: ClientGrid.cc config_writeval.h \
+ClientGrid.o: ClientGrid.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h ClientGrid.h \
  ../../../include/Grid.h ../../../include/BaseType.h \
  ../../../include/Constructor.h AttributeInterface.h \
  ../../../include/AttrTable.h name_map.h
-ClientUInt32.o: ClientUInt32.cc config_writeval.h \
+ClientUInt32.o: ClientUInt32.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h \
  ClientUInt32.h ../../../include/UInt32.h \
  ../../../include/dods-datatypes.h ../../../include/BaseType.h \
  ../../../include/AttrTable.h AttributeInterface.h name_map.h
-ClientInt16.o: ClientInt16.cc config_writeval.h \
+ClientInt16.o: ClientInt16.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h ClientInt16.h \
  ../../../include/Int16.h ../../../include/dods-datatypes.h \
  ../../../include/BaseType.h ../../../include/AttrTable.h \
  AttributeInterface.h name_map.h
-ClientUInt16.o: ClientUInt16.cc config_writeval.h \
+ClientUInt16.o: ClientUInt16.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h \
  ClientUInt16.h ../../../include/UInt16.h \
  ../../../include/dods-datatypes.h ../../../include/BaseType.h \
  ../../../include/AttrTable.h AttributeInterface.h name_map.h
-ClientFloat32.o: ClientFloat32.cc config_writeval.h \
+ClientFloat32.o: ClientFloat32.cc config_writedap.h \
  ../../../include/InternalErr.h ../../../include/Error.h \
  ../../../include/dods-limits.h ClientFloat32.h \
  ../../../include/Float32.h ../../../include/dods-datatypes.h \
  ../../../include/BaseType.h ../../../include/AttrTable.h \
  AttributeInterface.h name_map.h
-write_val.o: write_val.cc config_writeval.h \
+write_dap.o: write_dap.cc config_writedap.h \
  ../../../include/BaseType.h ../../../include/InternalErr.h \
  ../../../include/Error.h ../../../include/Connect.h \
  ../../../include/DAS.h ../../../include/AttrTable.h \
@@ -386,7 +386,7 @@ write_val.o: write_val.cc config_writeval.h \
  ClientInt32.h ClientUInt32.h ClientFloat32.h ClientFloat64.h \
  ClientStr.h ClientUrl.h ClientList.h ClientArray.h ClientStructure.h \
  ClientSequence.h ClientGrid.h name_map.h ../../../include/debug.h
-name_map.o: name_map.cc config_writeval.h ../../../include/escaping.h \
+name_map.o: name_map.cc config_writedap.h ../../../include/escaping.h \
  name_map.h
 MetadataProcessing.o: MetadataProcessing.cc ../../../include/debug.h \
  ../../../include/Pix.h ../../../include/Regex.h name_map.h \
@@ -412,12 +412,12 @@ LoaddodsProcessing.o: LoaddodsProcessing.cc ../../../include/debug.h \
  AttributeInterface.h ClientStructure.h ../../../include/Structure.h \
  ../../../include/Constructor.h ClientSequence.h \
  ../../../include/Sequence.h ClientGrid.h ../../../include/Grid.h
-loaddods.o: loaddods.c config_writeval.h MLVars.h extend.h variable.h \
+loaddap.o: loaddap.c config_writedap.h MLVars.h extend.h variable.h \
  queue.h defines.h
 variable.o: variable.c defines.h variable.h
-queue.o: queue.c ../../../include/debug.h config_writeval.h queue.h
+queue.o: queue.c ../../../include/debug.h config_writedap.h queue.h
 extend.o: extend.c defines.h MLVars.h error.h
 error.o: error.c defines.h
 MLVars.o: MLVars.c MLVars.h defines.h
-process_values.o: process_values.c config_writeval.h variable.h \
+process_values.o: process_values.c config_writedap.h variable.h \
  MLVars.h extend.h defines.h
