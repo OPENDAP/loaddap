@@ -5,21 +5,12 @@
 // Authors:
 //	jhrg,jimg	James Gallagher (jgallagher@gso.uri.edu)
 
-<<<<<<< name_map.cc
-#ifdef __GNUG__
-#pragma implementation
-#endif
-
 #include "config_writedap.h"
-=======
-#include "config_writedap.h"
->>>>>>> 1.1.1.1.2.2
 
-static char rcsid[] not_used = {"$Id: name_map.cc,v 1.3 2003/12/08 17:59:50 edavis Exp $"};
+static char rcsid[] not_used = {"$Id: name_map.cc,v 1.4 2004/02/06 00:49:59 jimg Exp $"};
 
 #include <vector>
 #include <string>
-#include <strstream>
 
 #include <Regex.h>
 
@@ -105,6 +96,9 @@ main(int argc, char *argv[])
 #endif
 
 // $Log: name_map.cc,v $
+// Revision 1.4  2004/02/06 00:49:59  jimg
+// Removed strstream include.
+//
 // Revision 1.3  2003/12/08 17:59:50  edavis
 // Merge release-3-4 into trunk
 //

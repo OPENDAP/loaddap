@@ -10,7 +10,6 @@
 #include <exception>
 #include <typeinfo>
 #include <iostream>
-#include <strstream>
 
 #include "debug.h"
 
@@ -168,6 +167,9 @@ MetadataProcessing::transfer_attributes(DAS &das)
 }
 
 // $Log: MetadataProcessing.cc,v $
+// Revision 1.3  2004/02/06 00:50:18  jimg
+// Removed strstream include.
+//
 // Revision 1.2  2003/12/08 17:59:49  edavis
 // Merge release-3-4 into trunk
 //
