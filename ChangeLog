@@ -1,3 +1,27 @@
+2004-07-08  James Gallagher  <jimg@comet.dods.org>
+
+	* Merged release-3-4-5FCS
+
+	* Removed call to LoaddodsProcessing::prune_duplicates() when
+	processing the DAS response.  This prunes the duplicated map
+	vectors that the netCDF server prefixes to its response for Grid
+	type variables.   The problem is that this pruning is only
+	occuring for DAS handling and has led to confusion by users. (From
+	Dan). 
+
+	* Misc. build fixes.
+
+2004-03-17  Dan Holloway     <d.holloway@gso.uri.edu>
+	* Updated code for maintaining DDS structure of 
+	data in the interned matlab variables.  When the
+	code was merged from version 3.3 to 3.4 the bulk
+	of these changes did not get merged correctly. The
+	affected files include process_values.c, MLVar.s,.h,
+	extend.c,.h, ClientSequence.cc, ClientStructure.cc,
+	ClientArray.cc.  Renamed loaddods to loaddap, and
+	writeval to writedap to delineate the non-structured
+	version from the structured version.
+
 2003-12-08  Yuan Ho  <yuanho@ucar.edu>
 
         * Merge release-3-4 into trunk.
