@@ -17,7 +17,7 @@
 
 #include "config_writedap.h"
 
-static char rcsid[] not_used = {"$Id: write_dap.cc,v 1.3 2004/01/26 17:38:57 jimg Exp $"};
+static char rcsid[] not_used = {"$Id: write_dap.cc,v 1.4 2004/07/08 20:50:03 jimg Exp $"};
 
 #include <stdio.h>
 #include <string>
@@ -379,7 +379,7 @@ main(int argc, char * argv[])
 	LoaddodsProcessing lp(url->dds());
 	    
 	lp.transfer_attributes(url->das());
-	lp.prune_duplicates();
+	//lp.prune_duplicates();
 	lp.add_size_attributes();
 	lp.add_realname_attributes();
 	lp.print_for_matlab(cout);
@@ -446,6 +446,16 @@ main(int argc, char * argv[])
 }
 
 // $Log: write_dap.cc,v $
+// Revision 1.4  2004/07/08 20:50:03  jimg
+// Merged release-3-4-5FCS
+//
+// Revision 1.1.2.2  2004/05/04 15:48:35  dan
+// Removed call to LoaddodsProcessing::prune_duplicates() when processing
+// the DAS response.  This prunes the duplicated map vectors that the
+// netCDF server prefixes to its response for Grid type variables.   The
+// problem is that this pruning is only occuring for DAS handling and
+// has led to confusion by users.
+//
 // Revision 1.3  2004/01/26 17:38:57  jimg
 // Removed List from the DAP
 //

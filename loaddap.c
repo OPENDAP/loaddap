@@ -31,7 +31,7 @@
 
 #include "config_writedap.h"
 
-static char id[] not_used ={"$Id: loaddap.c,v 1.2 2003/12/08 17:59:50 edavis Exp $"};
+static char id[] not_used ={"$Id: loaddap.c,v 1.3 2004/07/08 20:50:03 jimg Exp $"};
 
 /* I think that all gnu x86 compilers define __i386__. 9/22/2000 jhrg */
 #if defined(__i386__) && defined(__linux__) && defined(__GNUC__)
@@ -194,7 +194,7 @@ quote_for_shell(char *src)
     //  are taken care of because we double quote the arg to writedap
     while ((c = strpbrk(src,"\""))) {
 #else
-    while ((c = strpbrk(src, "\"*?[];&()|^<>"))) {
+    while ((c = strpbrk(src, " \"*?[];&()|^<>"))) {
 #endif
 	strncat(dest, src, c - src);
 	strcat(dest, "\\");
@@ -715,6 +715,12 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
 
 /* 
  * $Log: loaddap.c,v $
+ * Revision 1.3  2004/07/08 20:50:03  jimg
+ * Merged release-3-4-5FCS
+ *
+ * Revision 1.1.2.2  2004/04/30 14:59:51  dan
+ * Added space ' ' character to set for escaping in quote_for_shell().
+ *
  * Revision 1.2  2003/12/08 17:59:50  edavis
  * Merge release-3-4 into trunk
  *

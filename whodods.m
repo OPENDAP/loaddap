@@ -26,7 +26,7 @@ function text = whodods(url)
 %  A DODS Dataset descriptor structure, as text.
 %
 % EXAMPLE:
-%  whodods('http://dods.gso.uri.edu/cgi-bin/nph-nc/data/coads.nc')
+%  whodods('http://dodsdev.gso.uri.edu/cgi-bin/nph-nc/data/coads.nc')
 %	-> Returns structured text describing the names and types
 %	   of variables in the dataset `coads.nc' in directory 'data'
 %	   on `dods.gso.uri.edu'.

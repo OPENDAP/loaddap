@@ -9,15 +9,7 @@
 //
 // 3/29/99 jhrg
 
-<<<<<<< ClientFloat32.cc
-#ifdef __GNUG__
-#pragma implementation
-#endif
-
 #include "config_writedap.h"
-=======
-#include "config_writedap.h"
->>>>>>> 1.1.1.1.2.2
 
 #include <assert.h>
 #include <iostream>
@@ -113,6 +105,9 @@ ClientFloat32::set_matlab_name(const string &n)
 }
 
 // $Log: ClientFloat32.cc,v $
+// Revision 1.4  2004/07/08 20:50:03  jimg
+// Merged release-3-4-5FCS
+//
 // Revision 1.3  2003/12/08 17:59:49  edavis
 // Merge release-3-4 into trunk
 //

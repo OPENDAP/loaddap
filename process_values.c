@@ -1,3 +1,5 @@
+// -*- mode: c; c-basic-offset: 4 -*-
+
 /* 
    (c) COPYRIGHT URI/MIT 2000
    Please read the full copyright statement in the file COPYRIGHT.
@@ -15,7 +17,7 @@
 
 #include "config_writedap.h"
 
-static char id[] not_used ={"$Id: process_values.c,v 1.3 2003/12/08 17:59:50 edavis Exp $"};
+static char id[] not_used ={"$Id: process_values.c,v 1.4 2004/07/08 20:50:03 jimg Exp $"};
 
 #include <errno.h>
 
@@ -102,17 +104,17 @@ extern int fullnames;
     attributes. */
 static int use_structures = 0;
 
-static int do_error(FILE *, variable **vectors, char *, int, MLVars *);
-static int do_float(FILE *, variable **vectors, char *, int, MLVars *);
-static int do_string(FILE *, variable **vectors, char *, int, MLVars *);
-static int do_list(FILE *, variable **vectors, char *, int, MLVars *);
-static int do_array(FILE *, variable **vectors, char *, int, MLVars *);
-static int do_structure(FILE *, variable **vectors, char *, int, MLVars *);
-static int do_sequence(FILE *, variable **vectors, char *, int, MLVars *);
-static int do_grid(FILE *, variable **vectors, char *, int, MLVars *);
-static int do_attributes(FILE *, variable **vectors, char *, int, MLVars *);
+static int do_error(FILE *, variable **vectors, char *, int, MLVars *, char *, char *);
+static int do_float(FILE *, variable **vectors, char *, int, MLVars *, char *, char *);
+static int do_string(FILE *, variable **vectors, char *, int, MLVars *, char *, char *);
+static int do_list(FILE *, variable **vectors, char *, int, MLVars *, char *, char *);
+static int do_array(FILE *, variable **vectors, char *, int, MLVars *, char *, char *);
+static int do_structure(FILE *, variable **vectors, char *, int, MLVars *, char *, char *);
+static int do_sequence(FILE *, variable **vectors, char *, int, MLVars *, char *, char *);
+static int do_grid(FILE *, variable **vectors, char *, int, MLVars *, char *, char *);
+static int do_attributes(FILE *, variable **vectors, char *, int, MLVars *, char *, char *);
 
-typedef (*reader_type)(FILE *, variable **vectors, char *, int, MLVars *);
+typedef (*reader_type)(FILE *, variable **vectors, char *, int, MLVars *, char *, char *);
 
 /* NB: The Byte and Int32 types are mapped to Float64 since Matlab 4
    represents numbers using only 64 bit floating point values. */
@@ -201,6 +203,43 @@ get_reader(char *typename)
 }
 
 /**
+   Given a type name, return TRUE if it matches Sequence. 
+*/ 
+bool
+is_sequence(char *typename)
+{
+  if (strcmp(typename,"Sequence") == 0)
+    return TRUE;
+  else
+    return FALSE;
+}
+
+/**
+   Given a type name, return TRUE if it matches Structure. 
+*/ 
+bool
+is_structure(char *typename)
+{
+  if (strcmp(typename,"Structure") == 0)
+    return TRUE;
+  else
+    return FALSE;
+}
+
+/**
+   Given a type name, return TRUE if it matches Structure. 
+*/ 
+bool
+is_arrayType(char *typename)
+{
+  if ((strcmp(typename,"Grid") == 0) ||
+      (strcmp(typename,"Array") == 0))
+    return TRUE;
+  else
+    return FALSE;
+}
+
+/**
   Read a line from writeval which should have only one word on it. Store the
   word in NAME. 
 
@@ -230,7 +269,7 @@ internal to loaddods or it may be caused by an earlier error.\n");
 	    break;
     }
 
-    DBG(msg("read_name: line: `%s'\n", line));
+    DBG2(msg("read_name: line: `%s'\n", line));
 
     items = sscanf(line, "%s", &name[strlen(name)]);
     if (items != 1) {
@@ -241,7 +280,10 @@ internal to loaddods or it may be caused by an earlier error.\n");
 	return FALSE;
     }
 
-    return TRUE;
+    if ( strcmp(name,"EndSequence") == 0 )
+	return FALSE;
+    else
+	return TRUE;
 }
 
 /* 
@@ -259,13 +301,13 @@ read_vec_descript(FILE *fin, char element_type[MAX_STR], char name[MAX_STR],
     char line[256];
 
     if (feof(fin)) {
-	DBG(msg("EOF found.\n"));
+	DBG2(msg("EOF found.\n"));
 	return FALSE;
     }
 
     fgets(line, 255, fin);
 
-    DBG(msg("line: `%s'\n", line));
+    DBG2(msg("line: `%s'\n", line));
 
     items = sscanf(line, "%s %s %d", &element_type[0], 
 		   &name[strlen(name)], length);
@@ -293,14 +335,14 @@ read_array_dims(FILE *fin, int ndims, int *dims)
     char dimension[MAX_LN_LEN];
     
     if (feof(fin)) {
-	DBG(msg("EOF found.\n"));
+	DBG2(msg("EOF found.\n"));
 	return FALSE;
     }
 
     fgets(line, MAX_LN_LEN-1, fin);
     line_p = &line[0];		/* line_p is used iterate over elements */
 
-    DBG(msg("line: `%s'\n", line_p));
+    DBG2(msg("line: `%s'\n", line_p));
 
     /* Read in the dimension sizes and compute total number of elements.
        NB: Look for dimensions with size equal to one. These are dimensions
@@ -351,7 +393,7 @@ read_aggregate(FILE *fin, char name[MAX_STR], int *length)
     char line[256];
     fgets(line, 255, fin);
 
-    DBG(msg("line: `%s'\n", line));
+    DBG2(msg("line: `%s'\n", line));
 
     items = sscanf(line, "%s %d", &name[strlen(name)], length);
     if (items != 2) {
@@ -393,12 +435,12 @@ read_trailing_newline(FILE *fin)
 
 static int 
 do_error(FILE *fin, variable **vectors, char *prefix, int outermost, 
-	 MLVars *vars)
+	 MLVars *vars, char *child, char *parent)
 {
     char value[BIG_STR];
     size_t i = 0;
 
-    DBG(msg("In do_error\n"));
+    DBG2(msg("In do_error\n"));
     value[0]='\0';
     fgets(value, BIG_STR-1, fin);
     do {
@@ -406,7 +448,7 @@ do_error(FILE *fin, variable **vectors, char *prefix, int outermost,
 	fgets(&value[i], BIG_STR-(i+1), fin);
     } while (!feof(fin) && i < BIG_STR && value[i] != '\0');
 	
-    DBG(msg("Error message from writeval before processing:\n%s\n", value));
+    DBG2(msg("Error message from writeval before processing:\n%s\n", value));
 
     strip(value, value, '"');		/* Strip out double quotes. */
     
@@ -418,7 +460,7 @@ do_error(FILE *fin, variable **vectors, char *prefix, int outermost,
 /** Read a single float value from the input stream. */
 static int
 do_float(FILE *fin, variable **vectors, char *prefix, int outermost,
-	 MLVars *vars)
+	 MLVars *vars, char *child, char *parent)
 {
     double y;
     char name[MAX_STR] = "";
@@ -435,8 +477,6 @@ do_float(FILE *fin, variable **vectors, char *prefix, int outermost,
 	name[0]='\0';
     }
 
-    DBG2(msg("do_float: prefix: %s, name: %s\n", prefix, name));
-
     if (!read_name(fin, name, TRUE))
 	return FALSE;
 
@@ -446,31 +486,30 @@ do_float(FILE *fin, variable **vectors, char *prefix, int outermost,
 	mxArray *variable;
 	fread(&y, sizeof(double), 1, fin);
 	if (isnan(y)) {
-	    DBG(msg("Found NaN!\n"));
+	    DBG2(msg("Found NaN!\n"));
 	    y = mxGetNaN();
 	}
 
 	variable = build_var(name, 0, 0, &y);
 	add_ml_var(vars, variable);
-
     }
     else {
 	/* Check to see if this vector already exists. If not, create it,
 	   reassign the global list of vectors and set the local pointer VAR
 	   to the newly added element. */
 	var = find_var(*vectors, name);
-	if (!var)
+	if (!var) {
 	    var = *vectors = add_var(*vectors, name, float64);
-
+	}
 	/* Add the value. */
 	fread(&y, sizeof(double), 1, fin);
 	if (isnan(y)) {
-	    DBG(msg("Found NaN!\n"));
+	    DBG2(msg("Found NaN!\n"));
 	    y = mxGetNaN();
 	}
 	add_float64_value(var, y);
     
-	DBG(msg("Float value read: %lf\n", y));
+	DBG2(msg("Float value read: %lf\n", y));
     }
 
 #ifdef DODS_DEBUG2
@@ -561,7 +600,7 @@ read_string_value(FILE *fin)
 
 static int 
 do_string(FILE *fin, variable **vectors, char *prefix, int outermost,
-	  MLVars *vars)
+	  MLVars *vars, char *child, char *parent)
 {
     variable *var;
     char *value;
@@ -600,7 +639,7 @@ do_string(FILE *fin, variable **vectors, char *prefix, int outermost,
 	mxFree(value);
     }
 
-    DBG(msg("do_string: read: %s = `%s'\n", name, value));
+    DBG2(msg("do_string: read: %s = `%s'\n", name, value));
 
     return TRUE;
 }
@@ -631,7 +670,7 @@ print_array_creation_msg(char *name, int num_elems, int ndims, int dims[])
 
 static int
 do_array(FILE *fin, variable **vectors, char *prefix, int outermost, 
-	 MLVars *vars)
+	 MLVars *vars, char *child, char *parent)
 {
   size_t i;
   int ndims;
@@ -639,6 +678,7 @@ do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
   size_t num_elems;
   char element_type[MAX_STR];
   char name[MAX_STR] = "";	/* PREFIX + short_name */
+  char cName[MAX_STR] = "";	/* PREFIX + short_name */
 
   /* If prefix is non-null load it into NAME. */
   if (fullnames && prefix[0]) {
@@ -651,6 +691,8 @@ do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
 
   if (!read_vec_descript(fin, element_type, name, &ndims))
     return FALSE;
+
+  strcpy(child,name);
 
   dims = mxCalloc((size_t)ndims, sizeof(int));
   DBGM(mexPrintf("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, dims));
@@ -679,6 +721,7 @@ do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
       if (use_structures)
 	{
 	  mxArray *variable = build_var(name, ndims, dims, yp);
+	  DBG(msg("do_array: name: %s, variable: %d\n",name,variable));
 	  if (!variable)
 	    return FALSE;
 	  add_ml_var(vars, variable);
@@ -748,7 +791,7 @@ do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
 
       for (i = 0; i < num_elems; ++i)
 	{
-	  status = (*exectype)(fin, vectors, name, outermost, vars);
+	  status = (*exectype)(fin, vectors, name, outermost, vars, cName, NULL);
 	  if (!status)
 	    return FALSE;
 	}
@@ -768,12 +811,13 @@ do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
 
 static int
 do_list(FILE *fin, variable **vectors, char *prefix, int outermost,
-	MLVars *vars)
+	MLVars *vars, char *child, char *parent)
 {
     int length;
     int dims[1];
     char element_type[MAX_STR];
     char name[MAX_STR] = "";	/* PREFIX + short_name */
+    char cName[MAX_STR] = "";	/* PREFIX + short_name */
 
     /* If prefix is non-null load it into NAME. */
     if (fullnames && prefix[0]) {
@@ -836,7 +880,7 @@ internal to loaddods or it may be caused by an earlier error.\n");
 	DBG2(msg("do_list: Processing: %s\n", element_type)); 
 
 	for (i = 0; i < length; ++i) {
-	    status = (*exectype)(fin, vectors, name, outermost, vars);
+	    status = (*exectype)(fin, vectors, name, outermost, vars, cName, NULL);
 	    if (!status) {
 		return FALSE;
 	    }
@@ -851,18 +895,28 @@ internal to loaddods or it may be caused by an earlier error.\n");
 
 static int
 do_structure(FILE *fin, variable **vectors, char *prefix, int outermost,
-	     MLVars *vars)
+	     MLVars *vars, char *child, char *parent)
 {
     int num_elems;
     int status;
     size_t i;
     char name[MAX_STR] = "";	/* PREFIX + short_name */
-    MLVars *my_vars;		/* Holds ML struct */
+    char cName[MAX_STR] = "";	/* PREFIX + short_name */
 
+    MLVars *struct_vars;		/* Holds ML struct */
+    MLVars *seq_vars = NULL;
+    variable *seqVectors = NULL;
+
+    mxArray *my_seq = NULL;
+    mxArray *my_struct = NULL;
+
+    int tmp_use_structures = use_structures;
+    int tmp_outermost;
+    
     if (use_structures)
-	my_vars = init_ml_vars();
+	struct_vars = init_ml_vars();
     else
-	my_vars = NULL;
+	struct_vars = NULL;
 
     /* If prefix is non-null load it into NAME. */
     if (fullnames && prefix[0]) {
@@ -877,6 +931,7 @@ do_structure(FILE *fin, variable **vectors, char *prefix, int outermost,
 	return FALSE;
 
     DBG2(msg("do_struct: name: %s, elems: %d\n", name, num_elems));
+    strcpy(child,name);
 
     for (i = 0; i < num_elems; ++i) {
 	char  element_type[MAX_STR];
@@ -896,28 +951,63 @@ do_structure(FILE *fin, variable **vectors, char *prefix, int outermost,
 	    return FALSE;
 	}
 
-	status = (*exectype)(fin, vectors, name, outermost, my_vars);
-	if (!status) {
-	    return FALSE;
+	if ( is_sequence(element_type) ) {
+	    
+	    seq_vars = init_ml_vars();
+
+	    tmp_use_structures = use_structures;
+	    use_structures = 0;
+
+	    status = (*exectype)(fin, &seqVectors, name, FALSE, seq_vars, cName, NULL);
+	    if (!status) {
+		return FALSE;
+	    }
+
+	    my_seq = build_ml_vars(cName, seq_vars);
+
+	    if ( struct_vars ) {
+		add_ml_var( struct_vars, my_seq );
+	    }
+	    else {
+		if ( vars ) {
+		    add_ml_var( vars, my_seq );
+		}
+		else 
+		    status = (mexPutArray(my_seq, "caller") == 0);
+	    }
+
+	    use_structures = tmp_use_structures;
+	    outermost = tmp_outermost;
+	}
+	else {
+	    status = (*exectype)(fin, &seqVectors, name, FALSE, struct_vars, cName, NULL);
+	    if (!status) {
+		return FALSE;
+	    }
 	}
     }
     
-    if (use_structures) {
-	mxArray *my_struct = build_ml_vars(name, my_vars);
+    if (use_structures) 
+	my_struct = build_ml_vars( name, struct_vars );
 
-	status = 1;
-	if (vars)
-	    add_ml_var(vars, my_struct);
-	else
-	    status = (mexPutArray(my_struct, "caller") == 0);
+    if ( vars ) {
+	transfer_arrays( seqVectors, vars );
+	seqVectors = NULL;
+    }
+
+    status = 1;
+    if ( use_structures && vars ) {
+	add_ml_var(vars, my_struct);
+    //    else
+    //    status = (mexPutArray(my_struct, "caller") == 0);
     }
 
     if (!status) 
 	err_msg("Internal Error: Could not intern variable %s. (%s:%d)\n", 
 		name, __FILE__, __LINE__);
 
-    if (my_vars)
-	clear_ml_vars(my_vars);
+    if ( struct_vars )
+	clear_ml_vars( struct_vars );
 
     return status;
 }
@@ -925,11 +1015,37 @@ do_structure(FILE *fin, variable **vectors, char *prefix, int outermost,
 /** @param vars Ignored. */
 static int
 do_sequence(FILE *fin, variable **vectors, char *prefix, int outermost,
-	    MLVars *vars)
+	    MLVars *vars, char *child, char *parent)
 {
     int num_elems;
-    size_t i;
+    char element_type[MAX_STR];
+    reader_type exectype;
+
+    size_t i,j;
+    int status;
+    int count = 0;
     char name[MAX_STR] = "";	/* PREFIX + short_name */
+    char cName[MAX_STR] = "";
+    char parent_info[MAX_STR] = "";
+
+    int tmp_use_structs = use_structures;
+    int numNested = 0;
+
+    bool initialSequenceElement = TRUE;
+    bool embedded_structs = FALSE;
+    bool nested_sequences = FALSE;
+
+    variable *seqVectors = NULL;
+
+    mxArray *my_seq = NULL;
+
+    MLVars *seq_vars = NULL;
+    MLVars *seqVars[32];
+    mxArray *v;
+    char *tName;
+    char seqVarNames[32][MAX_STR];
+    _MLVar *mlV;
+    int tcnt;
 
     /* If prefix is non-null load it into NAME. For Seqs, don't do this on
        the outermost level to conserve name length. */
@@ -941,30 +1057,42 @@ do_sequence(FILE *fin, variable **vectors, char *prefix, int outermost,
 	name[0]='\0';
     }
 
-    if (!read_aggregate(fin, name, &num_elems))
-	return FALSE;
+    if ( parent == NULL )
+	parent_info[0] = '\0';
+    else 
+	strcpy( parent_info, parent );
 
-    DBG(msg("do_seq: name: %s, elems: %d\n", name, num_elems));
+    status = 1;
 
-    /* NB: Run the loop util all the data is used up when reading the
-       outermost sequence, otherwise read the elements only once. */
-    do {
+    while ( status ) {
+
+	if ( !initialSequenceElement ) {
+	    element_type[0] = '\0';
+	    status = read_name(fin, &element_type[0], FALSE);
+	    if ( !status )
+		break;
+	}
+	name[0] = '\0';
+
+	if (!read_aggregate(fin, name, &num_elems))
+	    return FALSE;
+
+	if ( strcmp(parent_info, name) != 0 ) {
+	    strcpy( child, name );
+	    parent_info[0] = '\0';
+	    strcpy( parent_info, name );
+	}
+
+	/* NB: Run the loop util all the data is used up when reading the
+	   outermost sequence, otherwise read the elements only once. */
+
 	for (i = 0; i < num_elems; ++i) {
 	    int status;
 	    char  element_type[MAX_STR];
 	    reader_type exectype;
 
 	    element_type[0]='\0';
-	    DBG(msg("element type: %s\n", element_type));
-	    if (!read_name(fin, &element_type[0], FALSE)) {
-		if (outermost)
-		    return TRUE;
-		else {
-		    return FALSE;
-		}
-	    }
-
-	    DBG(msg("do_seq: Processing: %s\n", element_type)); 
+	    status = read_name(fin, &element_type[0], FALSE);
 
 	    exectype = get_reader(element_type);
 	    if (!exectype) {
@@ -973,23 +1101,163 @@ do_sequence(FILE *fin, variable **vectors, char *prefix, int outermost,
 		return FALSE;
 	    }
 
-	    status = (*exectype)(fin, vectors, name, FALSE, vars);
-	    if (!status) {
-		return FALSE;
+	    /** Handle each element of the Sequence, Structures and
+		Sequences need special handling to maintain structural
+		representation. */
+	 
+	    /* Next element is a Structure type (embedded structures) */
+	    if  ( is_structure(element_type) ) {
+		seq_vars = init_ml_vars(); 
+		
+		tmp_use_structs = use_structures;
+		use_structures = 0;
+		
+		status = (*exectype)(fin, &seqVectors, name, FALSE, seq_vars, cName, name);
+		if (!status) 
+		    return FALSE;
+		
+		if ( initialSequenceElement ) {
+		    seqVars[numNested] = init_ml_vars();
+		    strcpy(seqVarNames[numNested],cName);
+		    numNested++;
+		}
+		
+		for (j=0; j<numNested; j++) {
+		    if (strcmp(seqVarNames[j],cName) == 0) {
+			count = j;
+			break;
+		    }
+		}
+		    
+		my_seq = first_ml_var(seq_vars);
+		while (my_seq) {
+		    add_ml_var(seqVars[count], my_seq);
+		    my_seq = next_ml_var(seqVars[numNested-1]);
+		}
+
+		use_structures = tmp_use_structs;
+		embedded_structs = TRUE;	  
+	    }
+	    
+	    /* Next element is a Sequence type (nested sequences) */
+	    else if ( is_sequence(element_type) ) {
+		seq_vars = init_ml_vars();
+		
+		status = (*exectype)(fin, &seqVectors, name, FALSE, seq_vars, cName, name);
+		if ( !status ) 
+		    return FALSE;
+		
+		if ( initialSequenceElement ) {
+		    seqVars[numNested] = init_ml_vars();
+		    strcpy(seqVarNames[numNested],cName);
+		    numNested++;
+		}
+		
+		for (j=0; j<numNested; j++) {
+		    if (strcmp(seqVarNames[j],cName) == 0) {
+			count = j;
+			break;
+		    }
+		}
+		    
+		my_seq = first_ml_var(seq_vars);
+		while (my_seq) {
+		    add_ml_var(seqVars[count], my_seq);
+		    my_seq = next_ml_var(seq_vars);
+		}
+		use_structures = tmp_use_structs;
+		nested_sequences = TRUE;	  
+	    }  
+	    
+	    else if ( is_arrayType(element_type) ) {
+		seq_vars = init_ml_vars();
+		
+		tmp_use_structs = use_structures;
+		use_structures = 1;
+
+		status = (*exectype)(fin, &seqVectors, name, FALSE, seq_vars, cName, name);
+		if (!status) 
+		    return FALSE;
+		
+		if ( initialSequenceElement ) {
+		    seqVars[numNested] = init_ml_vars();
+		    strcpy(seqVarNames[numNested],cName);
+		    numNested++;
+		}
+				
+		for (j=0; j<numNested; j++) {
+		    if (strcmp(seqVarNames[j],cName) == 0) {
+			count = j;
+			break;
+		    }
+		}
+		    
+		my_seq = first_ml_var(seq_vars); 
+		while (my_seq) {
+		    add_ml_var(seqVars[count], my_seq);
+		    my_seq = next_ml_var(seq_vars);
+		}
+		use_structures = tmp_use_structs;
+		embedded_structs = TRUE;	  
+	    }
+	    
+	    /* The next element is not a structure or sequence type. */
+	    else {
+		use_structures = 0;
+		status = (*exectype)(fin, vectors, name, FALSE, vars, cName, name);	
+		if (!status) 
+		    return FALSE;
+		
+		use_structures = tmp_use_structs;
 	    }
 	}
-    } while (outermost && !feof(fin) && !ferror(fin));
-
+	initialSequenceElement = FALSE;
+    }
+   
+    for (i = 0; i < numNested; i++) { 
+     
+	if ( embedded_structs || nested_sequences ) {
+   
+	    DBG(msg("do_seq: nn: %d, name[%d]: %s, %d\n",numNested,i,seqVarNames[i],seqVars[i]));
+	    seq_vars = transfer_variables(seqVarNames[i],seqVars[i]);
+	    
+	    my_seq = first_ml_var(seq_vars);      
+	    while (my_seq) {
+		tName = mxGetName(my_seq);
+		DBG(msg("do_seq: name: %s\n",tName));
+		add_ml_var(vars, my_seq);
+		my_seq = next_ml_var(seq_vars);
+	    }
+	}
+    }
+    
+    if ( vars ) {
+	transfer_arrays(*vectors, vars);
+	*vectors = NULL;
+    }
+    
     return TRUE;
 }
 
 /** @param vars Ignored. */
 static int
 do_grid(FILE *fin, variable **vectors, char *prefix, int outermost, 
-	MLVars *vars)
+	MLVars *vars, char *child, char *parent)
 {
     char name[MAX_STR] = "";	/* PREFIX + short_name */
+    char cName[MAX_STR] = "";
     int num_elems;
+    int status;
+
+    size_t i;
+    size_t j;
+    char part[MAX_STR];
+    
+    mxArray *my_grid;
+    MLVars *grid_vars = init_ml_vars();
+
+    int tmp_use_structs = use_structures;
+    use_structures = 1;
 
     /* If prefix is non-null load it into NAME. */
     if (fullnames && prefix[0]) {
@@ -1000,43 +1268,48 @@ do_grid(FILE *fin, variable **vectors, char *prefix, int outermost,
 	name[0]='\0';
     }
 
-    if (!read_name(fin, name, TRUE))
+    if ( !read_name(fin, name, TRUE) )
 	return FALSE;
 
-    DBG(msg("do_grid: name: %s\n", name));
+    strcpy(child,name);
 
-    {
-	size_t i;
-	int status;
-	char part[MAX_STR];
-	for (i = 0; i < 2; ++i) {
-	    size_t j;
-
-	    part[0]='\0';
-	    if (!read_aggregate(fin, part, &num_elems))
+    for (i = 0; i < 2; ++i) {
+	
+	part[0]='\0';
+	if (!read_aggregate(fin, part, &num_elems))
+	    return FALSE;
+	
+	for (j = 0; j < num_elems; ++j) {
+	    char dummy[MAX_STR];
+	    
+	    DBG2(msg("do_grid: Processing: Array\n")); 
+	    
+	    dummy[0]='\0';
+	    if (!read_name(fin, dummy, TRUE))
 		return FALSE;
-
-	    DBG(msg("do_grid: part: %s, num_elems: %d\n", part, num_elems));
-
-	    for (j = 0; j < num_elems; ++j) {
-		char dummy[MAX_STR];
-
-		DBG2(msg("do_grid: Processing: Array\n")); 
-
-		dummy[0]='\0';
-		if (!read_name(fin, dummy, TRUE))
-		    return FALSE;
-
-		status = do_array(fin, vectors, name, FALSE, vars);
-		if (!status) {
-		    return FALSE;
-		}
+	    
+	    status = do_array(fin, vectors, name, FALSE, grid_vars, cName, NULL);
+	    if (!status) {
+		return FALSE;
 	    }
 	}
     }
 
+    /* Create container variable to be interned into existing
+       container 'vars' if non-NULL, or else directly onto 
+       the workspace. */
+    
+    my_grid = build_ml_vars(name, grid_vars);
+    if (vars) 
+	add_ml_var(vars, my_grid);
+    else 
+	status = (mexPutArray(my_grid, "caller") == 0);
+    
+    use_structures = tmp_use_structs;
+    
     return TRUE;
 }
+
 
 /* This function is a little different than all the other do_* functions
    since it *only* handles the attributes while the other handle both
@@ -1050,16 +1323,18 @@ do_grid(FILE *fin, variable **vectors, char *prefix, int outermost,
 */
 static int
 do_attributes(FILE *fin, variable **vectors, char *prefix, int outermost,
-	      MLVars *vars)
+	      MLVars *vars, char *child, char *parent)
 {
     int num_elems;
     size_t i;
     int tmp_verbose;		/* holds the value of the verbose flag */
     int tmp_use_structs;
     char name[MAX_STR] = "";	/* PREFIX + short_name */
+    char cName[MAX_STR] = "";	/* PREFIX + short_name */
     MLVars *my_vars = init_ml_vars();
 
     name[0]='\0';
+    cName[0]='\0';
 
     /* Accessing attribute information requires that the caller use the
        return argument feature of loaddods. There must be exactly one return
@@ -1107,7 +1382,7 @@ do_attributes(FILE *fin, variable **vectors, char *prefix, int outermost,
 	    return FALSE;
 	}
 
-	status = (*exectype)(fin, vectors, name, outermost, my_vars);
+	status = (*exectype)(fin, vectors, name, outermost, my_vars, cName, NULL);
 	if (!status) {
 	    return FALSE;
 	}
@@ -1139,7 +1414,26 @@ process_values(FILE *fin)
 {
   variable *vectors = NULL;
   char datatype[MAX_STR];
+  char cName[MAX_STR];
+  char pName[MAX_STR];
+  MLVars *my_vars = NULL;
+  MLVars *seq_vars = NULL;
+  MLVars *struct_vars = NULL;
+  mxArray *my_struct = NULL;
   
+  int tmp_use_structs;
+
+  DBG2(msg("Proc_vals: %d\n", num_return_args));
+  if (num_return_args == 1) {
+    use_structures = 1;
+    my_vars = init_ml_vars();
+  }
+  else
+    use_structures = 0;
+
+  cName[0]='\0';
+  pName[0]='\0';
+
     /* Note that read_name() is called with VERBOSE == FALSE since this
        call will fail when there are no more variables to read. */
     datatype[0]='\0';
@@ -1156,11 +1450,71 @@ process_values(FILE *fin)
 	    return FALSE;
 	}
 
-	/* The initial value of the MLVars list is NULL. This will change
-	   when full support for ML structures is added. */
-	status = (*exectype)(fin, &vectors, "", TRUE, NULL);
-	if (!status) {
-	  return FALSE;
+	if (is_sequence(datatype)) {
+ 	    seq_vars = init_ml_vars();
+	    tmp_use_structs = use_structures;
+	    use_structures = 1;
+
+	    status = (*exectype)(fin, &vectors, "", TRUE, seq_vars, cName, NULL);
+
+	    if (!status)
+	      return FALSE;
+	    else {
+	      my_struct = build_ml_vars(cName, seq_vars);
+	    }
+	    
+	    use_structures = tmp_use_structs;
+
+	    if (use_structures) {
+		add_ml_var(my_vars, my_struct);
+	    }
+	    else
+	      status = (mexPutArray(my_struct, "caller") == 0);	    
+	    
+	}
+	else if (is_structure(datatype)) {
+ 	    struct_vars = init_ml_vars();
+
+	    tmp_use_structs = use_structures;
+	    use_structures = 1;
+
+	    status = (*exectype)(fin, &vectors, "", TRUE, struct_vars, cName, NULL);
+	    if (!status)	      
+	      return FALSE;
+	    else {
+	      if ( struct_vars )
+		my_struct = first_ml_var(struct_vars);
+	      else {
+		err_msg("Internal Error: Unable to intern datatype (%s). (%s:%d)\n", 
+			datatype, __FILE__, __LINE__);
+		return FALSE;
+	      }
+
+	    }
+
+	    use_structures = tmp_use_structs;
+
+	    if (use_structures) {
+		add_ml_var(my_vars, my_struct);
+	    }
+	    else
+	      status = (mexPutArray(my_struct, "caller") == 0);	    
+	}
+	else {
+
+	  if (use_structures) {
+	    status = (*exectype)(fin, &vectors, "", TRUE, my_vars, cName, NULL);
+	    if (!status) { 
+	      
+	      return FALSE;
+	    }
+	  }
+	  else {
+	    status = (*exectype)(fin, &vectors, "", TRUE, NULL, cName, NULL);
+	    if (!status) {
+	      return FALSE;
+	    }
+	  }
 	}
 
 #ifndef WIN32
@@ -1170,14 +1524,22 @@ process_values(FILE *fin)
 	datatype[0]='\0';
     }
 
-    if (!transfer_builtup_arrays(vectors))
-      return FALSE;
+    if (num_return_args == 1&& current_arg == 0) {
+	return_args[current_arg++] = build_ml_vars("", my_vars);
 
-    if (output_variable_names)
-      build_variable_name_vector();
+	if (my_vars)
+	  clear_ml_vars(my_vars);
+    }
+    else {
+        if (!transfer_builtup_arrays(vectors))
+	  return FALSE;
 
-    if (vectors)
-	free_vars(vectors);
+	if (output_variable_names)
+	  build_variable_name_vector();
+
+	if (vectors)
+	  free_vars(vectors);
+    }
 
     return TRUE;
 }
@@ -1188,52 +1550,127 @@ process_values(FILE *fin)
 int
 transfer_builtup_arrays(variable *var)
 {
-  while (var) {
-    int status;
-    switch (var->type) {
-    case float64:
-      /* Note that in the following call, ndims == 1. By sending
-	 the address of var->length we fool intern into thinking it
-	 is getting a one element array which holds the size of the
-	 single dimension of var->data. */
-
-      status = intern(var->name, 1, &var->length, var->data,
-		      extend_existing_variables);
-      if (status && verbose && !num_return_args)
-	msg("Creating vector `%s' with %d elements.\n",
-	    var->name, var->length);
-      break;
-
-    case string: {
-      status = intern_strings(var->name, var->length, var->sdata, 
-			      extend_existing_variables);
-      if (status && verbose && !num_return_args)
-	msg("Creating string vector `%s' with %d elements.\n", 
-	    var->name, var->length);
-      break;
+    while (var) {
+	int status;
+	DBG(msg("TBA: var: %s: \n", var->name));
+	switch (var->type) {
+	case float64:
+	    /* Note that in the following call, ndims == 1. By sending
+	       the address of var->length we fool intern into thinking it
+	       is getting a one element array which holds the size of the
+	       single dimension of var->data. */
+	    
+	    status = intern(var->name, 1, &var->length, var->data,
+			    extend_existing_variables);
+	    if (status && verbose && !num_return_args)
+		msg("Creating vector `%s' with %d elements.\n",
+		    var->name, var->length);
+	    break;
+	    
+	case string: {
+	    mxArray *vector_ptr = NULL;
+	    status = intern_strings(var->name, var->length, var->sdata, 
+				    extend_existing_variables, &vector_ptr);
+	    if (status && verbose && !num_return_args)
+		msg("Creating string vector `%s' with %d elements.\n", 
+		    var->name, var->length);
+	    break;
+	}
+	    
+	default:
+	    status = FALSE;
+	    break;
+	}
+	
+	if (!status) {
+	    err_msg("Internal Error: Could not add vector %s. (%s:%d)\n",
+		    var->name, __FILE__, __LINE__);
+	    return FALSE;
+	}
+	
+	var = var->next;
     }
+    
+    return TRUE;
+}
 
-    default:
-      status = FALSE;
-      break;
+/** Intern the vectors built up from ctor variables multiple calls to
+    do_float and do_sring. Make each vector a column vector. */
+
+int
+transfer_arrays(variable *var, MLVars *ml_struct)
+{
+    mxArray *vector_ptr = NULL;
+    int nVars = 0;
+
+    while ( var ) {
+	int status;
+	nVars++;
+
+	switch ( var->type ) {
+	case float64:
+	    /* Note that in the following call, ndims == 1. By sending
+	       the address of var->length we fool intern into thinking it
+	       is getting a one element array which holds the size of the
+	       single dimension of var->data. */
+	    
+	    status = create_vector(var->name, 1, &var->length, var->data,
+				   extend_existing_variables, &vector_ptr);
+	    if (status && verbose)
+		msg("Creating vector `%s' with %d elements.\n",
+		    var->name, var->length);
+	    
+	    if ( ml_struct ) { 
+		add_ml_var(ml_struct, vector_ptr);
+	    }
+	    else {
+		err_msg("Internal Error: Could not add vector %s. (%s:%d)\n",
+			var->name, __FILE__, __LINE__);
+		return FALSE;
+	    } 
+	    break; 
+	    
+	case string: {
+	    
+	    status = intern_strings(var->name, var->length, var->sdata, 
+				    extend_existing_variables, &vector_ptr);
+	    if (status && verbose && !num_return_args)
+		msg("Creating string vector `%s' with %d elements.\n", 
+		    var->name, var->length);
+	    
+	    if ( ml_struct ) {
+		add_ml_var(ml_struct, vector_ptr);
+	    }
+	    else {
+		err_msg("Internal Error: Could not add vector %s. (%s:%d)\n",
+			var->name, __FILE__, __LINE__);
+		return FALSE;
+	    }
+	    break;
+	}
+	    
+	default:
+	    status = FALSE;
+	    break;
+	}
+	
+	if (!status) {
+	    err_msg("Internal Error: Could not add vector %s. (%s:%d)\n",
+		    var->name, __FILE__, __LINE__);
+	    return FALSE;
+	}
+	
+	var = var->next;
     }
-
-    if (!status) {
-      err_msg("Internal Error: Could not add vector %s. (%s:%d)\n",
-	      var->name, __FILE__, __LINE__);
-      return FALSE;
-    }
-
-    var = var->next;
-  }
-
-  return TRUE;
+    
+    return TRUE;
 }
 
 /* 
    $Log: process_values.c,v $
-   Revision 1.3  2003/12/08 17:59:50  edavis
-   Merge release-3-4 into trunk
+   Revision 1.4  2004/07/08 20:50:03  jimg
+   Merged release-3-4-5FCS
+
 
 
    Revision 1.10  2003/04/22 14:46:47  dan

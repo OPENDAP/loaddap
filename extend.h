@@ -15,7 +15,7 @@ extern "C" {
 
     extern int intern(const char *name, int ndims, int dims[], double *yp, 
 		      int extend);
-    extern int intern_strings(const char *name, int m, char **s, int extend);
+    extern int intern_strings(const char *name, int m, char **s, int extend, mxArray **array_ptr);
 
     extern mxArray *build_var(const char *name, const int ndims, 
 			      const int dims[], double *yp);

@@ -9,15 +9,7 @@
 //
 // jhrg 1/12/95
 
-<<<<<<< ClientStructure.cc
-#ifdef _GNUG_
-#pragma implementation
-#endif
-
 #include "config_writedap.h"
-=======
-#include "config_writedap.h"
->>>>>>> 1.1.1.1.2.2
 
 #include <assert.h>
 #include <iostream>
@@ -70,6 +62,15 @@ ClientStructure::read(const string &)
 void 
 ClientStructure::print_val(ostream &os, string space, bool print_decls)
 {
+    if (print_decls) {
+	int numElements = 0;
+
+	for (Pix p = first_var(); p; next_var(p))
+	    numElements++;
+
+	os << type_name() << endl << get_matlab_name() << " " << numElements << endl;
+    }
+    
     for (Pix p = first_var(); p; next_var(p)) {
 	var(p)->print_val(os, "", print_decls);
 	smart_newline(os,var(p)->type());
@@ -108,12 +109,19 @@ ClientStructure::set_matlab_name(const string &name)
 }
 
 // $Log: ClientStructure.cc,v $
-// Revision 1.3  2003/12/08 17:59:49  edavis
-// Merge release-3-4 into trunk
+// Revision 1.4  2004/07/08 20:50:03  jimg
+// Merged release-3-4-5FCS
 //
 // Revision 1.1.1.1  2003/10/22 19:43:20  dan
 // Version of the Matlab CommandLine client which uses Matlab Structure
 // variables to maintain the shape of the underlying DODS data.
+// Revision 1.1.1.1.2.3  2004/03/08 18:35:28  dan
+// Modified to support storing Structure variables
+// in Matlab structures.
+//
+// Revision 1.3  2003/12/08 17:59:49  edavis
+// Merge release-3-4 into trunk
+//
 // Revision 1.1.1.1.2.2  2003/10/29 19:03:21  dan
 // Removed 'pragma interface' directive from all subclass
 // source files.

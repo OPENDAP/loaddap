@@ -19,7 +19,7 @@
    @author jhrg 3/5/97 
 */
 
-static char id[]={"$Id: extend.c,v 1.2 2003/12/08 17:59:50 edavis Exp $"};
+static char id[]={"$Id: extend.c,v 1.3 2004/07/08 20:50:03 jimg Exp $"};
 
 #include <stdio.h>
 #include <string.h>
@@ -371,7 +371,6 @@ extend_array(const char *name, const int ndims, const int dims[], double *pr2)
 	memcpy(pr, pr1, s1 * sizeof(double));
 	memcpy(pr + s1, pr2, s2 * sizeof(double));
 
-	DBG(fprintf(stderr, "vector:\n"));
     }
     else if (MATRICES_MATCH(r1, c1, r2, c2)) {
 	s1 = r1 * c1;
@@ -589,7 +588,6 @@ clear_existing_variables()
 	variables.len--;
 	DBGM(fprintf(stderr, "mxFree (%s:%d): %x\n", __FILE__, __LINE__,
 		     variables.name[variables.len]));
-	DBG(fprintf(stderr, "variables.len: %d\n", variables.len));
 	mxFree(variables.name[variables.len]);
     }
     if (variables.size > 0) {
@@ -761,6 +759,51 @@ intern(const char *name, int ndims, int dims[], double *yp, int extend)
     return status;
 }
 
+int
+create_vector(const char *name, int ndims, int dims[], double *yp, int extend, mxArray **array_ptr)
+{
+    int exists;
+    int status;
+
+    /* Perform bookkeeping for the extend option. Every time a new variable
+       name appears, record that name. Only variables with the same name can
+       be concatenated (extended). 2/18/2000 jhrg */
+    exists = is_existing_variable(name);
+    if (!exists)
+	add_new_variable(name);
+    
+    /* Using the `extend' option and using return arguments is mutually
+       exclusive. The return argument syntax overrides using the -k option. */
+    if (num_return_args) {
+	if (current_arg+1 > num_return_args)
+	    return TRUE;	/* not an error, technically */
+
+	return_args[current_arg] = build_var(name, ndims, dims, yp);
+
+	current_arg++;
+	return TRUE;
+    }
+
+    if (extend && exists) {
+	if (!extend_array(name, ndims, dims, yp)) {
+	    err_msg(
+"Internal Error: Could not create variable for `%s' (%s:%d)\n", name,
+		    __FILE__, __LINE__);
+	    return FALSE;
+	}
+	else
+	    return TRUE;
+    }
+
+    *array_ptr = build_var(name, ndims, dims, yp);
+    
+    status = 1;
+
+    if (!status) 
+	err_msg("Internal Error: Could not intern array %s.\n", name);
+    return status;
+}
+
 /**
    Read through the MLVars list adding each mxArray to a structure called
    #name#.
@@ -780,14 +823,17 @@ build_ml_vars(const char *name, MLVars *vars)
     /* Allocate the new ML structure. We must gather the names of the
        structure's fields *before* creating the structure. */
     {
+
 	int i = 0;
 	mxArray *v = first_ml_var(vars);
 	while (v) {
 	    names[i++] = mxGetName(v);
+	    DBG2(msg("build_ml_vars: name[%d]: %s\n",i-1,mxGetName(v)));
 	    v = next_ml_var(vars);
 	}
     }
 
+    DBG2(msg("build_ml_vars: %d\n",vars));
     ret_array = mxCreateStructMatrix(1, 1, num_vars, names);
     mxSetName(ret_array, name);
 
@@ -802,6 +848,89 @@ build_ml_vars(const char *name, MLVars *vars)
     }
 
     return ret_array;
+}
+
+MLVars *
+transfer_variables(const char *lName, MLVars *vars)
+{
+    int status, nFields, idx, i, j;
+    int numUniqueVariables;
+    int start, next, count;
+    bool Found = false;
+    char *name;
+    MLVars *structArray;
+    mxArray *ret_array;
+    mxArray *v;
+
+    _MLVar *varPtr;
+
+    int num_vars = num_ml_var(vars);
+
+    const char **names = mxMalloc(num_vars * sizeof(char *));
+    const char *structName;
+
+    v = first_ml_var(vars);
+    while (v) {
+      name = mxGetName(v);
+      v = next_ml_var(vars);
+    }
+	  
+    count = 0;
+
+    v = first_ml_var(vars);
+    while (v) {
+      name = mxGetName(v);
+      
+      for(i=0; i<count; i++) {
+	if ( strcmp(names[i],name)==0 ) { 
+	  Found = true;
+	}
+      }
+      if ( !Found )
+	names[count++] = mxGetName(v);
+
+      v = next_ml_var(vars);
+    }
+
+    structName = mxMalloc(sizeof(char *));
+    structName = lName;
+
+    numUniqueVariables = num_vars / count;
+
+    structArray = init_ml_vars();
+
+    ret_array = mxCreateStructMatrix(numUniqueVariables, 1, count, &names[0]);
+    mxSetName(ret_array, structName);
+
+    // Add exception handling for ret_array == NULL.
+
+    for(i=0; i<count; i++) {
+
+      next = 0;
+      for (j=i; j<num_vars; j+=count) {
+	
+	/* iterate over the vars list adding each mxArray */
+
+	start = 0;
+
+	v = first_ml_var(vars);
+	while (v) {
+	  if ( start == j ) {
+	    mxSetFieldByNumber(ret_array, next, i, v);
+	    next++;
+	    break;
+	  }
+	  else {
+	    v = next_ml_var(vars);
+	    start++;
+	  }
+	} 
+      }
+    }      
+    add_ml_var(structArray,ret_array);
+
+    return structArray;
+
 }
 
 mxArray *
@@ -830,9 +959,9 @@ build_string_var(const char *name, int m, char **s)
 */
 
 int
-intern_strings(char *name, int m, char **s, int extend)
+intern_strings(char *name, int m, char **s, int extend, mxArray **array_ptr)
 {
-    mxArray *array_ptr;
+  /*mxArray *array_ptr;*/
     int status;
     int exists;
 
@@ -840,6 +969,7 @@ intern_strings(char *name, int m, char **s, int extend)
     if (!exists)
 	add_new_variable(name);
     
+#if 0
     /* Using the `extend' option and using return arguments is mutually
        exclusive. The return argument syntax overrides using the -k option. */
     if (num_return_args) {
@@ -856,7 +986,7 @@ intern_strings(char *name, int m, char **s, int extend)
 	current_arg++;
 	return TRUE;
     }
-
+#endif
     if (extend && exists) {
 	if (!extend_strings(name, 1, s)) {
 	    err_msg(
@@ -868,16 +998,19 @@ intern_strings(char *name, int m, char **s, int extend)
 	    return TRUE;
     }    
 
-    array_ptr = mxCreateCharMatrixFromStrings(m, (const char **)s);    
-    if (!array_ptr) {
+    *array_ptr = build_string_var(name, m, (const char **)s);
+
+    /* *array_ptr = mxCreateCharMatrixFromStrings(m, (const char **)s);    */
+    if (!*array_ptr) {
 	err_msg(
 "Internal Error: Could not intern strings (%s:%d)", __FILE__, __LINE__);
 	return FALSE;
     }
+    /*
     mxSetName(array_ptr, name);
     status = (mexPutArray(array_ptr, "caller") == 0);
-
-    return status;
+    */
+    return TRUE;
 }
 
 #ifdef TEST
@@ -1016,6 +1149,15 @@ mexFunction(int nlhs, mxArray *plhs[], const int nrhs, mxArray *prhs[])
 
 /* 
  * $Log: extend.c,v $
+ * Revision 1.3  2004/07/08 20:50:03  jimg
+ * Merged release-3-4-5FCS
+ *
+ * Revision 1.27  2001/08/27 18:06:57  jimg
+ * Merged release-3-2-5.
+ * Revision 1.1.1.1.2.2  2004/04/16 19:34:05  dan
+ * Fixed compile-time problems that gcc-2.95.3 was having that gcc-3.3
+ * was not.
+ *
  * Revision 1.2  2003/12/08 17:59:50  edavis
  * Merge release-3-4 into trunk
  *
@@ -1032,8 +1174,6 @@ mexFunction(int nlhs, mxArray *plhs[], const int nrhs, mxArray *prhs[])
  * Resolved conflict on merge, caused by PWEST's removal
  * of the SLLIST includes in a previous update on the trunk.
  *
- * Revision 1.27  2001/08/27 18:06:57  jimg
- * Merged release-3-2-5.
  *
  * Revision 1.26.2.2  2001/11/09 13:43:15  rmorris
  * clear_existing_variables() had a out-of-bounds indexing problem

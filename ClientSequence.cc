@@ -1,3 +1,4 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 
 // (c) COPYRIGHT URI/MIT 1996,2000
 // Please read the full copyright statement in the file COPYRIGHT.
@@ -9,15 +10,7 @@
 //
 // jhrg 9/26/96
 
-<<<<<<< ClientSequence.cc
-#ifdef __GNUG__
-#pragma implementation
-#endif
-
 #include "config_writedap.h"
-=======
-#include "config_writedap.h"
->>>>>>> 1.1.1.1.2.2
 
 #include <assert.h>
 
@@ -28,7 +21,7 @@
 #include "InternalErr.h"
 #include "debug.h"
 #include "ClientSequence.h"
-#include "name_map.h"
+#include "name_map.h" 
 
 extern name_map names;
 extern bool translate;
@@ -59,7 +52,7 @@ ClientSequence::~ClientSequence()
 bool 
 ClientSequence::read(const string &)
 {
-  throw InternalErr(__FILE__, __LINE__, "Called unimplemented read method");
+    throw InternalErr(__FILE__, __LINE__, "Called unimplemented read method");
 }
 
 int
@@ -129,7 +122,18 @@ ClientSequence::print_one_row(ostream &os, int row, string space,
 	// data. 1/15/2002 jhrg
 	if (bt_ptr) {		// data
 	    bt_ptr->print_val(os, space, true);
-	}
+
+            // Add a new-line if the contained variable is an Array type.
+            // This is required so that sequences containing Grids/Arrays
+            // will work the same as simple datasets containing Grids/Arrays.
+            // 1/15/2003 danh
+            switch ( bt_ptr->type() ) {
+            case dods_array_c:
+		os << endl;
+		break;
+	    
+	    }
+	}	
     }
 
 }
@@ -144,6 +148,7 @@ ClientSequence::print_val_by_rows(ostream &os, string space,
     for (int i = 0; i < rows; ++i) {
 	print_one_row(os, i, space, false);
     }
+    os << "EndSequence" << endl;
 }
 
 AttrTable &
@@ -178,12 +183,21 @@ ClientSequence::set_matlab_name(const string &name)
 }
 
 // $Log: ClientSequence.cc,v $
-// Revision 1.3  2003/12/08 17:59:49  edavis
-// Merge release-3-4 into trunk
+// Revision 1.4  2004/07/08 20:50:03  jimg
+// Merged release-3-4-5FCS
 //
 // Revision 1.1.1.1  2003/10/22 19:43:19  dan
 // Version of the Matlab CommandLine client which uses Matlab Structure
 // variables to maintain the shape of the underlying DODS data.
+// Revision 1.1.1.1.2.3  2004/03/08 17:52:49  dan
+// Modified to support storing Sequence variables
+// in Matlab structures.   This required handling
+// arrays and recognizing an EndofSequence marker
+// in the deserialization stream.
+//
+// Revision 1.3  2003/12/08 17:59:49  edavis
+// Merge release-3-4 into trunk
+//
 // Revision 1.1.1.1.2.2  2003/10/29 19:03:21  dan
 // Removed 'pragma interface' directive from all subclass
 // source files.

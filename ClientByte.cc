@@ -11,30 +11,7 @@
 //
 // jhrg 9/24/96
 
-<<<<<<< ClientByte.cc
-#ifdef __GNUG__
-#pragma implementation
-#endif
-
-// The NewByte `helper function' creates a pointer to the a ClientByte and
-// returns that pointer. It takes the same arguments as the class's ctor. If
-// any of the variable classes are subclassed (e.g., to make a new Byte like
-// HDFByte) then the corresponding function here, and in the other class
-// definition files, needs to be changed so that it creates an instnace of
-// the new (sub)class. Continuing the earlier example, that would mean that
-// NewByte() would return a HDFByte, not a Byte.
-//
-// It is important that these function's names and return types do not change
-// - they are called by the parser code (for the dds, at least) so if their
-// names changes, that will break.
-//
-// The declarations for these fuctions (in util.h) should *not* need
-// changing. 
-
 #include "config_writedap.h"
-=======
-#include "config_writedap.h"
->>>>>>> 1.1.1.1.2.2
 
 #include <stdio.h>
 #include <assert.h>
@@ -144,6 +121,9 @@ ClientByte::set_matlab_name(const string &name)
 }
 
 // $Log: ClientByte.cc,v $
+// Revision 1.4  2004/07/08 20:50:03  jimg
+// Merged release-3-4-5FCS
+//
 // Revision 1.3  2003/12/08 17:59:49  edavis
 // Merge release-3-4 into trunk
 //
