@@ -17,7 +17,7 @@
 
 #include "config_writedap.h"
 
-static char rcsid[] not_used = {"$Id: write_dap.cc,v 1.2 2003/12/08 17:59:50 edavis Exp $"};
+static char rcsid[] not_used = {"$Id: write_dap.cc,v 1.3 2004/01/26 17:38:57 jimg Exp $"};
 
 #include <stdio.h>
 #include <string>
@@ -39,7 +39,6 @@ static char rcsid[] not_used = {"$Id: write_dap.cc,v 1.2 2003/12/08 17:59:50 eda
 #include "ClientFloat64.h"
 #include "ClientStr.h"
 #include "ClientUrl.h"
-#include "ClientList.h"
 #include "ClientArray.h"
 #include "ClientStructure.h"
 #include "ClientSequence.h"
@@ -447,6 +446,9 @@ main(int argc, char * argv[])
 }
 
 // $Log: write_dap.cc,v $
+// Revision 1.3  2004/01/26 17:38:57  jimg
+// Removed List from the DAP
+//
 // Revision 1.2  2003/12/08 17:59:50  edavis
 // Merge release-3-4 into trunk
 //
