@@ -9,9 +9,9 @@
 #pragma implementation
 #endif
 
-#include "config_writeval.h"
+#include "config_writedap.h"
 
-static char rcsid[] not_used = {"$Id: name_map.cc,v 1.1 2003/10/22 19:43:33 dan Exp $"};
+static char rcsid[] not_used = {"$Id: name_map.cc,v 1.2 2003/10/23 18:53:02 dan Exp $"};
 
 #include <vector>
 #include <string>
@@ -101,8 +101,15 @@ main(int argc, char *argv[])
 #endif
 
 // $Log: name_map.cc,v $
-// Revision 1.1  2003/10/22 19:43:33  dan
-// Initial revision
+// Revision 1.2  2003/10/23 18:53:02  dan
+// Changed config include to config_writedap.h from config_writeval.h
+// This is to remain consistent with the renaming used from loaddods
+// to loaddap.  To support nested sequences writeval was modified
+// to send an end-of-sequence marker to delimit sequence instances.
+//
+// Revision 1.1.1.1  2003/10/22 19:43:33  dan
+// Version of the Matlab CommandLine client which uses Matlab Structure
+// variables to maintain the shape of the underlying DODS data.
 //
 // Revision 1.10  2003/01/29 16:18:14  dan
 // Merged with release-3-2-7
@@ -140,7 +147,7 @@ main(int argc, char *argv[])
 // rewrite lookup(string, bool) to use it.
 //
 // Revision 1.6.2.1  2000/08/17 23:53:18  jimg
-// Switched from config_dap.h to config_writeval.h.
+// Switched from config_dap.h to config_writedap.h.
 //
 // Revision 1.7  2000/07/21 10:21:56  rmorris
 // Merged with win32-mlclient-branch.
