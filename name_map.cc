@@ -7,7 +7,9 @@
 
 #include "config_writedap.h"
 
-static char rcsid[] not_used = {"$Id: name_map.cc,v 1.4 2004/02/06 00:49:59 jimg Exp $"};
+static char rcsid[] not_used = {"$Id: name_map.cc,v 1.5 2004/02/06 15:52:12 jimg Exp $"};
+
+#include <ctype.h>
 
 #include <vector>
 #include <string>
@@ -96,6 +98,9 @@ main(int argc, char *argv[])
 #endif
 
 // $Log: name_map.cc,v $
+// Revision 1.5  2004/02/06 15:52:12  jimg
+// Added ctype.h include.
+//
 // Revision 1.4  2004/02/06 00:49:59  jimg
 // Removed strstream include.
 //
