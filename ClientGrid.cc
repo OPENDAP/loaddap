@@ -13,7 +13,7 @@
 #pragma implementation
 #endif
 
-#include "config_writeval.h"
+#include "config_writedap.h"
 
 #include <assert.h>
 #include <iostream>
@@ -93,8 +93,15 @@ ClientGrid::setAttrTable(AttrTable &attr)
 }
 
 // $Log: ClientGrid.cc,v $
-// Revision 1.1  2003/10/22 19:43:18  dan
-// Initial revision
+// Revision 1.2  2003/10/23 18:34:02  dan
+// Changed config include to config_writedap.h from config_writeval.h
+// This is to remain consistent with the renaming used from loaddods
+// to loaddap.  To support nested sequences writeval was modified
+// to send an end-of-sequence marker to delimit sequence instances.
+//
+// Revision 1.1.1.1  2003/10/22 19:43:18  dan
+// Version of the Matlab CommandLine client which uses Matlab Structure
+// variables to maintain the shape of the underlying DODS data.
 //
 // Revision 1.17  2003/01/29 15:45:05  dan
 // Resolved conflict on merge, caused by PWEST's removal

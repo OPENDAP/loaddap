@@ -13,9 +13,9 @@
     8/17/2000 jhrg
 */
 
-#include "config_writeval.h"
+#include "config_writedap.h"
 
-static char id[] not_used ={"$Id: process_values.c,v 1.1 2003/10/22 19:43:35 dan Exp $"};
+static char id[] not_used ={"$Id: process_values.c,v 1.2 2003/10/23 18:34:02 dan Exp $"};
 
 #include <errno.h>
 
@@ -1232,8 +1232,15 @@ transfer_builtup_arrays(variable *var)
 
 /* 
    $Log: process_values.c,v $
-   Revision 1.1  2003/10/22 19:43:35  dan
-   Initial revision
+   Revision 1.2  2003/10/23 18:34:02  dan
+   Changed config include to config_writedap.h from config_writeval.h
+   This is to remain consistent with the renaming used from loaddods
+   to loaddap.  To support nested sequences writeval was modified
+   to send an end-of-sequence marker to delimit sequence instances.
+
+   Revision 1.1.1.1  2003/10/22 19:43:35  dan
+   Version of the Matlab CommandLine client which uses Matlab Structure
+   variables to maintain the shape of the underlying DODS data.
 
    Revision 1.10  2003/04/22 14:46:47  dan
    Removed changes added to maintain DDS structure, these
