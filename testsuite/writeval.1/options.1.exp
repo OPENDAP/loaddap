@@ -1,0 +1,60 @@
+
+# Test options to writeval
+#
+# The general options that writeval currently processes are:
+# d: instead of getting data, print the dds.
+# f: Force all numberic types to float64, enforce name canonicalization,
+#    munge DDDMMSSH to a float number (with sign as hemisphere indicator).
+# g: Use the gui
+# v: Verbose output
+# a: Asynchronous transfer (broken in the core).
+#
+# Note that the options -r and -c (the per-url options) are tested by the
+# multiurl tests.
+
+# Test the `-d' option. See other options.?.exp files for test for the other
+# options. 
+
+# $Id: options.1.exp,v 1.1 2003/10/22 19:44:32 dan Exp $
+
+global comp_output		# contains output from das-test_start
+global verbose			# this and srcdir are set by runtest.exp
+global srcdir
+
+source "testsuite/writeval.1/urls.tcl"
+
+set test_name "option: -d"
+
+# The `1' in compare_stdout means call xfail if the test fails.
+
+#  writeval_start "-D" $nodb_xb
+#  compare_stdout $nodb_xb "$test_name: nodb xb" 1
+
+#  writeval_start "-D" $nodb_hctd
+#  compare_stdout $nodb_hctd "$test_name: nodb hctd" 1
+
+#  writeval_start "-D" $nodb_bo
+#  compare_stdout $nodb_bo "$test_name: nodb bo" 1
+
+#  writeval_start "-D" $coads_pmel
+#  compare_stdout $coads_pmel_dds "$test_name: coads pmel"
+
+writeval_start "-D" $coads 
+compare_stdout $coads_dds "$test_name: coads"
+
+# This image file was moved away. To where?
+# writeval_start "-D" $dsp_1
+# compare_stdout $dsp_1_dds "$test_name: dsp 1"
+
+writeval_start "-D" $dsp_2
+compare_stdout $dsp_2_dds "$test_name: dsp 2"
+
+# the JG server does not have these datasets any more. 
+# writeval_start "-D" $jg_diatoms
+# compare_stdout $jg_diatoms_dds "$test_name: jg diatoms"
+
+# writeval_start "-D" $jg_ctd
+# compare_stdout $jg_ctd_dds "$test_name: jg ctd"
+
+# writeval_start "-D" $jg_bot
+# compare_stdout $jg_bot_dds "$test_name: jg bot"

@@ -1,0 +1,423 @@
+
+# $Id: Makefile.in,v 1.1 2003/10/22 19:43:33 dan Exp $
+
+@SET_MAKE@
+
+# Set makefile variables, some with values supplied by configure 
+# DEFS gets the `-D' defines that describe what a particular system has
+# or doesn't have.
+
+# The library libdap++.a contains the code for the generation of the DAS and
+# DDS structures plus the code for data transmission and the GNU libg++.a
+# classes Map, Stack, Plex and Vec.
+# geturl is a simple program that uses the dap++ library plus others to fetch
+# a url. In addition it can read and process DAS and DDS objects, displaying
+# the print representation on the screen.
+
+# LOADDODS = loaddods.mex*
+PROG = writeval loaddods
+
+DODS_ROOT = @dods_relative@
+MATLAB_ROOT = @MATLAB_ROOT@
+
+INCS = -I. -I$(DODS_ROOT)include -I$(MATLAB_ROOT)/extern/include @INCS@
+
+# Add $(DMALLOC) to DEFS to use the dmalloc library.
+DMALLOC = -DDMALLOC -DDMALLOC_FUNC_CHECK
+DEFS = @DEFS@ -DDODS_VERSION=\"@VERSION@\" -DNO_MX_FREE
+CPPFLAGS = @CPPFLAGS@ $(DEFS) $(INCS)
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+LDFLAGS = @LDFLAGS@ -L.
+LFLAGS = -8
+YFLAGS = -d
+LIBS = -ldap++ @LIBS@
+MAT_LIBS = -ldap++ @MATLIBS@ @LIBS@
+TAGS_FLAGS = --include=../../../dap/TAGS
+TEST_COV_FLAGS = -ftest-coverage -fprofile-arcs
+
+# Set the instalation directories; prefix can be set on the command line
+# during Makefile construction with `./configure --prefix /my/choice'
+
+prefix = @prefix@
+exec_prefix = $(prefix)
+bindir = $(exec_prefix)bin
+libdir = $(exec_prefix)lib
+includedir = $(prefix)include
+manext = 1
+mandir = $(prefix)man/man$(manext)
+
+src = $(DODS_ROOT)src
+etcdir = $(DODS_ROOT)etc
+
+INSTALLMAN = man
+
+SHELL = /bin/sh
+srcdir = @srcdir@
+version = @VERSION@
+basedir = ml-cmdln
+dir = $(basedir)-@VERSION@
+host = @host@
+
+COMPONENT_NAME = DODS Matlab Command Line Client
+TAR = @TAR@
+PERL = @PERL@
+
+# testsuite specifics
+RUNTEST = runtest
+RUNTESTFLAGS = #--all --verbose
+
+# names of key programs
+
+LN_S = @LN_S@
+CP = cp
+AWK = @AWK@
+CC = @CC@
+CXX = @CXX@
+YACC = @YACC@
+LEX = @LEX@
+AR = ar
+TAGS = etags
+RANLIB = @RANLIB@
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+STRIP = strip
+CMEX = $(MATLAB_ROOT)/bin/mex
+DOCXX = doc++
+
+CLIENTSRCS = ClientByte.cc ClientInt32.cc ClientFloat64.cc ClientStr.cc \
+	ClientUrl.cc ClientArray.cc ClientStructure.cc ClientList.cc \
+	ClientSequence.cc ClientGrid.cc ClientUInt32.cc \
+	ClientInt16.cc ClientUInt16.cc ClientFloat32.cc
+
+CLIENTOBJS = ClientByte.o ClientInt32.o ClientFloat64.o ClientStr.o \
+	ClientUrl.o ClientArray.o ClientStructure.o ClientList.o \
+	ClientSequence.o ClientGrid.o ClientUInt32.o \
+	ClientInt16.o ClientUInt16.o ClientFloat32.o
+
+WV_SRCS = write_val.cc name_map.cc MetadataProcessing.cc \
+	LoaddodsProcessing.cc
+
+WV_OBJS = write_val.o name_map.o MetadataProcessing.o LoaddodsProcessing.o
+
+LD_SRCS = loaddods.c variable.c queue.c extend.c error.c MLVars.c \
+	process_values.c
+
+LD_OBJS = loaddods.o variable.o queue.o extend.o error.o MLVars.o \
+	process_values.o
+
+ALLSRCS = $(CLIENTSRCS) $(WV_SRCS) $(AV_SRCS) 
+
+all: $(PROG) loaddods
+
+writeval: $(WV_OBJS) $(CLIENTOBJS)
+	$(CXX) $(LDFLAGS) -o writeval $(WV_OBJS) $(CLIENTOBJS) $(LIBS)
+
+loaddods: $(LD_OBJS)
+	$(CMEX) $(LD_OBJS) @LINUX_HACK@
+
+# Standard targets with some customization for das-test and dds-test
+
+install: install-client
+
+# Changed loaddods.mex* install because on SGI can have multiple
+# versions (for different architectures matlab supports, e.g.,
+# o32/mips2 and 64/mips4). And install-sh doesn't support install
+# of multiple files (though GNU install does). erd 2001/12/26
+install-client: writeval loaddods
+	$(INSTALL_PROGRAM) -s writeval $(bindir)
+	for f in loaddods.mex*; do \
+	  $(INSTALL_PROGRAM) $$f $(bindir); \
+	done
+	$(INSTALL_PROGRAM) loaddods.m $(bindir)
+	$(INSTALL_PROGRAM) whodods.m $(bindir)
+	$(INSTALL_DATA) INSTALL-matlab-client $(etcdir)
+
+configure: configure.in $(DODS_ROOT)etc/aclocal.m4
+	autoconf --localdir=$(DODS_ROOT)etc
+
+Makefile: Makefile.in
+	if [ -x ./config.status ]; \
+	then \
+	    ${SHELL} ./config.status; \
+	else \
+	    ./configure; \
+	fi
+
+config_writeval.h: config_writeval.h.in
+	if [ -x ./config.status ]; \
+	then \
+	    ${SHELL} ./config.status; \
+	else \
+	    ./configure; \
+	fi
+
+check: writeval writeval-check 
+
+writeval-check: writeval
+	${RUNTEST} ${RUNTESTFLAGS} --tool writeval --srcdir testsuite
+
+extend: error.o
+	$(CC) -DTEST $(CFLAGS) $(CPPFLAGS) -c extend.c
+	$(CMEX) $(CMEXFLAGS) -g extend.o $^
+
+loaddods-check:
+	@echo "Disabled"
+
+# Unit test driver. Run unit tests like `TestRunner name_map_test'. 8/25/2000
+# jhrg
+TestRunner: name_map.o TestRunner.o TextTestResult.o
+	$(CXX) $(LDFLAGS) $^ -o $@ -lcppunit $(LIBS)
+
+# This is a simple driver for the name_map class I wrote to debug problems
+# with the lookup method. 8/25/2000 jhrg
+name_map: name_map.cc
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -DDODS_NAME_MAP_TEST name_map.cc -o name_map.o 
+	$(CXX)  $(LDFLAGS) name_map.o -o $@ $(LIBS)
+
+test-coverage: clean
+	$(MAKE) $(MFLAGS) CXXFLAGS="$(CXXFLAGS) $(TEST_COV_FLAGS)" check
+
+# Note that the gcov options -f and -b are useful but sometimes make looking
+# at the results of coverage analysis a little taxing. -b reports on all
+# branched and -f reports on all functions. The -l -o options summarize on a
+# per-file basis. 3/27/98 jhrg
+collect-coverage-data:
+	(cd test-coverage; \
+         cov_dat="coverage-data-`date +%m.%d.%y`"; \
+	 touch $$cov_dat; \
+	 for f in $(ALLSRCS); do \
+	     echo "\n*** Coverage data for $$f ***\n" >> $$cov_dat; \
+	     gcov -l -o ../ $$f >> $$cov_dat; \
+         done)
+
+PURIFY = purify $(CC) 
+
+loaddods-purify: writeval variable.o queue.o
+	$(CC)  -c -g $(CFLAGS) $(CPPFLAGS) -DTEST_LOADDODS loaddods.c
+	$(CC)  -c -g $(CFLAGS) $(CPPFLAGS) -DTEST_LOADDODS extend.c
+	$(PURIFY) $(LDFLAGS) -g -o test-ldods loaddods.o variable.o queue.o \
+		extend.o -lmx
+	-rm loaddods.o extend.o
+
+# these tests all fail when das-test is linked with -lnew_debug.
+
+clean:	
+	-rm -f *.o *.sum *.log *~ core
+	-rm -f $(PROG) loaddods.mex* extend.mexsol name_map TestRunner
+
+distclean: clean
+	-rm -f config.status config.log config.cache *.bb *.bbg *.da
+	-(cd test-coverage && rm -f *)
+
+# In order to get the latex docs to work (compile w/latex) you need the
+# docxx.sty file where latex will find it. 9/15/98 jhrg
+.PHONY: docs
+docs:
+	@echo "Building reference documentation."
+	-mkdir docs-html;
+	$(DOCXX) -H -d docs-html -f -B /dev/null *.h
+	-mkdir docs-latex;
+	$(DOCXX) -t -o docs-latex/reference.tex *.h
+
+# $(CLIENTSRCS) $(WV_SRCS) $(LD_SRCS) $(URLQ_SRCS)
+
+.PHONY: depend
+depend: 
+	@depend@ -m Makefile.in -- $(CPPFLAGS) -- \
+	$(CLIENTSRCS) $(WV_SRCS) $(LD_SRCS)
+
+# This is a special tar target because it builds not only the tar file for
+# the core software but also the lib, etc, and bin directories. It assumes
+# that the root directory for DODS is called `DODS' (no version number).
+.PHONY: tar
+tar:
+	-rm -r config.cache config.log config.status
+	cd $(DODS_ROOT).. && \
+	$(TAR) --exclude 'old' --exclude '.#*' --exclude 'CVS' \
+	    --exclude '.flc' --exclude '.snprj' --exclude 'Makefile' \
+	    --gzip --create --dereference --file DODS-$(dir).tar.gz \
+	    DODS/src/clients/$(dir)
+
+.PHONY: binary-tar
+binary-tar:
+	cd $(DODS_ROOT).. && \
+	$(TAR) --gzip --create --dereference \
+            --file DODS-ml-cmdln-$(version)-$(host).tar.gz \
+            DODS/NEWS \
+            DODS/docs/README DODS/docs/README-ml-cmdln \
+            DODS/bin/loaddods.m DODS/bin/loaddods.mex* DODS/bin/whodods.m \
+	    DODS/bin/geturl DODS/bin/writeval
+
+.PHONY: update-version
+update-version: check-version
+	@echo "Version is: `cat version.h`"
+	if test ! -d ../$(dir); then mv ../$(basedir)* ../$(dir); fi
+	if test ! -f $(DODS_ROOT)VERSION; then touch $(DODS_ROOT)VERSION; fi
+	$(etcdir)/update-manifest.pl "$(COMPONENT_NAME)" $(version) \
+		< $(DODS_ROOT)VERSION > tmp.dods.manifest
+	mv tmp.dods.manifest $(DODS_ROOT)VERSION
+
+# Compare the version encoded in this Makefile (set by configure) with the
+# version in version.h. The version make variable is set up near the top of
+# the Makefile.
+.PHONY: check-version
+check-version:
+	@echo "Checking for version.h and Makefile version match-up"
+	@if [ "$(version)" != "`cat version.h`" ]; \
+	then \
+		echo "You must manually re-run configure!"; \
+		exit 1; \
+	else \
+		echo "Yes, they match."; \
+	fi
+
+.PHONY: tags
+tags:
+	$(TAGS) $(TAGS_FLAGS) *.cc *.h *.c
+
+.SUFFIXES:      .o .cc .c
+
+.c.o:
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+
+.cc.o:
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
+
+# DO NOT DELETE; depend depends on this line.
+ClientByte.o: ClientByte.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h ClientByte.h \
+ ../../../include/Byte.h ../../../include/dods-datatypes.h \
+ ../../../include/BaseType.h ../../../include/AttrTable.h \
+ AttributeInterface.h name_map.h
+ClientInt32.o: ClientInt32.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h ClientInt32.h \
+ ../../../include/Int32.h ../../../include/dods-datatypes.h \
+ ../../../include/BaseType.h ../../../include/AttrTable.h \
+ AttributeInterface.h name_map.h
+ClientFloat64.o: ClientFloat64.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h \
+ ClientFloat64.h ../../../include/Float64.h \
+ ../../../include/dods-datatypes.h ../../../include/BaseType.h \
+ ../../../include/AttrTable.h AttributeInterface.h name_map.h
+ClientStr.o: ClientStr.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h ClientStr.h \
+ ../../../include/dods-limits.h ../../../include/Str.h \
+ ../../../include/BaseType.h ../../../include/AttrTable.h \
+ AttributeInterface.h name_map.h nan_hack.h
+ClientUrl.o: ClientUrl.cc ClientUrl.h ClientStr.h \
+ ../../../include/dods-limits.h ../../../include/Str.h \
+ ../../../include/BaseType.h ../../../include/InternalErr.h \
+ ../../../include/Error.h ../../../include/AttrTable.h \
+ AttributeInterface.h
+ClientArray.o: ClientArray.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h ClientArray.h \
+ ../../../include/Array.h ../../../include/dods-limits.h \
+ ../../../include/Vector.h ../../../include/BaseType.h \
+ ../../../include/DDS.h ../../../include/Clause.h \
+ ../../../include/expr.h ../../../include/RValue.h \
+ AttributeInterface.h ../../../include/AttrTable.h name_map.h \
+ ../../../include/debug.h
+ClientStructure.o: ClientStructure.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h \
+ ClientStructure.h ../../../include/Structure.h \
+ ../../../include/BaseType.h ../../../include/Constructor.h \
+ ../../../include/DDS.h ../../../include/Clause.h \
+ ../../../include/expr.h ../../../include/RValue.h \
+ AttributeInterface.h ../../../include/AttrTable.h ClientSequence.h \
+ ../../../include/Sequence.h ClientArray.h ../../../include/Array.h \
+ ../../../include/dods-limits.h ../../../include/Vector.h name_map.h
+ClientList.o: ClientList.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h ClientList.h \
+ ../../../include/List.h ../../../include/dods-limits.h \
+ ../../../include/Vector.h ../../../include/BaseType.h \
+ ../../../include/DDS.h ../../../include/Clause.h \
+ ../../../include/expr.h ../../../include/RValue.h \
+ ../../../include/AttrTable.h AttributeInterface.h name_map.h
+ClientSequence.o: ClientSequence.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h \
+ ../../../include/debug.h ClientSequence.h ../../../include/Sequence.h \
+ ../../../include/BaseType.h ../../../include/Constructor.h \
+ AttributeInterface.h ../../../include/AttrTable.h name_map.h
+ClientGrid.o: ClientGrid.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h ClientGrid.h \
+ ../../../include/Grid.h ../../../include/BaseType.h \
+ ../../../include/Constructor.h AttributeInterface.h \
+ ../../../include/AttrTable.h name_map.h
+ClientUInt32.o: ClientUInt32.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h \
+ ClientUInt32.h ../../../include/UInt32.h \
+ ../../../include/dods-datatypes.h ../../../include/BaseType.h \
+ ../../../include/AttrTable.h AttributeInterface.h name_map.h
+ClientInt16.o: ClientInt16.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h ClientInt16.h \
+ ../../../include/Int16.h ../../../include/dods-datatypes.h \
+ ../../../include/BaseType.h ../../../include/AttrTable.h \
+ AttributeInterface.h name_map.h
+ClientUInt16.o: ClientUInt16.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h \
+ ClientUInt16.h ../../../include/UInt16.h \
+ ../../../include/dods-datatypes.h ../../../include/BaseType.h \
+ ../../../include/AttrTable.h AttributeInterface.h name_map.h
+ClientFloat32.o: ClientFloat32.cc config_writeval.h \
+ ../../../include/InternalErr.h ../../../include/Error.h \
+ ../../../include/dods-limits.h ClientFloat32.h \
+ ../../../include/Float32.h ../../../include/dods-datatypes.h \
+ ../../../include/BaseType.h ../../../include/AttrTable.h \
+ AttributeInterface.h name_map.h
+write_val.o: write_val.cc config_writeval.h \
+ ../../../include/BaseType.h ../../../include/InternalErr.h \
+ ../../../include/Error.h ../../../include/Connect.h \
+ ../../../include/DAS.h ../../../include/AttrTable.h \
+ ../../../include/DDS.h ../../../include/Clause.h \
+ ../../../include/expr.h ../../../include/RValue.h \
+ ../../../include/util.h ../../../include/Byte.h \
+ ../../../include/dods-datatypes.h ../../../include/Int16.h \
+ ../../../include/UInt16.h ../../../include/Int32.h \
+ ../../../include/UInt32.h ../../../include/Float32.h \
+ ../../../include/Float64.h ../../../include/Str.h \
+ ../../../include/dods-limits.h ../../../include/Url.h \
+ ../../../include/Array.h ../../../include/Vector.h \
+ ../../../include/List.h ../../../include/Structure.h \
+ ../../../include/Constructor.h ../../../include/Sequence.h \
+ ../../../include/Grid.h LoaddodsProcessing.h MetadataProcessing.h \
+ ClientByte.h AttributeInterface.h ClientInt16.h ClientUInt16.h \
+ ClientInt32.h ClientUInt32.h ClientFloat32.h ClientFloat64.h \
+ ClientStr.h ClientUrl.h ClientList.h ClientArray.h ClientStructure.h \
+ ClientSequence.h ClientGrid.h name_map.h ../../../include/debug.h
+name_map.o: name_map.cc config_writeval.h ../../../include/escaping.h \
+ name_map.h
+MetadataProcessing.o: MetadataProcessing.cc ../../../include/debug.h \
+ ../../../include/Pix.h ../../../include/Regex.h name_map.h \
+ MetadataProcessing.h ../../../include/DAS.h \
+ ../../../include/AttrTable.h ../../../include/Error.h \
+ ../../../include/DDS.h ../../../include/BaseType.h \
+ ../../../include/InternalErr.h ../../../include/Clause.h \
+ ../../../include/expr.h ../../../include/RValue.h ClientArray.h \
+ ../../../include/Array.h ../../../include/dods-limits.h \
+ ../../../include/Vector.h AttributeInterface.h ClientStructure.h \
+ ../../../include/Structure.h ../../../include/Constructor.h \
+ ClientSequence.h ../../../include/Sequence.h ClientGrid.h \
+ ../../../include/Grid.h
+LoaddodsProcessing.o: LoaddodsProcessing.cc ../../../include/debug.h \
+ ../../../include/Pix.h ../../../include/dods-datatypes.h \
+ ../../../include/InternalErr.h ../../../include/Error.h name_map.h \
+ LoaddodsProcessing.h ../../../include/DDS.h \
+ ../../../include/BaseType.h ../../../include/Clause.h \
+ ../../../include/expr.h ../../../include/RValue.h \
+ MetadataProcessing.h ../../../include/DAS.h \
+ ../../../include/AttrTable.h ClientArray.h ../../../include/Array.h \
+ ../../../include/dods-limits.h ../../../include/Vector.h \
+ AttributeInterface.h ClientStructure.h ../../../include/Structure.h \
+ ../../../include/Constructor.h ClientSequence.h \
+ ../../../include/Sequence.h ClientGrid.h ../../../include/Grid.h
+loaddods.o: loaddods.c config_writeval.h MLVars.h extend.h variable.h \
+ queue.h defines.h
+variable.o: variable.c defines.h variable.h
+queue.o: queue.c ../../../include/debug.h config_writeval.h queue.h
+extend.o: extend.c defines.h MLVars.h error.h
+error.o: error.c defines.h
+MLVars.o: MLVars.c MLVars.h defines.h
+process_values.o: process_values.c config_writeval.h variable.h \
+ MLVars.h extend.h defines.h

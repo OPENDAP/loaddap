@@ -1,0 +1,496 @@
+2003-04-22  Dan Holloway     <d.holloway@gso.uri.edu>
+	* Fixed process_values to maintain DDS structure of 
+	data in the interned matlab variables.  Previous versions
+	would not maintain this structure and it could overwrite
+	similarly named child elements of structure variables, and
+	would not allow the client to determine the lineage of particular
+	variables.
+	* Created structure-format1 branch in CVS, to house the 
+	new changes for maintaining the explicit DDS structure.  This
+	was done so that interim releases of the client could be made
+	while we wait for the GUI to be modified to support this new
+	behavior.
+	* Merged with release-3-3-0.
+	* Updated version to 3.4.
+	
+2003-01-30    <d.holloway@gso.uri.edu>
+
+	* Merged with release-3-2-9.
+	* Updated version number to 3.3.0.
+	
+2003-01-28    <d.holloway@gso.uri.edu>
+
+	* MetadataProcessing.cc Fixed global attribute
+	handling, now creates variable named 'Global Attributes'.
+	
+2002-04-22    <jimg@dcz.dods.org>
+
+	* write_val.cc: Corrected the help output.
+	Tests now use the ASCII mode.
+	Tests now use the data sets on dodsdev.
+	Added the -g option back into the code; the progresss indicator
+	now works again.
+
+2002-01-15  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed a bug in the way Sequences were deserialized. The DAP was
+	changed a while back to slurp it all into memory in one call (to
+	deserialize). This code needed to be updated to work with the new
+	Sequence methods.
+
+2001-10-13  James Gallagher  <jimg@dcz.dods.org>
+
+	* Merged with release-3-2-7.
+
+	* The program now links with the gui-enabled version of the
+	library so the progress indicator should show up. (Ethan).
+
+2001-10-10  James Gallagher  <jimg@dcz.dods.org>
+
+	* I claim to have spiffed up the build. The header mex.h was
+	included using "mex.h"; I changed it to <mex.h> which cleans up
+	the dependencies. Users should not need to run `make depend'
+	unless something else is hosed.
+
+	* Removed urlqueue. The current version of the web form does not
+	have the `Send to Program' button; it caused to much confusion.
+	Users can use simple cut and paste to do the same sort of thing.
+
+2001-09-28  James Gallagher  <jimg@dcz.dods.org>
+
+	* Merged with 3.2.6.
+
+2001-09-27  James Gallagher  <jimg@dcz.dods.org>
+
+	* Replaced a C++ style comment with C style (Ethan).
+
+2001-08-27  James Gallagher  <jimg@dcz.dods.org>
+
+	* Merged from the head of release-3-2. The next merge should use
+	-j release-3-2-5 -j release-3-2.
+
+2001-08-21  Daniel Holloway  <d.holloway@gso.uri.edu>
+
+	* Modified subclassed types to optimize name translation.  This
+	was an optimization issue in particular for sequences because
+	write_val was calling translate at each sequence instance serialize
+	call.
+
+	* Fixed problem in process_values which was removing singleton
+	matrix dimensions from resulting dods access.  Removing singleton
+	dimensions obscures the resulting data structure to the end-user.
+	
+2000-12-14  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed an error in the loaddods.m help file. An extraneous space
+	caused the help message to be reduced to just the copyright
+	statement. 
+
+2000-12-13  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed a bug where the -V option caused loaddods to complain
+	about the exit status of writeval. The problem was that the pipe
+	was being closed twice.
+
+	* Fixed a goof where the yesterday's fix left out of the build
+	(not defined in the Makefile). 
+
+2000-12-12  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed a bug whereby memory was freed both within loaddods and
+	then again by Matlab once loaddods exited. I used the preprocessor
+	to remove all the calls to mxFree. This should result in only a
+	slight performance penalty.
+
+2000-12-07  James Gallagher  <jimg@dcz.dods.org>
+
+	* Changed the way loaddods looks for writeval. loaddods used a
+	complex scheme whereby writeval could be kept in a different
+	directory from loaddods so long as that directory was on the PATH,
+	MATLABPATH, ... The code was complex and seemed to be at the root
+	of a number of problems. It appears that if writeval was
+	referenced by a symlink in a directory on the user's PATH, then
+	the get_pathname() function overwrote path of Matlab's memory. I
+	replaced get_pathname() with a simpler function that assumes
+	loaddods and writeval will always be in the same directory. If
+	Matlab can find loaddods, loaddods can find writeval.
+
+2000-11-22  James Gallagher  <jimg@dcz.dods.org>
+
+	* Merged changes from 3.1.8. The next merge from 3-1 (if there is
+	one) should use update -d -j release-3-1-8 -j release-3-1.
+
+2000-09-22  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed (I hope) a problem on Linux where loaddods would crash
+	Matlab when the user exited. In some cases the user would have to
+	switch windows and kill the Matlab process, etc. See the comments
+	in loaddods.c for particulars.
+
+	* Changed the way some variable names are output. Before, an
+	`illegal' character in an identifier was replaced with an
+	underscore. Now an illegal character is replaced with an
+	underscore and the ASCII code in decimal of the character that was
+	replaced. For example "Ident With Spaces" becomes
+	Ident_20With_20Spaces. Not beautiful but there are some datasets
+	where identifiers differ on in characters that were being mapped
+	to underscores, creating namespace collisions.
+
+2000-08-29  James Gallagher  <jimg@dcz.dods.org>
+
+	* Merged changes from version 3.1.7. The next merge should cvs
+	update -d -j release-3-1-7 -j release-3-1.
+
+	* Added a simple unit test driver and unit test class for the
+	name_map class.
+
+2000-08-25  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed a bug in name_map where the lookup(string, bool) did not
+	work properly due to a bug in libdap++'s esc2underscore function.
+	The fix was actually to the library, but in the process the
+	name_map class was fixed up to be simpler.
+
+2000-08-21  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed a bug where DAS objects with arrays of strings caused
+	loaddods to crash. This bug was fixed by changing the way both
+	writeval and loaddods process String arrays. writeval used broken
+	logic to externalize String arrays when they appeared in a DAS
+	object; loaddods was just plain broken.
+
+2000-07-21  Robert Morris    <Robert.O.Morris@jpl.nasa.gov>
+	* Merged the code from branch win32-mlclient-branch and tagged that
+        point as win32-mlclient-branch2.
+
+2000-06-20  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed a bug where the use_structures switch was not reset after
+	processing attributes. This meant that data access would break if
+	it was preceded by an attribute request.
+
+	* Fixed bugs in the error messages that made them extra confusing.
+	Mostly this meant cleaning up text and making sure that each
+	message has a newline at the end.
+	
+	* Merged with 3.1.6. The next merge should use -j release-3-1-6 -j
+	release-3-1. 
+
+2000-06-14  James Gallagher  <jimg@dcz.dods.org>
+
+	* Merged with the 3.1.5 changes. The next merge should use -j
+	release-3-1-5 -j release-3-1.
+
+2000-06-14  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed a bug in the attribute processing code that caused string
+	attributes longer than one line to crash loaddods. Now string
+	attribute that span lines (like the history attribute present in
+	DSP files) will be interned by Matlab so long as they are quoted
+	(with double quotes).
+
+2000-06-06  James Gallagher  <jimg@dcz.dods.org>
+
+	* Merged withthe 3.1.4 changes (Attribute support). Used cvs
+	update -j release-3-1-3 -j release-3-1. The next merge should use
+	-j release-3-1-4 -j release-3-1.
+
+2000-06-02  James Gallagher  <jimg@dcz.dods.org>
+
+	* Added support for attributes. The old attribute support was
+	removed since it only worked for string attributes and was
+	otherwise pretty limited. The new function is accessed using -A.
+	Given a URL, it will return a ML structure which contains all of
+	the dataset's attributes structured to match the hierarchy of the
+	dataset's DDS. In addition, an attribute called DODS_ML_Size will
+	be added to each Array variable. This vector attribute gives the
+	sizes of each of the Array's dimensions. Also, names are folded
+	from the WWW namespace to the Matlab namespace. This means that
+	the WWW escape sequences are mapped to underscores. So that
+	loaddods callers will be able to form URLs, an attribute called
+	DODS_ML_Real_Name is added for each variable. The value of this
+	attribute is the real name of the variable. loaddods clients can
+	use this attribute's value to build URLs.
+
+2000-05-03  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed a string processing bug in probe_path that showed up on
+	the Alpha. This bug caused an assert in probe_path to fail.
+
+2000-04-21  James Gallagher  <jimg@dcz.dods.org>
+
+	* Regarding strings: Paul pointed out that the new string code
+	(see the entry for 3/31) now uses the Matlab vector of strings and
+	not the old, big long character vector with newlines separating
+	each string. This means you'll have to change code that deals with
+	strings. 
+
+2000-04-20  James Gallagher  <jimg@dcz.dods.org>
+
+	* Merged cvs update -j release-3-1-2 -j release-3-1. Next merge
+	should use -j release-3-1-3 -j release-3-1.
+
+	* Wrote a bunch of tests for loaddods. Use the test_loaddods.m
+	Matlab script to run them. Like the writeval tests, these depend
+	on certain datasets and servers at dods.gso.uri.edu. It looks as
+	it these test about 65%--75% of the datatype code expect for
+	Strings and Urls.
+
+	* Fixed, I hope, a memory bug under linux. This caused the matlab
+	binary to trigger an assertion when matlab was exited. The problem
+	was that the error/message software was not calling va_end() when
+	it should have been. I also change from int to size_t when passing
+	size information to calloc and malloc.
+
+2000-04-11  James Gallagher  <jimg@dcz.dods.org>
+
+	* Added support for N-dimensions. Note that the -k option is not
+	supported for N > 2. Make sure to see the README file.
+
+2000-03-31  James Gallagher  <jimg@dcz.dods.org>
+
+	* Merged with release-3-1-2. The next merge should use -j
+	release-3-1-2 -j release-3-1.
+
+	* Removed the freeing of data since this causes dangling pointers
+	(I don't understand why that's the case since I thought all those
+	*values* were copied...). Also, remove the reorganize_strings()
+	function since strings are now interned using the new ML string
+	array. 
+
+	* Removed errant mention of the old -T (truncate names at 19
+	chars) option. This has been removed from the software.
+
+	* Increased the size of attribute strings to 8k.
+
+	* Added changes for n-dimensional array support (but this version
+	of loaddods is still limited to two dimensions).
+
+	* Fixed many bugs associated with dynamic memory handling.
+
+	* Changed from the Matlab 4 to Matlab 5 API.
+
+1999-11-08  James Gallagher  <jimg@dcz.dods.org>
+
+	* Result of merge with release-3-1-1
+
+	* Fixed the %-in-name bug. 
+
+	* Changes for the build process.
+
+	* Fixed a bug in the handling of 32 bit floats.
+
+1999-08-17  James Gallagher  <jimg@dcz.dods.org>
+
+	* Fixed a bug in writeval which made the -A option fail.
+
+1999-05-28  James Gallagher  <jimg@dcz.dods.org>
+
+	* New asciival tests from Nathan.
+
+	* Merge with alpha-3-0-0
+
+1999-05-25  James Gallagher  <jimg@dcz.dods.org>
+
+	* Added tests for asciival.
+
+1999-05-05  James Gallagher  <jimg@dcz.dods.org>
+
+	* Added test-coverage target to Makefile.in
+
+1999-03-29  James Gallagher  <jimg@dcz.dods.org>
+
+	* Added support for the new datatypes.
+
+1999-02-08  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Fixed a bug where loaddods failed to search for writeval correctly.
+
+1998-11-29  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Added -T option. Names longer than 19 chars are only truncated
+	when -T is given to loaddods. This means that longer names might
+	be interned in ML 5.
+
+1998-11-24  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Added identifier name truncation. All ids are truncated to 19
+	chars. Once I figure out a good way to get the version number (of
+	matlab) I'll set this so that its version dependent.
+
+	* Added a new feature, -w, to writeval (loaddods can use it too).
+	This activates warning messages. Currently limited to messages
+	about string conversion that fail when using -F, this can be
+	expanded to include other things. By default, -w is off.
+
+1998-11-20  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Fixed the fix for multiple newline separators. The code for
+	arrays was broken be the previous patch.
+
+1998-11-19  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Updated the grammar in README. Note the stuff about the newline
+	separators! 
+
+	* Fixed a bug which caused multiple variable requests to writeval
+	to generate bogus output (which loaddods could not parse).
+
+1998-11-11  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Patched the (in)famous crash under Linux. mexPutMatrix appears
+	to corrupt memory. It seems to be walking over the variables data
+	structure in extend.c. We patched this by changing the allocation
+	size from 5 to 500. Mathworks is looking at the problem.
+
+1998-11-05  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Fixed a bug where the output of structure members was hosed (see
+	ClientStructure::print_val()). This prevented loaddods from
+	reading structure members properly.
+	
+
+1998-06-08  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Fixed bug where writeval was not located even if it was on the
+	path or in DODS_ROOT/bin.
+
+	* Fixed error handling. loaddods now exits on an error passed back
+	from writeval. 
+
+	* Fixed a bug in ClientStr::write_val where deserialize was not
+	called at the start of a Sequence. This meant that the first
+	element of every sequence was garbage.
+
+	* Made verbose a global and moved messages in ClientStr.cc about
+	Nans only appear when the verbose option is used (-v).
+
+1998-03-20  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Added support for vectors of strings to loaddods.
+
+	* Added support for error messages to writeval, asciival and
+	loaddods. loaddods now uses mexErrMsgTxt to display error messages.
+
+1998-03-16  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Added the asciival program. This is a simple filter (similar to
+	writeval) that can be used to generate ASCII tables of DODS data.
+	The input may be either a URL, local file or stdin. In the later
+	case the output from a data filter can be piped directly into the
+	program (so this client can be used on the server side as a filter
+	for data that is then sent as ASCII to the real client).
+
+Fri Oct 24 16:52:51 1997  James Gallagher  <jimg@localhost>
+
+	* Added to get_pathname() so that the CWD is searched first.
+
+Wed Sep 10 15:43:33 1997  James Gallagher  <jimg@localhost>
+
+	* Added a feature to writeval that prints the DAS to stdout - so
+	that users can look at the DAS with out interning any values.
+
+	* Fixed a bug in loaddods which caused attribute values with
+	embedded spaces to be truncated.
+
+Fri Sep  5 09:57:09 1997  James Gallagher  <jimg@localhost>
+
+	* Added a new feature to writeval: -A can be used to print the
+	attribute structure to stdout. In order to `project' only one
+	specific container (in a way analogous to the way projections are
+	used to filter out specific variables from a data request) use the
+	-c switch. Make sure to separate the -A switch and the URL and
+	optional -c switch with a `--'.
+
+Thu Sep  4 15:49:31 1997  James Gallagher  <jimg@localhost>
+
+	* verbose (-v) now controls whether writeval prints `Constraint: '
+	when processing the per-url option -c.
+
+Mon Jun  9 17:18:37 1997  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* writeval can now read from stdin.
+
+Mon May  5 17:35:54 1997  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Error message from urlqueue is now slightly more helpful...
+
+	* loaddods now returns arguments when called using Matlab's return
+	arg syntax ([a b c] = loaddods();).
+
+	* Fixed the bug where loaddods dumped core with given -v or -k as
+	a single option.
+
+Mon Apr 21 09:47:03 1997  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Change: loaddods now looks along the user's PATH and in
+	DODS_ROOT/etc for writeval. 
+
+	* Change: writeval is now installed in DODS_ROOT/etc (it is a
+	`helper' program). 
+
+	* Added include of <sys/msg.h> for lunix.
+
+	* Fixed a bug where fseek() failed to advance beyond a newline
+	character when the data transfer size was an integral power of
+	two. I fixed the bug by removing all calls to fseek() and using
+	fgets() instead. I also removed all calls to fscanf() and replaced
+	them with calls to fgets() followed by sscanf() since that made
+	looking at the text information read by loaddods simpler.
+
+	* Modified the output stream of writeval so that it is simpler for
+	loaddods to parse. This was done during the coarse of
+	finding/fixing a particularly nasty bug in loaddods - I've left
+	the changes in place because they don't slow the system down and
+	will simplify finding problems in the future.
+
+	* Added fix to helper program `writeval' so that error messages
+	returned from servers do not result in core dumps.
+
+Sun Mar 23 16:58:43 1997  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Added option switch so users can use the fullnames option.
+
+	* Changed the way the catenate option works so that variables will
+	not be catenated unless that's what users want.
+
+	* Fixed loaddods help file: added examples, corrected examples,
+	hopefully fixed typos.
+
+Thu Mar  6 21:01:40 1997  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Added vector/matrix catenation. If two or more urls (given using
+	the multi-url option of loaddods) retrieve the same variable,
+	those values are catenated to the same variable name. So, if one
+	URL retrieves a 3 column 5 row array and a second URL gets a 3
+	column 7 row array of the same name, loaddods will intern a single
+	3 column 12 row array. Note that this is a loaddods feature -
+	writeval knows nothing of this.
+
+Thu Feb  6 12:33:28 1997  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Changed the way writeval handles translation of String values to
+	Float64. If the -f switch is given, all string values will be
+	translated to float. First the software checks to see if the
+	string is a lat/lon value of the form dddmmssh. If so it is
+	translated into a +/- real number (with fractional degrees). If
+	not, then strtod() is used to translate the string to a double. If
+	that fails then NaN is output. Note that this is only true when
+	the -f option is given; without the option strings are just
+	strings. This introduces a bug in that with the -f option all
+	strings that don't translate to floats become NaN.
+
+	* Fixed many bugs - see the file `TODO' in this directory. 
+
+Thu Jan  9 22:36:13 1997  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Fixed situation where strange characters in identifiers confused
+	Matlab. Non-alphanumerics are turned into underscores.
+
+Mon Dec 23 11:31:48 1996  James Gallagher  <jimg@dcz.cvo.oneworld.com>
+
+	* Fixed a nasty bug in the do_array function where single
+	dimension arrays were sometimes created as two dimension arrays.
+	The errant 2D arrays would be huge (billions and billions...) and
+	cause Matlab to complain about not having enough memory.
+

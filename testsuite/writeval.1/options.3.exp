@@ -1,0 +1,43 @@
+
+# Test options to writeval
+#
+# The general options that writeval currently processes are:
+# d: instead of getting data, print the dds.
+# f: Force all numberic types to float64, enforce name canonicalization,
+#    munge DDDMMSSH to a float number (with sign as hemisphere indicator).
+# g: Use the gui
+# v: Verbose output
+# a: Asynchronous transfer (broken in the core).
+
+# Test no option. See other options.?.exp files for test for the other
+# options.
+
+# $Id: options.3.exp,v 1.1 2003/10/22 19:44:32 dan Exp $
+
+global comp_output		# contains output from das-test_start
+global verbose			# this and srcdir are set by runtest.exp
+global srcdir
+
+source "testsuite/writeval.1/urls.tcl"
+
+# Test no option
+
+set test_name "option: (none)"
+
+# This tests a Grid of Float64.
+
+writeval_start "-a" "${coads}?${coads_sst_ce}"
+compare_stdout "testsuite/data/writeval/coads.data2" "$test_name: coads"
+
+# Test Grid of Bytes.
+
+#  writeval_start " " "${dsp_1}?${dsp_1_ce}"
+#  compare_stdout "testsuite/data/writeval/dsp_1.data2" "$test_name: dsp 1"
+
+# Test Array of Bytes.
+
+writeval_start "-a" "${dsp_2}?${dsp_2_ce}"
+compare_stdout "testsuite/data/writeval/dsp_2.data2" "$test_name: dsp 2"
+
+
+

@@ -1,0 +1,172 @@
+
+ $Id: README,v 1.1 2003/10/22 19:43:35 dan Exp $
+
+For installation information, see the file INSTALL-matlab-client. That file
+describes important configuration information.
+
+Note: For information about the new (6/2/2000) Attribute feature of loaddods,
+see the on line help.  (Type "help loaddods" at the Matlab prompt.)
+
+Note: If you're having trouble getting loaddods to run on Linux...
+For Red Hat Linux 6.x, Mathworks Solution #11129 suggests upgrading
+ld.so from version 1.9.5 to 1.9.11 or newer. Look in /lib, ld.so is
+hardlinked to ld.so.<version>. Use ls -i to see the inodes which tell you
+they are hard linked. Here's an example from my machine:
+
+   [jimg@bne ml-cmdln-3.1.7]$ ls -i /lib/ld.so*
+   288387 /lib/ld.so*   288387 /lib/ld.so.1.9.5*
+   
+It's not exactly clear from the Solution description what the benefits are to
+upgrading, but the older version of ld.so may make bad static mex functions
+or not run static mex functions correctly. Only do this if you're having
+problems running loaddods and other, more obvious things fail. You can get
+a newer ld.so from ftp://ftp.ods.com/pub/linux. 9/22/2000 jhrg
+
+CONTENTS OF THIS DIRECTORY
+
+  The two main programs in this directory are loaddods and whodods.  These are
+  the Matlab command line clients for DODS.  The loaddods function reads data
+  from a DODS data server and interns it in the Matlab workspace.  The whodods
+  function provides a listing of the variables in a DODS dataset. Both
+  commands accept DODS URLs as arguments.
+
+    whodods <dataset URL>
+
+  Example
+
+    >> whodods http://dods.gso.uri.edu/cgi-bin/nph-nc/data/fnoc1.nc
+    Dataset {
+	Int16 u[time_a = 16][lat = 17][lon = 21];
+	Int16 v[time_a = 16][lat = 17][lon = 21];
+	Float32 lat[lat = 17];
+	Float32 lon[lon = 21];
+	Float32 time[time = 16];
+    } fnoc1;
+
+    loaddods <dataset URL>?<variables>
+
+  Example:
+
+    >> loaddods 'http://dods.gso.uri.edu/cgi-bin/nph-nc/data/fnoc1.nc?u,v'
+
+    Reading: http://dods.gso.uri.edu/cgi-bin/nph-nc/data/fnoc1.nc
+      Constraint: u,v
+    Server version: nc/3.1.0
+    Creating matrix u (16 x 17 x 21) with 5712 elements.
+    Creating matrix v (16 x 17 x 21) with 5712 elements.
+
+  Note that you need the quotes around the argument to loaddods
+  because Matlab recognizes commas as special characters.
+
+  Both whodods and loaddods have online help (type `help loaddods' at the
+  Matlab prompt). Loaddods has many options, all described in the on-line
+  help. It can accept multiple URLs, rename variables, be used to read
+  dataset attribute information and be used in assignment statements. Here's
+  an example of loaddods called with an option and returning values using an
+  assignment statement. The -e option tells loaddods to use the new error
+  reporting scheme (see help for details). The values of u and v are stored
+  in a and b.
+
+    >> [a, b] = loaddods('-e', 'http://dods.gso.uri.edu/cgi-bin/nph-nc/data/fnoc1.nc?u,v');   
+    Reading: http://dods.gso.uri.edu/cgi-bin/nph-nc/data/fnoc1.nc
+      Constraint: u,v
+    Server version: nc/3.1.0
+    >> 
+
+OTHER CONTENTS OF THIS DIRECTORY
+
+  In addition to the two user programs, the DODS Matlab command line client
+  software includes:
+
+    writeval - Dereferences a DODS URL and returns a mixed ASCII and binary
+      stream of data. loaddods calls writeval to perform the actual data
+      fetch and this program must be in the same directory as loaddods. While
+      this program was originally intended to be used with loaddods, it can
+      also be used for other purposes as well. For example a user could save
+      binary data to a file with writeval. Note that with the `-f' option
+      writeval translates all simple types to either Float64 or String.
+
+      writeval can also be used to read from standard input, write ASCII
+      output and access the DDS for a given dataset. See the online help for
+      information about these options.
+
+BACKGROUND TECHNICAL INFORMATION
+
+  The following provides background technical information on the design of
+  loaddods.
+
+  There are two programs that comprise the DODS-Matlab command line
+  interface; loaddods and whodods. Both of these communicate with a
+  third program called writeval. writeval is a DODS client which is
+  called by either whodods or loaddods. Those programs pass writeval
+  one or more URLs along with some options, and writeval returns to
+  them the results from the DODS server. (This design originated
+  because Matlab 4 did not support using C++ to write mex files. While
+  ML 5 does support that, other uses for writeval have made it an
+  important part of the DODS system.)
+
+A grammar for writeval
+
+  Here is a pseudo grammar describing the output of writeval. I used *
+  as the Kleene closure (zero or more) and + as one or more. The idea
+  is simple; write the type and name of the variable each on one line
+  and data for it on the following line. For constructor types (Grid,
+  Sequence, Structure) it becomes more complex, but not much. For
+  arrays write Array, newline, the type, the name, the number of
+  dimensions, newline, a list of dimension sizes, newline and the
+  data. Finish by writing a newline.
+
+  While this means sending out some extra characters it makes the
+  output of writeval very simple to parse.  Strings are individually
+  terminated by a newline. A second newline follows the last string.
+
+  <data request> :: <variable>*
+
+  <variable> :: <simple variable>
+             :: <vector variable>
+             :: <constructor variable>
+
+  <simple variable> :: Byte '\n' <variable name> '\n' <data> '\n'
+                    :: Int32 '\n' <variable name> '\n' <data> '\n'
+                    :: Float64 '\n' <variable name> '\n'  <data> '\n'
+                    :: String '\n' <variable name> '\n' <string data> '\n'
+                    :: Url '\n' <variable name> '\n' <string data> '\n'
+
+  <vector variable> :: Array '\n' <array variable> '\n' <data> [see note 1]
+                    :: List '\n' <list variable> '\n' <data>
+
+  <constructor variable> :: Structure '\n' <struct variables> 
+                         :: Sequence '\n' <sequence variables>
+                         :: Grid '\n' <grid variables>
+
+  <string data> :: <string 0> '\n' <string 1> '\n' ... <string n> '\n'
+
+  <array variable> :: <variable type> ' ' <variable name> ' ' 
+                      <number of dims> '\n' <dim size>+ 
+
+  <list variable> :: <variable type> <variable name> <list size>
+
+  <struct variables> :: <variable name> <num of elements> '\n' 
+                        (<variable>)+
+
+  <sequence variables> :: <variable name> <num of elements> '\n' 
+                          (<variable>)+
+
+  <grid variables> :: <variable name> '\n' 'array '\n' <array variable>
+                      'map <num of arrays>\n' (<array variable>)+ 
+
+  <error> :: Error '\n' <message> '\n'
+
+  Note:
+    The vector type's data is sent using the print_val() method of the
+    vector's contained type. That is, for a vector of int32s, the contained
+    type is int32 and the print_val() method of the int32 class is used to
+    send the vector's values. This method writes binary values and
+    terminates them with a `\n'.  Thus, the vector variable's print_val()
+    methods do not need to send the `\n'.  Since we know that all vector and
+    ctor types must ultimately `lead to' simple types, it is sufficient to
+    have the simple types handle writing the `\n' separators. Having the
+    ctors (and vectors) do this too just means more information for the
+    recipient to parse.
+
+

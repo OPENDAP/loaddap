@@ -1,0 +1,43 @@
+
+# Test options to writeval
+#
+# The general options that writeval currently processes are:
+# d: instead of getting data, print the dds.
+# f: Force all numberic types to float64, enforce name canonicalization,
+#    munge DDDMMSSH to a float number (with sign as hemisphere indicator).
+# g: Use the gui
+# v: Verbose output
+# a: Asynchronous transfer (broken in the core).
+#
+# Note that the options -r and -c (the per-url options) are tested by the
+# multiurl tests.
+
+# Test single and multi URL access and variable renaming
+
+# $Id: data.1.exp,v 1.1 2003/10/22 19:44:32 dan Exp $
+
+global comp_output		# contains output from das-test_start
+global verbose			# this and srcdir are set by runtest.exp
+global srcdir
+
+source "testsuite/writeval.1/urls.tcl"
+
+set test_name "data: "
+
+# The `1' in compare_stdout means call xfail if the test fails.
+
+writeval_start "-a" "${fnoc1}?${fnoc1_ce} -r u:u1"
+compare_stdout "testsuite/data/writeval/data.1.data" "$test_name: fnoc1"
+
+writeval_start "-a" "${fnoc1}?${fnoc1_ce} -r u:u1 ${fnoc2}?${fnoc2_ce} -r u:u2"
+compare_stdout "testsuite/data/writeval/data.1.data2" "$test_name: fnoc1 & fnoc2"
+
+writeval_start "-a" "${fnoc1} -c ${fnoc1_ce} -r u:u1 ${fnoc2} -c ${fnoc2_ce} -r u:u2"
+compare_stdout "testsuite/data/writeval/data.1.data2" "$test_name: fnoc1 & fnoc2 (using -c)"
+
+writeval_start "-a" "${fnoc3}?${fnoc3_ce} -r u:u3 -r v:v3"
+compare_stdout "testsuite/data/writeval/data.1.data3" "$test_name: fnoc3 (two variables)"
+
+writeval_start "-a" "${fnoc3}?${fnoc3_ce} -r u:u3 -r v:v3 ${fnoc2}?${fnoc2_ce} -r u:u2"
+compare_stdout "testsuite/data/writeval/data.1.data4" "$test_name: fnoc3 & fnoc2"
+

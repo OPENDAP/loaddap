@@ -1,0 +1,114 @@
+
+	$Id: INSTALL-matlab-client,v 1.1 2003/10/22 19:43:30 dan Exp $
+
+This version of loaddods requires Matlab 5.
+
+BUILDING THE SOURCE CODE
+
+  There are a wide variety of pre-compiled binaries of this program
+  available on the DODS web site.  Before taking the time and effort to
+  build the source code for this package, make sure that you can't take
+  advantage of the work that someone else has done to make your life easier.
+  If you've already checked, or if you have a deep need to compile this code
+  from scratch, follow these instructions.
+
+  Incidentally, if you are installing pre-compiled binaries, skip ahead to
+  "INSTALLING THE DODS MATLAB CLIENT."
+
+  1. Make sure that you have built and installed the DODS-packages and
+     DODS-core software. See the INSTALL file at the root of the DODS tree
+     for information.
+
+  2. Run ./configure in this directory:
+
+       cd $DODS_ROOT/src/clients/ml-cmdln
+       . ./configure
+
+     If configure complains about not finding your Matlab root directory,
+     use the --with-matlab= option to tell it where you've installed
+     Matlab. To see a complete list of configure's options, use type
+     .\configure --help.
+
+  3. Rebuild the dependencies by running `make depend.'
+
+  4. Type `make'. This should build writeval and loaddods.mex*.
+
+     (The actual extension on loaddods will vary depending on the type of
+     machine on which you build.  For example, on a Solaris 7 machine
+     loaddods is called loaddods.mexsol.  No matter what machine you're
+     using, you only need to type `loaddods' at the Matlab prompt to run the
+     program.)
+
+     Note that during linking, mex will probably print a warning message
+     about loaddods and C versus Fortran. Ignore this message.
+
+  SGI Note:
+     If you are building on an SGI machine, it is possible that your build
+     of loaddods.mex* will fail due to architecture incompatibilities.
+     See our "How do I build the Matlab server and client on SGI?" FAQ
+     for details on how to complete the build:
+   
+       http://www.unidata.ucar.edu/packages/dods/home/faq.shtml 
+
+  4. If you have the DejaGNU test software installed, you can type `make
+     check' to test the writeval program. To test loaddods, run matlab and
+     type `test_loaddods'.  You should see messsages about various tests and
+     the word `PASS' for each of them.  If a test does not pass, contact the
+     DODS support center:
+
+       support@unidata.ucar.edu
+
+  5. Type `make install'. This will copy loaddods.mex*, whodods and writeval
+     to the DODS_ROOT/bin and DODS_ROOT/etc directories. You might want to
+     move them to some other place (e.g., if you have a collection of Matlab
+     commands you might want to move loaddods.mex* and writeval to that
+     directory). Note that this installs the software in your DODS tree, but
+     Matlab still needs to be informed about how the program. So read the
+     next section, "INSTALLING THE DODS MATLAB CLIENT."
+
+     Note that `whodods' is a Matlab script and does not need to be
+     compiled.
+
+INSTALLING THE DODS MATLAB CLIENT
+
+  After you've gotten the client software compiled and installed in the DODS
+  tree, there are still one or two simple steps you must take.
+
+  1. Make sure that loaddods.mex*, writeval and whodods are in a directory
+     where Matlab can find them.  If you built the software from source, then
+     running `make install' will copy them into DODS_ROOT/bin. If you got the
+     binary distribution, then they are already in DODS_ROOT/bin. You can add
+     $DODS_ROOT/bin to your MATLABPATH environment variable, or you can copy
+     the files in that directory to another directory already on that path.
+     There are a few other ways to do this; consult the Matlab documentation
+     for information about the Matlab path.
+
+     The rest of these instructions are for setting up loaddods to make use
+     of the DODS web interface. If you don't want to do that you can skip
+     the remaining instructions.
+
+  SGI Note: 
+     If you are running Matlab on a 64-bit SGI machine, check the
+     architecture of your Matlab installation by running 'ver' at a Matlab
+     prompt.  You will get a line like this
+
+       MATLAB Version 5.3.0.10183 (R11) on SGI64 
+
+     If that line contains 'SGI64', as above, you will need to make a change
+     to your DODS Matlab command line client (ml-cmdln) installation, see
+     below.  If that line contains 'SGI' only, your DODS ml-cmdln
+     installation should be set.
+
+     For those with the 'SGI64' version of Matlab, go into your DODS-ml/
+     directory (or DODS/bin, in some cases) and rename loaddods.mexsg to
+     loaddods.mexsg32 and then rename loaddods.mexsg64 to loaddods.mexsg.
+
+     For more discussion of the different SGI architectures, see our SGI
+     Issues web page at:
+
+       http://www.unidata.ucar.edu/packages/dods/home/sgiProbs.shtml
+
+  If you have any questions or comments, please email
+  support@unidata.ucar.edu. 
+
+

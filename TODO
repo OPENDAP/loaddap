@@ -1,0 +1,248 @@
+
+$Id: TODO,v 1.1 2003/10/22 19:43:35 dan Exp $
+
+ * Remove String parameter from write_val
+
+ X Merge functionality into Test Classes?
+
+ * Structures, etc. in the Sequence type. General recursion for all types.
+
+ * Add online help to loaddods.
+
+ * Add a verbose option to loaddods.
+
+ X Add a -m (Matlab 4) option to writeval that will print messages about
+   variables (e.g., 3D arrays) that cannot be interned by Matlab 4.
+
+ X Add a flag to writeval which will automatically scale values if a `scale
+   factor' attribute is present.
+
+ * Add a flag that will instruct writeval to `rename' a variable.
+
+------------------------------ 2/3/97 ---------------------------------
+
+ * Fix the no-pipes bug in startchild (see multi-load.m for code that
+   exercises the bug). Fixed by replacing startchild() with popen(). 
+   [closed 2/3/97 jhrg]
+
+ * Fix: use of exit() by the loaddods command caused the entire Matlab
+   executable to exit and left the shell messed up (had to use stty sane to
+   get normal CLI operation back). I replaced all the exit() calls with
+   return. 
+   [closed 2/3/97 jhrg]
+
+ * URLs with `.mat' in them (e.g., for datasets made up of .mat Matlab files)
+   break loaddods because it thinks they are local loads and tries to read
+   the URL as a local file. Fixed; now loaddods explicitly tests the last
+   four chars of the filename/URL argument for `.mat'. URLs need at least a
+   null CE (`?') appended to the URL.
+   [closed 2/3/97 jhrg]
+
+ * Add support for a version number/option. Done for both loaddods and
+   writeval (use -V).
+   [closed 2/3/97 jhrg]
+
+ * Add a verbose flag to loaddods. Started a while ago - finished. (use -v).
+   [closed 2/3/97 jhrg] 
+
+ * Fix the `URL mess' that loaddods prints.
+   [closed 2/4/97 jhrg]
+
+ * Fix the -v option so that `-v' enables the default level of verbosity.
+   Fixed by changing the way verbose is processed by writeval. The HTTP trace
+   messages are now activated using -t and -v means verbose in the way a
+   user would expect.
+   [closed 2/4/97 jhrg]
+
+ * Sometimes a variable from a previous URL is `kept around' from a previous
+   invocation of loaddods and loaded again at the beginning of a command.
+   This seems to happen with unconstrained URLs. Fixed by always initializing
+   the command options string and other static/global string variables used
+   to build up the writeval command.
+   [closed 2/4/97 jhrg]
+
+ * Write out NaN for string values that should translate to numbers, but don't
+   for some reason. 
+   [closed 2/5/97 jhrg]
+
+ * Enlarge buffer loaddods uses. Enlarged to 8k.
+   [closed 2/5/97 jhrg]
+
+ * Make the output messages from loaddods nicer to look at and more
+   informative. 
+   [closed 2/5/97 jhrg]
+
+ * loaddods starts writeval using an absolute path that reqires writeval be in
+   the user's CWD.
+   [open 2/3/97 jhrg]
+   [closed 2/6/97 jhrg]
+
+ * Update the online help for loaddods to reflect the new options.
+   [open 2/4/97 jhrg]
+   [closed 2/6/97 jhrg]
+
+ * Added +v switch to disable verbose messages (about variable creation, URLs,
+   ...).
+   [open 2/6/97 jhrg]
+   [closed 2/6/97 jhrg]
+
+ * Add variable catenation; variables from separate files could be catenated
+   using this option.
+   [open 1/23/97 jhrg]
+   [closed 3/7/97 jhrg]
+
+ * Add a simple set of DODS tools for use with Matlab: look at DDS, DAS.
+   Added `whodods' (a .m file) to print DDS to screen.
+   [open ? jhrg]
+   [closed 3/31/97]
+
+ * Fix the problems reporting null documents correctly (an important class of
+   errors).
+   [open 1/27/97 jhrg]
+   [closed 3/31/97 jhrg]
+
+ * configure should accept a --with option for Matlab or find matlab in any
+   location.
+   [open 1/16/97 jhrg]
+   [closed 3/31/97 jhrg]
+
+ * writeval does not return when the dds * from Connect::request_data() is
+   null. Fixed by adding a test of the returned pointer. 
+   [open 4/1/97 jhrg]
+   [closed 4/8/97 jhrg]
+
+ * loaddods runs writeval based on the user's PATH; it should try DODS_ROOT
+   too. 
+   [open 4/11/97 jhrg]
+   [close 4/19/97 jhrg]
+
+ * loaddods/writeval combination fails for data transfers of Grids when the
+   grid array contains 512^2 or greater items. The failure is a crash for
+   512^2 transfers (and maybe others) and missing Map vectors for 1024^2
+   transfers. This only happens on Solaris (not SGI, OSF or SunOS). 
+   [open 4/8/97 jhrg]
+   [closed 4/18/97 jhrg]
+
+ * When given '-v' generates a segmenation violation.
+   [open 4/28/97 dbyrne]
+   [closed 4/29/97 jhrg]
+
+ * Verbose option in loaddods.c fails when reading from the queue.
+   [open 4/11/97 jhrg]
+   [closed 4/29/97 jhrg]
+
+ * Add error messages to urlqueue that instructs users to run loaddods before
+   clicking on the post to Matlab button.
+   [open 4/11/97 jhrg]
+   [closed 5/1/97 jhrg]
+
+ X Transfer more of the `flattening out' from loaddods to writeval.
+   [open ? jhrg]
+
+ X Installation is too complicated!
+   [open 1/27/97 jhrg]
+
+ * Change loaddods so that it returns variables via lhs rather than interning
+   them directly. Also add a string matrix of returned variable names.
+   [open 4/22/97 Deirdre]
+   [closed 5/1/97 jhrg]
+
+ X Move the translate feature to loaddods.
+   [open 8/15/97 jhrg]
+
+ * Errors are not handled well. Send enough information from writeval back to
+   loaddods so that loaddods can sibnal an error.
+   [open 9/23/97 jhrg]
+   [closed 6/8/98 jhrg]
+
+ * configure fails to add tcl and expect to the link line.
+   [open 1/16/97 jhrg]
+   [closed ~2/19/98 jhrg]
+
+ * Renaming multiple variables in a single URL is broken.
+   http://dods.gso.uri.edu/cgi-bin/nph-nc/data/coads_climatology.nc
+   ?SST[1:1][26:37][151:179] -r SST:sst1 -r CODASY:cy1 -r COADSX:cx1
+   [open 5/14/97 george]
+   [closed ? jhrg]
+
+ * There is no user documentation for loaddods!
+   [open 8/6/97 jhrg]
+   [closed ? jhrg]
+
+ * Add a feature that will let users import attribute into the matlab
+   workspace. 
+   [open 8/6/97 jhrg]
+   [closed ? jhrg]
+
+ X When the -f option is given to writeval *all* strings will be emitted as
+   NaN if they do not translate to Float64s. 
+   [open 2/5/97 jhrg] 
+   -f has been replaced by -F. 
+   [closed 6/8/98 jhrg]
+
+ * loaddods/writeval -F option apparently fails to convert the first string
+   to a float (and chooses NaN).
+   [open 6/8/98 jhrg]
+   [closed 6/8/98 jhrg]
+
+ * loaddods does not find writeval using the PATH and DODS_ROOT environment
+   variables. 
+   [open 6/8/98 jhrg]
+   [closed 6/8/98 jhrg
+
+ * Fix the bug (Cause?) that shows up with JPL's Pathfinder dataset.
+   [open 10/21/99 jhrg]
+   [closed 11/8/99 jhrg]
+
+ * Once Sequence transmission is fixed up, change write_val to print_val, get
+   rid of the extra parameters (including `outermost') and generally spruce
+   things up. 
+   [open 8/15/97 jhrg]
+   [closed ? jhrg]
+
+ * Read/inspect extend.c. Fix errant comments and error messages
+   [open 11/17/98 jhrg]
+   [closed 2/17/2000 jhrg]
+
+ * Add matlabpath to the pathname search code.
+   [open 11/17/98 jhrg]
+   [closed ? jhrg]
+
+ * Change strings to ML 5 string code. (extend.c, variable.c
+   [open 2/17/2000 jhrg]
+   [closed 2/18/2000 jhrg
+
+Messages written by loaddods about variable creation are mingled with
+messages from writeval about URLs, constraints and renaming oprion. Fix this
+so that the messages are in order.
+[open jhrg 2/6/97]
+
+Build breaks on SGI because OS is set to IRIX which it should be `sgi'; use
+MACHINE instead of OS.
+[open 1/16/97 jhrg]
+
+Add `NaN' to the translation Seq --> Array where Seq level changes occur.
+[open 4/11/97 jhrg]
+
+`loaddods *' does not start netscape if the program is not running.
+[open 5/29/97 deirdre]
+
+Sending two `very different' URLs to loaddods causes a segmenatation
+violation. See message in dods-bugs.
+[open 5/23/97 todd]
+
+Extend extend.c for N-dimensions.
+[open 11/17/98 jhrg]
+
+-A option broken for nested attribute containers. See Tom's message
+(dods-dev) of 4/27/99 for examples. This maybe a problem with non-string
+attributes. 
+[open 4/27/99 jhrg]
+
+-A broken for non-string attributes
+[open 8/17/99 jhrg]
+
+Broken badly when 3d or > arrays are interned. Hangs on Sol 2.6, crashses
+Linux (rh 5.2/ k 2.0...)
+[open 11/8/99 jhrg]
+
