@@ -10,7 +10,7 @@
 #include <exception>
 #include <typeinfo>
 #include <iostream>
-#include <strstream>
+#include <sstream>
 
 #include "debug.h"
 
@@ -248,10 +248,9 @@ add_size_attr(BaseType &bt)
 	      ClientArray &a = dynamic_cast<ClientArray &>(bt);
 	      AttrTable &at = a.getAttrTable();
 	      for (Pix p = a.first_dim(); p; a.next_dim(p)) {
-		  ostrstream oss;
-		  oss << a.dimension_size(p) << ends;
+		  ostringstream oss;
+		  oss << a.dimension_size(p);
 		  at.append_attr("DODS_ML_Size", "Float64", oss.str());
-		  oss.freeze(0);
 	      }
 	      break;
 	  }
@@ -341,6 +340,9 @@ LoaddodsProcessing::add_realname_attributes()
 }
 
 // $Log: LoaddodsProcessing.cc,v $
+// Revision 1.3  2004/02/06 00:50:59  jimg
+// Switched from strstream to stringstream.
+//
 // Revision 1.2  2003/12/08 17:59:49  edavis
 // Merge release-3-4 into trunk
 //
