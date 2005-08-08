@@ -14,7 +14,7 @@
 
 # Test single and multi URL access and variable renaming
 
-# $Id: data.1.exp,v 1.1 2003/10/22 19:44:32 dan Exp $
+# $Id$
 
 global comp_output		# contains output from das-test_start
 global verbose			# this and srcdir are set by runtest.exp

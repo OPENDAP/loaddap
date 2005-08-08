@@ -1,5 +1,5 @@
 
-% $Id: twoD_byte_array.m,v 1.1 2003/10/22 19:44:32 dan Exp $
+% $Id$
 %
 % Compare data read from a network source with values previously verified.
 % This test checks that byte arrays are properly processed.

@@ -1,5 +1,5 @@
 
-% $Id: memory_expansion.m,v 1.1 2003/10/22 19:44:29 dan Exp $
+% $Id$
 %
 % Test use of memory by loaddods. Is there a memory leak? Test by loading 
 % a variable many, many times. To use this test you must look at the size of

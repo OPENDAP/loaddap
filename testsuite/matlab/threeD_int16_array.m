@@ -1,5 +1,5 @@
 
-% $Id: threeD_int16_array.m,v 1.1 2003/10/22 19:44:31 dan Exp $
+% $Id$
 %
 % Test 1d arrays of int16s. This test changes the way the dims matrix must be
 % changed by intern() (see extend.c).

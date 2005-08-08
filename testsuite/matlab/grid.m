@@ -2,7 +2,7 @@
 % Test loaddods by reading some URLs and comparing the values read in with
 % ones stored in a saved work space.
 %
-% $Id: grid.m,v 1.1 2003/10/22 19:44:29 dan Exp $
+% $Id$
 %
 
 % This file contains data to compare with values read over the network. For

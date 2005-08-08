@@ -1,7 +1,7 @@
 
 # Tcl/Expect code for the writeval test.
 # 
-# $Id: unix.exp,v 1.1 2003/10/22 19:43:36 dan Exp $
+# $Id$
 
 # Compare $expected to the global $comp_output. Run `pass' if they match,
 # `fail' otherwise unless `xfailp' is true in which case run `xfail' if they

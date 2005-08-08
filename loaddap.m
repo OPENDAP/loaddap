@@ -1,7 +1,7 @@
 function values = loaddap([switches,] URL [, URL])
 %--------------------------------------------------------------------
 %     Copyright 1997,1998,1999,2001 (C) URI/MIT
-%     $Revision: 1.2 $
+%     $Revision$
 %
 %  function values = loaddap([switches,] URL [options] [, URL [options]])
 %

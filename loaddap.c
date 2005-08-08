@@ -31,7 +31,7 @@
 
 #include "config_writedap.h"
 
-static char id[] not_used ={"$Id: loaddap.c,v 1.3 2004/07/08 20:50:03 jimg Exp $"};
+static char id[] not_used ={"$Id$"};
 
 /* I think that all gnu x86 compilers define __i386__. 9/22/2000 jhrg */
 #if defined(__i386__) && defined(__linux__) && defined(__GNUC__)

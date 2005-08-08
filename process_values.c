@@ -17,7 +17,7 @@
 
 #include "config_writedap.h"
 
-static char id[] not_used ={"$Id: process_values.c,v 1.4 2004/07/08 20:50:03 jimg Exp $"};
+static char id[] not_used ={"$Id$"};
 
 #include <errno.h>
 

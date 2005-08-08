@@ -7,7 +7,7 @@
 
 #include "config_writedap.h"
 
-static char rcsid[] not_used = {"$Id: name_map.cc,v 1.5 2004/02/06 15:52:12 jimg Exp $"};
+static char rcsid[] not_used = {"$Id$"};
 
 #include <ctype.h>
 

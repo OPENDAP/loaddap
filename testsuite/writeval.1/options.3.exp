@@ -12,7 +12,7 @@
 # Test no option. See other options.?.exp files for test for the other
 # options.
 
-# $Id: options.3.exp,v 1.1 2003/10/22 19:44:32 dan Exp $
+# $Id$
 
 global comp_output		# contains output from das-test_start
 global verbose			# this and srcdir are set by runtest.exp

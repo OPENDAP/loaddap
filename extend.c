@@ -19,7 +19,7 @@
    @author jhrg 3/5/97 
 */
 
-static char id[]={"$Id: extend.c,v 1.3 2004/07/08 20:50:03 jimg Exp $"};
+static char id[]={"$Id$"};
 
 #include <stdio.h>
 #include <string.h>

@@ -1,7 +1,7 @@
 
 % Test loaddods' attribute support.
 %
-% $Id: attr_arrays.m,v 1.1 2003/10/22 19:43:36 dan Exp $
+% $Id$
 %
 
 disp 'Test Attribute support for a dataset of arrays: ';

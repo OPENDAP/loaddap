@@ -61,7 +61,7 @@
  * Created from code in urlqueue and loaddods.
  */
 
-static char id[]={"$Id: queue.c,v 1.3 2003/12/08 17:59:50 edavis Exp $"};
+static char id[]={"$Id$"};
 
 #include <stdio.h>
 #include <errno.h>

@@ -1,5 +1,5 @@
 
-% $Id: oneD_int16_array.m,v 1.1 2003/10/22 19:44:31 dan Exp $
+% $Id$
 %
 % Test oneD arrays of int16s.
 
