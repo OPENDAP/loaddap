@@ -11,10 +11,9 @@
 #include <typeinfo>
 #include <iostream>
 
-#include "debug.h"
+#include <debug.h>
 
-#include "Pix.h"
-#include "Regex.h"
+#include <Regex.h>
 
 #include "name_map.h"
 #include "MetadataProcessing.h"
@@ -63,21 +62,24 @@ MetadataProcessing::transfer_attr(DAS &das, BaseType &bt)
 	    switch (bt.type()) {
 	      case dods_structure_c: {
 		  Structure &s = dynamic_cast<Structure &>(bt);
-		  for (Pix p = s.first_var(); p; s.next_var(p))
-		      transfer_attr(das, *s.var(p));
+		  Constructor::Vars_iter p;
+		  for (p = s.var_begin(); p != s.var_end(); ++p)
+		      transfer_attr(das, **p);
 		  break;
 	      }
 	      case dods_sequence_c: {
 		  Sequence &s = dynamic_cast<Sequence &>(bt);
-		  for (Pix p = s.first_var(); p; s.next_var(p))
-		      transfer_attr(das, *s.var(p));
+		  Constructor::Vars_iter p;
+		  for (p = s.var_begin(); p != s.var_end(); ++p)
+		      transfer_attr(das, **p);
 		  break;
 	      }
 	      case dods_grid_c: {
 		  Grid &g = dynamic_cast<Grid &>(bt);
 		  transfer_attr(das, *g.array_var());
-		  for (Pix p = g.first_map_var(); p; g.next_map_var(p))
-		      transfer_attr(das, *g.map_var(p));
+		  Grid::Map_iter p;
+		  for (p = g.map_begin(); p != g.map_end(); ++p)
+		      transfer_attr(das, **p);
 		  break;
 	      }	  
 	      default:
@@ -104,8 +106,9 @@ MetadataProcessing::transfer_attr(DAS &das, BaseType &bt)
 bool
 MetadataProcessing::is_global_attr(string name)
 {
-    for (Pix p = meta_dds.first_var(); p; meta_dds.next_var(p))
-	if (meta_dds.var(p)->name() == name)
+    DDS::Vars_iter p;
+    for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p)
+	if ((*p)->name() == name)
 	    return false;
 
     return true;
@@ -130,7 +133,8 @@ MetadataProcessing::add_global_attributes(DAS &das, string global_cont_name)
 {
     ClientStructure *cs = new ClientStructure(global_cont_name);
 
-    for (Pix p = das.first_var(); p; das.next_var(p)) {
+    AttrTable::Attr_iter p;
+    for (p = das.attr_begin(); p != das.attr_end(); ++p) {
 	string name = das.get_name(p);
 
 	if (!is_in_kill_file(name) && is_global_attr(name)) {
@@ -158,8 +162,10 @@ MetadataProcessing::MetadataProcessing(DDS &dds): meta_dds(dds)
 void 
 MetadataProcessing::transfer_attributes(DAS &das)
 {
-    for (Pix p = meta_dds.first_var(); p; meta_dds.next_var(p)) {
-	BaseType *btp = meta_dds.var(p);
+    DDS::Vars_iter p;
+
+    for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
+	BaseType *btp = (*p);
 	transfer_attr(das, *btp);
     }
 

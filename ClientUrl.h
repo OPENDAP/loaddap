@@ -14,9 +14,9 @@
 #ifndef _clienturl_h
 #define _clienturl_h 1
 
-#include "ClientStr.h"
+#include "Url.h"
 
-class ClientUrl: public ClientStr {
+class ClientUrl: public Url {
 public:
     ClientUrl(const string &n = (char *)0);
     virtual ~ClientUrl() {}

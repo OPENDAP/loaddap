@@ -20,14 +20,14 @@
 static char rcsid[] not_used = {"$Id$"};
 
 #include <stdio.h>
+
 #include <string>
 #include <typeinfo>
 
 #include <GetOpt.h>
-#include <Pix.h>
 
-#include "BaseType.h"
-#include "Connect.h"
+#include <BaseType.h>
+#include <Connect.h>
 
 #include "LoaddodsProcessing.h"
 #include "ClientByte.h"
@@ -43,6 +43,7 @@ static char rcsid[] not_used = {"$Id$"};
 #include "ClientStructure.h"
 #include "ClientSequence.h"
 #include "ClientGrid.h"
+#include "ClientTypeFactory.h"
 
 #include "name_map.h"
 #include "debug.h"
@@ -138,7 +139,6 @@ smart_newline(ostream &os, Type type)
       case dods_float32_c:
       case dods_float64_c:
       case dods_array_c:
-      case dods_list_c:
 	os << endl;
 	break;
 
@@ -161,10 +161,11 @@ process_data(Connect &url, DDS *dds)
 {
     if (verbose)
 	cerr << "Server version: " << url.get_version() << endl;
-
-    for (Pix q = dds->first_var(); q; dds->next_var(q)) {
-	dds->var(q)->print_val(cout, "", true);
-	smart_newline(cout, dds->var(q)->type());
+    
+    DDS::Vars_iter q;
+    for (q = dds->var_begin(); q != dds->var_end(); ++q) {
+	(*q)->print_val(cout, "", true);
+	smart_newline(cout, (*q)->type());
     }
 }
 
@@ -204,7 +205,6 @@ process_per_url_options(int &i, int argc, char *argv[])
     write anything out (since that will confuse loaddods).
 
     @author jhrg */
-
 static void
 output_error_object(Error &e)
 {
@@ -221,227 +221,192 @@ int
 #endif
 main(int argc, char * argv[])
 {
-  GetOpt getopt (argc, argv, "VvwnfFat:ADg");
-  int option_char;
-  bool cexpr = false;
-  bool trace = false;
-  bool gui = false;
-  bool dds = false;
-  bool das = false;
-  string expr = "";
-  char *tcode = NULL;
-  int topts = 0;
-  // Connect dummy("http");
+    GetOpt getopt (argc, argv, "VvwnfFat:AD");
+    int option_char;
+    bool cexpr = false;
+    bool show_dds = false;
+    bool show_das = false;
+    string expr = "";
+    char *tcode = NULL;
+    int topts = 0;
+    // Connect dummy("http");
 
 #ifdef WIN32
-  _setmode(_fileno(stdout), _O_BINARY);
+    _setmode(_fileno(stdout), _O_BINARY);
 #endif
 
-  putenv("_POSIX_OPTION_ORDER=1"); // Suppress GetOpt's argv[] permutation.
+    putenv("_POSIX_OPTION_ORDER=1"); // Suppress GetOpt's argv[] permutation.
 
-  while ((option_char = getopt()) != EOF)
-    switch (option_char) {
-      // Genreal options
-    case 'V': {cerr << "writedap: " << VERSION << endl; exit(0);}
-    case 'v': verbose = true; break;
-    case 'w': warning = true; break;
-    case 'n': translate = true; break;
-    case 'f': numeric_to_float = true; break;
-    case 'F': string_to_float = true; break;
-    case 'a': ascii = true; break;
-    case 'g': gui = true; break;
-    case 't':
-      trace = true;
-      topts = strlen(getopt.optarg);
-      if (topts) {
-	tcode = new char[topts + 1];
-	strcpy(tcode, getopt.optarg); 
-      }
-      break;
-      // Metadata options
-    case 'A': das = true; break;
-    case 'D': dds = true; break;
-      // Help!
-    case 'h':
-    case '?':
-    default:
-      usage(); exit(1); break;
-    }
-
-#if 0
-  char c, *cc = tcode;
-  if (verbose && topts > 0)
-    while ((c = *cc++))
-      switch (c) {
-      case 'a': WWWTRACE |= SHOW_ANCHOR_TRACE; break;
-      case 'b': WWWTRACE |= SHOW_BIND_TRACE; break;
-      case 'c': WWWTRACE |= SHOW_CACHE_TRACE; break;
-      case 'l': WWWTRACE |= SHOW_SGML_TRACE; break;
-      case 'm': WWWTRACE |= SHOW_MEM_TRACE; break;
-      case 'p': WWWTRACE |= SHOW_PROTOCOL_TRACE; break;
-      case 's': WWWTRACE |= SHOW_STREAM_TRACE; break;
-      case 't': WWWTRACE |= SHOW_THREAD_TRACE; break;
-      case 'u': WWWTRACE |= SHOW_URI_TRACE; break;
-      default:
-	cerr << "Unrecognized verbose option: `" << c << "'" << endl;
-	break;
-      }
-    
-  delete tcode;
-#endif
-
-  Connect *url = 0;
-
-  // If after processing all the command line options there is nothing left
-  // (no URL or file) assume that we should read from stdin. This test
-  // allows `-r' options to be used when reading from a pipe or
-  // redirection. It is assumed that all command options will be rmoved by
-  // the time execution gets here. Thus, if an option appears here we must
-  // be reading from stdin.
-  if (getopt.optind == argc || argv[getopt.optind][0] == '-') {
-    if (verbose)
-      cerr << "Assuming standard input is a DODS data stream." << endl;
-
-    try {
-      url = new Connect("stdin");
-
-      process_per_url_options(getopt.optind, argc, argv);
-
-      DDS *dds = url->read_data(stdin, gui, false);
-      if (dds) 
-	process_data(*url, dds);
-      else
-	output_error_object(url->error());
-    }
-    catch (Error &e) {
-      output_error_object(e);
-    }
-
-    exit(0);
-  }
-
-  for (int i = getopt.optind; i < argc; ++i) {
-    if (url)
-      delete url;
-
-    url = new Connect(argv[i]);
-
-    DBG2(cerr << "argv[" << i << "] (of " << argc << "): " << argv[i] \
-	 << endl);
-
-    if (url->is_local()) {
-      if (verbose) 
-	cerr << "Assuming that the argument " << argv[i] 
-	     << " is a file" << endl 
-	     << "that contains a DODS data object; decoding." << endl;
-
-      process_per_url_options(i, argc, argv);
-
-      DDS *dds;
-
-      try {
-	dds = url->read_data(fopen(argv[i], "r"), gui, false);
-	// I think this should be `dds', not `das' in the test. 5/24/2001
-	// jhrg 
-	// I changed it. 6/19/2001 jhrg
-	if (dds) 
-	  process_data(*url, dds);
-	else
-	  output_error_object(url->error());
-      }
-      catch (Error &e) {
-	output_error_object(e);
-      }	      
-
-      continue;
-    }
-
-    if (verbose)
-      cerr << endl << "Reading: " << url->URL(false) << endl;
-	
-    // If the user supplied -d or -D, print the DDS
-    if (dds) {
-      try {
-	url->request_dds(gui);
-	url->dds().print();
-      }
-      catch (Error &e) {
-	output_error_object(e);
-      }
-      continue;
-    }
-
-    // If the user supplied -A, write the attribute material.
-    if (das) {
-      try {
-	url->request_das(gui);
-	url->request_dds(gui);
-	LoaddodsProcessing lp(url->dds());
-	    
-	lp.transfer_attributes(url->das());
-	//lp.prune_duplicates();
-	lp.add_size_attributes();
-	lp.add_realname_attributes();
-	lp.print_for_matlab(cout);
-      }
-      catch (Error &e) {
-	output_error_object(e);
-      }
-      continue;
-    }
-
-    // If writedap is not reading from a pipe or a local file and is
-    // not being used to access the DAS or DDS, the caller must want
-    // data. 
-    {
-      // Scan ahead for a -c option. If it does not exist, print the CE
-      // here before printing the stuff about renaming variables.
-      // Otherwise delay printing the constraint until the in the
-      // second while-loop.
-      int j = i;
-      bool found_ce = false;
-      while (!found_ce && j < argc && argv[j+1] && argv[j+1][0] == '-')
-	if (argv[++j][1] == 'c') {
-	  found_ce = true;
-	  expr = argv[++j];
-	  i = j;
+    while ((option_char = getopt()) != EOF)
+	switch (option_char) {
+	    // Genreal options
+	  case 'V': {cerr << "writedap: " << VERSION << endl; exit(0);}
+	  case 'v': verbose = true; break;
+	  case 'w': warning = true; break;
+	  case 'n': translate = true; break;
+	  case 'f': numeric_to_float = true; break;
+	  case 'F': string_to_float = true; break;
+	  case 'a': ascii = true; break;
+	    // Metadata options
+	  case 'A': show_das = true; break;
+	  case 'D': show_dds = true; break;
+	    // Help!
+	  case 'h':
+	  case '?':
+	  default:
+	    usage(); exit(1); break;
 	}
 
-      if (verbose && !found_ce)
-	cerr << "  Constraint: " << url->CE() << endl;
+    Connect *url = 0;
 
-      process_per_url_options(i, argc, argv);
+    // If after processing all the command line options there is nothing left
+    // (no URL or file) assume that we should read from stdin. This test
+    // allows `-r' options to be used when reading from a pipe or
+    // redirection. It is assumed that all command options will be rmoved by
+    // the time execution gets here. Thus, if an option appears here we must
+    // be reading from stdin.
+    if (getopt.optind == argc || argv[getopt.optind][0] == '-') {
+	if (verbose)
+	    cerr << "Assuming standard input is a DODS data stream." << endl;
 
-      DDS *dds;
-      try {
-	dds = url->request_data(expr, gui, false);
+	try {
+	    url = new Connect("stdin");
 
-	DBG(cerr << "Starting writing data..." << endl);
+	    process_per_url_options(getopt.optind, argc, argv);
 
-	if (dds)
-	  process_data(*url, dds);
-	else
-	  output_error_object(url->error());
-      }
-      catch (Error &e) {
-	output_error_object(e);
-      }
-      DBG(cerr << "Completed writing data." << endl);
+	    ClientTypeFactory factory;
+	    DataDDS data(&factory);
+	    url->read_data(data, stdin);
+
+	    process_data(*url, &data);
+	}
+	catch (Error &e) {
+	    output_error_object(e);
+	}
+
+	exit(0);
     }
 
-    cout.flush();
-  } // end of the URL processing loop
+    for (int i = getopt.optind; i < argc; ++i) {
+	if (url)
+	    delete url;
 
-  DBG(cerr << "writedap exiting." << endl);
-  cerr.flush();
+	url = new Connect(argv[i]);
 
-  delete url;
+	DBG2(cerr << "argv[" << i << "] (of " << argc << "): " << argv[i] \
+	     << endl);
+
+	if (url->is_local()) {
+	    if (verbose) 
+		cerr << "Assuming that the argument " << argv[i] 
+		     << " is a file" << endl 
+		     << "that contains a DODS data object; decoding." << endl;
+
+	    process_per_url_options(i, argc, argv);
+
+	    try {
+		ClientTypeFactory factory;
+		DataDDS data(&factory);
+
+		url->read_data(data, fopen(argv[i], "r"));
+		process_data(*url, &data);
+	    }
+	    catch (Error &e) {
+		output_error_object(e);
+	    }	      
+
+	    continue;
+	}
+
+	if (verbose)
+	    cerr << endl << "Reading: " << url->URL(false) << endl;
+	
+	// If the user supplied -d or -D, print the DDS
+	if (show_dds) {
+	    try {
+		ClientTypeFactory factory;
+		DDS dds(&factory);
+		url->request_dds(dds);
+		dds.print();
+	    }
+	    catch (Error &e) {
+		output_error_object(e);
+	    }
+	    continue;
+	}
+
+	// If the user supplied -A, write the attribute material.
+	if (show_das) {
+	    try {
+		DAS das;
+		url->request_das(das);
+		ClientTypeFactory factory;
+		DDS dds(&factory);
+		url->request_dds(dds);
+		LoaddodsProcessing lp(dds);
+	    
+		lp.transfer_attributes(das);
+		//lp.prune_duplicates();
+		lp.add_size_attributes();
+		lp.add_realname_attributes();
+		lp.print_for_matlab(cout);
+	    }
+	    catch (Error &e) {
+		output_error_object(e);
+	    }
+	    continue;
+	}
+
+	// If writedap is not reading from a pipe or a local file and is
+	// not being used to access the DAS or DDS, the caller must want
+	// data. 
+	{
+	    // Scan ahead for a -c option. If it does not exist, print the CE
+	    // here before printing the stuff about renaming variables.
+	    // Otherwise delay printing the constraint until the in the
+	    // second while-loop.
+	    int j = i;
+	    bool found_ce = false;
+	    while (!found_ce && j < argc && argv[j+1] && argv[j+1][0] == '-')
+		if (argv[++j][1] == 'c') {
+		    found_ce = true;
+		    expr = argv[++j];
+		    i = j;
+		}
+
+	    if (verbose && !found_ce)
+		cerr << "  Constraint: " << url->CE() << endl;
+
+	    process_per_url_options(i, argc, argv);
+
+	    try {
+		ClientTypeFactory factory;
+		DataDDS dds(&factory);
+		url->request_data(dds, expr);
+
+		DBG(cerr << "Starting writing data..." << endl);
+
+		process_data(*url, &dds);
+	    }
+	    catch (Error &e) {
+		output_error_object(e);
+	    }
+	    DBG(cerr << "Completed writing data." << endl);
+	}
+
+	cout.flush();
+    } // end of the URL processing loop
+
+    DBG(cerr << "writedap exiting." << endl);
+    cerr.flush();
+
+    delete url;
 
 #ifdef WIN32
-  exit(0);
-  return;
+    exit(0);
+    return;
 #else
-  exit(0);
+    exit(0);
 #endif
 }
 

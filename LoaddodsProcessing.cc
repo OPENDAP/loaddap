@@ -147,21 +147,24 @@ LoaddodsProcessing::print_attributes(BaseType &bt, ostream &os)
 	switch (bt.type()) {
 	  case dods_structure_c:  {
 	      Structure &s = dynamic_cast<Structure &>(bt);
-	      for (Pix p = s.first_var(); p; s.next_var(p))
-		  print_attributes(*s.var(p), os);
+	      Constructor::Vars_iter p;
+	      for (p = s.var_begin(); p != s.var_end(); ++p)
+		  print_attributes(*(*p), os);
 	      break;
 	  }
 	  case dods_sequence_c:  {
 	      Sequence &s = dynamic_cast<Sequence &>(bt);
-	      for (Pix p = s.first_var(); p; s.next_var(p))
-		  print_attributes(*s.var(p), os);
+	      Constructor::Vars_iter p;
+	      for (p = s.var_begin(); p != s.var_end(); ++p)
+		  print_attributes(*(*p), os);
 	      break;
 	  }
 	  case dods_grid_c: {
 	      Grid &g = dynamic_cast<Grid &>(bt);
 	      print_attributes(*g.array_var(), os);
-	      for (Pix p = g.first_map_var(); p; g.next_map_var(p))
-		  print_attributes(*g.map_var(p), os);
+	      Grid::Map_iter p;
+	      for (p = g.map_begin(); p != g.map_end(); ++p)
+		  print_attributes(*(*p), os);
 	      break;
 	  }
 	  default:
@@ -195,8 +198,9 @@ LoaddodsProcessing::print_for_matlab(ostream &os)
     // Write information about each top level varaible. This prints all the
     // variables, so if some are to be excluded, they must be removed from
     // the DDS before this is run.
-    for (Pix p = meta_dds.first_var(); p; meta_dds.next_var(p)) {
-	BaseType *btp = meta_dds.var(p);
+    DDS::Vars_iter p;
+    for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
+	BaseType *btp = (*p);
 	print_attributes(*btp, os);
     }
 }
@@ -206,12 +210,14 @@ LoaddodsProcessing::print_for_matlab(ostream &os)
 static bool
 is_replicate_map_vector(BaseType &bt, DDS &dds)
 {
-    for (Pix p = dds.first_var(); p; dds.next_var(p)) {
-	BaseType &var = *dds.var(p);
+    DDS::Vars_iter p;
+    for (p = dds.var_begin(); p != dds.var_end(); ++p) {
+	BaseType &var = **p;
 	if (var.type() == dods_grid_c) {
 	    Grid &g = dynamic_cast<Grid &>(var);
-	    for (Pix q = g.first_map_var(); q; g.next_map_var(q))
-		if (g.map_var(q)->name() == bt.name())
+	    Grid::Map_iter q;
+	    for (q = g.map_begin(); q != g.map_end(); ++q)
+		if ((*q)->name() == bt.name())
 		    return true;
 	}
     }
@@ -227,8 +233,9 @@ void
 LoaddodsProcessing::prune_duplicates()
 {
     BaseType *bt;
-    for (Pix p = meta_dds.first_var(); p; meta_dds.next_var(p)) {
-	bt = meta_dds.var(p);
+    DDS::Vars_iter p;
+    for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
+	bt = *p;
 	DBG(cerr << "Looking at: " << bt->name() << " (" << bt << ")" << endl);
 	if (bt->type() == dods_array_c 
 	    && is_replicate_map_vector(*bt, meta_dds)) {
@@ -247,7 +254,8 @@ add_size_attr(BaseType &bt)
 	  case dods_array_c:  {
 	      ClientArray &a = dynamic_cast<ClientArray &>(bt);
 	      AttrTable &at = a.getAttrTable();
-	      for (Pix p = a.first_dim(); p; a.next_dim(p)) {
+	      Array::Dim_iter p;
+	      for (p = a.dim_begin(); p != a.dim_end(); ++p) {
 		  ostringstream oss;
 		  oss << a.dimension_size(p);
 		  at.append_attr("DODS_ML_Size", "Float64", oss.str());
@@ -257,20 +265,23 @@ add_size_attr(BaseType &bt)
 	  case dods_grid_c: {
 	      ClientGrid &g = dynamic_cast<ClientGrid &>(bt);
 	      add_size_attr(*g.array_var());
-	      for (Pix p = g.first_map_var(); p; g.next_map_var(p))
-		  add_size_attr(*g.map_var(p));
+	      Grid::Map_iter p;
+	      for (p = g.map_begin(); p != g.map_end(); ++p)
+		  add_size_attr(**p);
 	      break;
 	  }
 	  case dods_structure_c:  {
 	      ClientStructure &s = dynamic_cast<ClientStructure &>(bt);
-	      for (Pix p = s.first_var(); p; s.next_var(p))
-		  add_size_attr(*s.var(p));
+	      Constructor::Vars_iter p;
+	      for (p = s.var_begin(); p != s.var_end(); ++p)
+		  add_size_attr(**p);
 	      break;
 	  }
 	  case dods_sequence_c:  {
 	      ClientSequence &s = dynamic_cast<ClientSequence &>(bt);
-	      for (Pix p = s.first_var(); p; s.next_var(p))
-		  add_size_attr(*s.var(p));
+	      Constructor::Vars_iter p;
+	      for (p = s.var_begin(); p != s.var_end(); ++p)
+		  add_size_attr(**p);
 	      break;
 	  }
 	  default:
@@ -309,14 +320,16 @@ add_realname_attr(BaseType &bt)
 	  }
 	  case dods_structure_c:  {
 	      ClientStructure &s = dynamic_cast<ClientStructure &>(bt);
-	      for (Pix p = s.first_var(); p; s.next_var(p))
-		  add_realname_attr(*s.var(p));
+	      Constructor::Vars_iter p;
+	      for (p = s.var_begin(); p != s.var_end(); ++p)
+		  add_realname_attr(**p);
 	      break;
 	  }
 	  case dods_sequence_c:  {
 	      ClientSequence &s = dynamic_cast<ClientSequence &>(bt);
-	      for (Pix p = s.first_var(); p; s.next_var(p))
-		  add_realname_attr(*s.var(p));
+	      Constructor::Vars_iter p;
+	      for (p = s.var_begin(); p != s.var_end(); ++p)
+		  add_realname_attr(**p);
 	      break;
 	  }
 	  default:
@@ -332,11 +345,13 @@ add_realname_attr(BaseType &bt)
 void 
 LoaddodsProcessing::add_realname_attributes()
 {
-    if (translate)
-	for (Pix p = meta_dds.first_var(); p; meta_dds.next_var(p)) {
-	    BaseType &bt = *meta_dds.var(p);
+    if (translate) {
+	DDS::Vars_iter p;
+	for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
+	    BaseType &bt = **p;
 	    add_realname_attr(bt);
 	}
+    }
 }
 
 // $Log: LoaddodsProcessing.cc,v $

@@ -49,7 +49,7 @@ NewUrl(const string &n)
     return new ClientUrl(n);
 }
 
-ClientUrl::ClientUrl(const string &n) : ClientStr(n)
+ClientUrl::ClientUrl(const string &n) : Url(n)
 {
 }
 

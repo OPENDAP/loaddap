@@ -11,13 +11,11 @@
 
 #include "config_writedap.h"
 
-#include <assert.h>
 #include <iostream>
 #include <string>
 
-#include <Pix.h>
+#include <InternalErr.h>
 
-#include "InternalErr.h"
 #include "ClientStructure.h"
 #include "ClientSequence.h"
 #include "ClientArray.h"
@@ -65,15 +63,15 @@ ClientStructure::print_val(ostream &os, string space, bool print_decls)
     if (print_decls) {
 	int numElements = 0;
 
-	for (Pix p = first_var(); p; next_var(p))
+	for (Constructor::Vars_iter p = var_begin(); p != var_end(); ++p)
 	    numElements++;
 
 	os << type_name() << endl << get_matlab_name() << " " << numElements << endl;
     }
     
-    for (Pix p = first_var(); p; next_var(p)) {
-	var(p)->print_val(os, "", print_decls);
-	smart_newline(os,var(p)->type());
+    for (Constructor::Vars_iter p = var_begin(); p != var_end(); ++p) {
+	(*p)->print_val(os, "", print_decls);
+	smart_newline(os, (*p)->type());
     }
 }
 

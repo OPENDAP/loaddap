@@ -69,8 +69,8 @@ count_elements(ClientSequence *sp, bool flat)
 {
     int i = 0;
 
-    for (Pix p = sp->first_var(); p; sp->next_var(p))
-	switch (sp->var(p)->type()) {
+    for (Constructor::Vars_iter p = sp->var_begin(); p != sp->var_end(); ++p)
+	switch ((*p)->type()) {
 	  case dods_byte_c:
 	  case dods_int16_c:
 	  case dods_uint16_c:
@@ -84,12 +84,11 @@ count_elements(ClientSequence *sp, bool flat)
 	    break;
 
 	  case dods_array_c:
-	  case dods_list_c:
 	  case dods_structure_c:
 	  case dods_sequence_c:
 	  case dods_grid_c:
 	    if (flat)
-		i += count_elements((ClientSequence *)sp->var(p), flat);
+		i += count_elements(dynamic_cast<ClientSequence*>(*p), flat);
 	    else
 		i++;
 	    break;
