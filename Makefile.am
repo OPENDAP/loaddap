@@ -25,7 +25,7 @@ TEST_COV_FLAGS = -ftest-coverage -fprofile-arcs
 
 DIST_SUBDIRS = testsuite win32
 
-bin_PROGRAMS = writedap
+bin_PROGRAMS = writedap loaddap
 
 CLIENTSRCS = ClientByte.cc ClientInt32.cc ClientFloat64.cc ClientStr.cc	\
 	ClientUrl.cc ClientArray.cc ClientStructure.cc			\
@@ -45,14 +45,13 @@ LD_SRCS = loaddap.c variable.c queue.c extend.c error.c MLVars.c	\
 	process_values.c MLVars.h defines.h dods_memory.h error.h	\
 	extend.h queue.h variable.h 
 
-LD_OBJS = loaddap.o variable.o queue.o extend.o error.o MLVars.o	\
-	process_values.o
-
 writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
 writedap_CFLAGS = -I$(top_srcdir)
 
-loaddap: 
-	$(CMEX) $(LD_SRCS)
+loaddap_SOURCES = $(LD_SRCS)
+loaddap_CFLAGS  = $(MATLAB_FLAGS)
+loaddap_LDFLAGS = $(WRAPS) $(MATLAB_LINK)
+loaddap_LDADD   = $(MATLAB_LIB)
 
 DEJATOOL = writedap
 RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite

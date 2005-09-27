@@ -52,6 +52,36 @@ AC_CHECK_LIBDAP([3.5.0],
 
 OPENDAP_DEBUG_OPTION
 
+MEX_INIT([MEX],[1],[1],[2])
+
+linux="no"
+winnt="no"
+case $build_os in
+*linux*)
+    linux="yes"
+    EXEEXT=.mexglx;;
+*mingw*)
+    winnt="yes"
+    EXEEXT=.dll;;
+*cygwin*)
+    winnt="yes"
+    EXEEXT=.dll;;
+esac
+
+AM_CONDITIONAL(LINUX, test "$linux" = "yes")
+AM_CONDITIONAL(WINNT, test "$winnt" = "yes")
+
+dnl
+dnl Matlab Library
+dnl
+
+CHECK_MATLAB
+
+if test "$have_matlab" = "no"
+then
+    AC_MSG_ERROR([Must specify matlab directory using --with-matlab])
+fi
+
 dnl autoheader macros; tack some text at the top and bottom of config.h.in
 AH_TOP([#ifndef _config_h
 #define _config_h])
