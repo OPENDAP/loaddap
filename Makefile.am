@@ -7,8 +7,16 @@
 
 AUTOMAKE_OPTIONS = foreign dejagnu
 
-AM_CPPFLAGS = -I$(top_srcdir)
+MATLAB_ROOT = /Applications/MATLAB71
+# @MATLAB_ROOT@
+
+# This is a little sloppy, but until I figure out how to set up
+# automake to build loaddap (and thus can use loaddap_CFLAGS), I'm
+# just going to dump the include here and override this for writedap
+# (so it's not looking in the matlab includes...). jhrg 9/26/05
+AM_CPPFLAGS = -I$(top_srcdir) -I$(MATLAB_ROOT)/extern/include
 ACLOCAL_AMFLAGS = -I conf
+CMEX = $(MATLAB_ROOT)/bin/mex
 
 # These are not used by automake but are often useful for certain types of
 # debugging.
@@ -29,26 +37,22 @@ CLIENTSRCS = ClientByte.cc ClientInt32.cc ClientFloat64.cc ClientStr.cc	\
 	ClientGrid.h ClientInt16.h ClientInt32.h ClientSequence.h	\
 	ClientStr.h
 
-
 WV_SRCS = write_dap.cc name_map.cc MetadataProcessing.cc		\
-	LoaddodsProcessing.cc LoaddodsProcessing.h MLVars.h		\
+	LoaddodsProcessing.cc LoaddodsProcessing.h			\
 	MetadataProcessing.h config_writedap.h nan_hack.h name_map.h
 
-LD_SRCS = loaddap.c variable.c queue.c extend.c error.c MLVars.c \
-	process_values.c
+LD_SRCS = loaddap.c variable.c queue.c extend.c error.c MLVars.c	\
+	process_values.c MLVars.h defines.h dods_memory.h error.h	\
+	extend.h queue.h variable.h 
 
-# AttributeInterface.h    ClientStructure.h       defines.h
-# ClientArray.h           ClientTypefactory.h     dods_memory.h
-# ClientByte.h            ClientUInt16.h          error.h
-# ClientFloat32.h         ClientUInt32.h          extend.h
-# ClientFloat64.h         ClientUrl.h             name_map.h
-# ClientGrid.h            LoaddodsProcessing.h    nan_hack.h
-# ClientInt16.h           MLVars.h                queue.h
-# ClientInt32.h           MetadataProcessing.h    variable.h
-# ClientSequence.h        config.h                version.h
-# ClientStr.h             config_writedap.h
+LD_OBJS = loaddap.o variable.o queue.o extend.o error.o MLVars.o	\
+	process_values.o
 
 writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
+writedap_CFLAGS = -I$(top_srcdir)
+
+loaddap: 
+	$(CMEX) $(LD_SRCS)
 
 DEJATOOL = writedap
 RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite
