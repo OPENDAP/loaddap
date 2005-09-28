@@ -24,7 +24,6 @@ static char id[]={"$Id$"};
 #include <stdio.h>
 #include <string.h>
 
-#define MATLAB_MEX_FILE 
 #include <mex.h>
 
 #if DMALLOC
@@ -857,7 +856,7 @@ transfer_variables(const char *lName, MLVars *vars)
     int numUniqueVariables;
     int start, next, count;
     bool Found = false;
-    char *name;
+    const char *name;
     MLVars *structArray;
     mxArray *ret_array;
     mxArray *v;
@@ -998,7 +997,10 @@ intern_strings(char *name, int m, char **s, int extend, mxArray **array_ptr)
 	    return TRUE;
     }    
 
+#if 0
     *array_ptr = build_string_var(name, m, (const char **)s);
+#endif
+    *array_ptr = build_string_var(name, m, (char **)s);
 
     /* *array_ptr = mxCreateCharMatrixFromStrings(m, (const char **)s);    */
     if (!*array_ptr) {

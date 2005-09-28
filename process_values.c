@@ -20,8 +20,8 @@
 static char id[] not_used ={"$Id$"};
 
 #include <errno.h>
+#include<string.h>
 
-#define MATLAB_MEX_FILE 
 #include <mex.h>
 
 #include "variable.h"

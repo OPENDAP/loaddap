@@ -17,11 +17,18 @@ then
     AC_MSG_CHECKING(for Matlab software)
 
     case $build_os in
+    *darwin*)
+        MATLAB_FLAGS="-I${MATLAB_DIR}/extern/include -I${MATLAB_DIR}/simulink/include -DMATLAB_MEX_FILE -fno-common -no-cpp-precomp -fexceptions -g -O3 -DNDEBUG";
+        MATLAB_LINK="-bundle -Wl,-flat_namespace -undefined suppress -Wl,-exported_symbols_list,${MATLAB_DIR}/extern/lib/mac/mexFunction.map";
+        MATLAB_LIB="-L${MATLAB_DIR}/bin/mac -lmx -lmex -lmat -lstdc++";
+        MEXEXT=mexmac;;
+
     *linux*)
         MATLAB_FLAGS="-I${MATLAB_DIR}/extern/include -I${MATLAB_DIR}/simulink/include -DMATLAB_MEX_FILE -fPIC -ansi -D_GNU_SOURCE -pthread -O -DNDEBUG";
         MATLAB_LINK="-pthread -shared -W1,--version-script,${MATLAB_DIR}/extern/lib/glnx86/mexFunction.map";
         MATLAB_LIB="-W1,--rpath-link,${MATLAB_DIR}/extern/lib/glnx86,--rpath-link,${MATLAB_DIR}/bin/glnx86 -L${MATLAB_DIR}/bin/glnx86 -lmx -lmex -lmat -lm";
         MEXEXT=mexglx;;
+
     *cygwin*)
         MATLAB_FLAGS="-I${MATLAB_DIR}/extern/include -I${MATLAB_DIR}/simulink/include -fno-exceptions -mno-cygwin -DMATLAB_MEX_FILE -DNDEBUG";
         MATLAB_LINK="-shared -mno-cygwin -W1,--version-script,${MATLAB_DIR}/extern/lib/win32/mexFunction.def";
@@ -47,6 +54,7 @@ then
             libmat=`dlltool -llibmat.a -d${MATLAB_DIR}/extern/include/libmat.def -Dlibmat.dll`
             cd -
         fi;;
+
     *mingw*)
         MATLAB_FLAGS="-I${MATLAB_DIR}/extern/include -I${MATLAB_DIR}/simulink/include -fno-exceptions -DMATLAB_MEX_FILE -DNDEBUG";
         MATLAB_LINK="-shared -W1,--version-script,${MATLAB_DIR}/extern/lib/win32/mexFunction.def";
@@ -73,6 +81,7 @@ then
             cd -
         fi;;
     esac
+
     AC_MSG_RESULT($MATLAB_LINK $MATLAB_LIB)
     AC_SUBST(MATLAB_DIR)
     AC_SUBST(MATLAB_LIB)

@@ -50,8 +50,6 @@ static char id[] not_used ={"$Id$"};
 #include <dlfcn.h>		/* see lock_mex_function() */
 #endif 
 
-#define MATLAB_MEX_FILE 
-
 #include <mex.h>
 
 #include "MLVars.h"
@@ -163,6 +161,7 @@ int current_arg = 0;
 
 /** Return the DODS Root directory pathname. */
 
+#if 0
 static char *
 dods_root()
 {
@@ -173,6 +172,7 @@ dods_root()
 
     return dods_root;
 }
+#endif
 
 /** Escape all characters that the Bourne shell treats as special. Storage
   for the new string is allocated by this function and must be freed by the
@@ -450,10 +450,10 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
     }
 
     /* Check for `-k' catenate option. If present, turn on variable
-       catenation by setting the global extend_existing_variables. Variable
-       catenation is off by default. 
+       catenation by setting the global extend_existing_variables. Off by 
+       default.
 
-       Note that writedap is clue-less about this option. */
+       Note that writedap is clueless about this option. */
     {
 	char *kat;
 	if ((kat = strstr(command_opts, "-k"))) {
@@ -654,12 +654,14 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
     {
 	int status;
 	status = pclose(fin);
+#if 0
 	if (status != 0)
 	    err_msg(\
 "Error: The loaddap helper application writedap reported an error (%d). \n\
        This may be due to an earlier error. However, if there was no previous\n\
        error message, please report this to support@unidata.ucar.edu.\n",
                     status);
+#endif
     }
 
     fflush(stderr);

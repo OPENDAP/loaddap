@@ -54,22 +54,29 @@ OPENDAP_DEBUG_OPTION
 
 MEX_INIT([MEX],[1],[1],[2])
 
+echo "Build OS: $build_os"
+
 linux="no"
 winnt="no"
+macos="no"
 case $build_os in
 *linux*)
-    linux="yes"
-    EXEEXT=.mexglx;;
+    linux="yes";;
+dnl    EXEEXT=.mexglx;;
 *mingw*)
-    winnt="yes"
-    EXEEXT=.dll;;
+    winnt="yes";;
+dnl    EXEEXT=.dll;;
 *cygwin*)
-    winnt="yes"
-    EXEEXT=.dll;;
+    winnt="yes";;
+dnl    EXEEXT=.dll;;
+*darwin*)
+    macos="yes";
+dnl    EXEEXT=.mexmac;;
 esac
 
 AM_CONDITIONAL(LINUX, test "$linux" = "yes")
 AM_CONDITIONAL(WINNT, test "$winnt" = "yes")
+AM_CONDITIONAL(MACOS, test "$macos" = "yes")
 
 dnl
 dnl Matlab Library

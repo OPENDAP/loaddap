@@ -13,7 +13,7 @@
 
 #include <debug.h>
 
-#include <Regex.h>
+#include <GNURegex.h>
 
 #include "name_map.h"
 #include "MetadataProcessing.h"
