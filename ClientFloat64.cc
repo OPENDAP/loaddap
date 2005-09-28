@@ -11,12 +11,9 @@
 
 #include "config_writedap.h"
 
-#include <assert.h>
 #include <iostream>
 #include <iomanip>
 #include <string>
-
-#include <Pix.h>
 
 #include "InternalErr.h"
 #include "ClientFloat64.h"

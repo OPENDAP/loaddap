@@ -20,8 +20,7 @@
 #include <iostream>
 #include <string>
 
-#include <Pix.h>
-#include <Regex.h>
+#include <GNURegex.h>
 
 #include "InternalErr.h"
 #include "ClientStr.h"

@@ -13,46 +13,46 @@
 
 # Read the common code for tests.
 
-if {[info exists env(DODS_ROOT)] && [file exists $env(DODS_ROOT)/etc/common_tests.exp]} {
-    source $env(DODS_ROOT)/etc/common_tests.exp
-} elseif {[file exists ../../../etc/common_tests.exp]} {
-    source ../../../etc/common_tests.exp
+if {[file exists testsuite/common_tests.exp]} {
+    source testsuite/common_tests.exp
+} elseif {[file exists common_tests.exp]} {
+    source common_tests.exp
 } else {
-    send_user "Could not load common tests!"
-    exit(1)
+    send_user "Could not load common tests!\n"
+    exit
 }
 
 # Writeval test procedures
 # The four `required' procs are _start, _load, _exit and _version.
 
-proc writeval_start { {switches ""} {urls ""} {file ""}} {
+proc writedap_start { {switches ""} {urls ""} {file ""}} {
     global verbose
     global comp_output
     global spawn_id
 
     if ![string compare $file ""] {
 	if {$verbose >= 1} {
-	    send_user "Testing writeval $switches -- $urls ...\n"
+	    send_user "Testing writedap $switches -- $urls ...\n"
 	    exp_internal 1
 	}
-	catch "exec ./writeval $switches -- $urls" comp_output
+	catch "exec ./writedap $switches -- $urls" comp_output
     } else {
 	if {$verbose >= 1} {
-	    send_user "Testing writeval $switches -- $urls >& $file ...\n"
+	    send_user "Testing writedap $switches -- $urls >& $file ...\n"
 	    exp_internal 1
 	}
-	catch "exec ./writeval $switches -- $urls > $file" comp_output
+	catch "exec ./writedap $switches -- $urls > $file" comp_output
     }
 }
 
-proc writeval_load {} {
+proc writedap_load {} {
 }
 
-proc writeval_exit {} {
+proc writedap_exit {} {
     send -raw ""
 }
 
-proc writeval_version {} {
-    send_user "writeval test suite 1.0\n"
+proc writedap_version {} {
+    send_user "writedap test suite 1.0\n"
 }
 

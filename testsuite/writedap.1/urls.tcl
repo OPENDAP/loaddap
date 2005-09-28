@@ -1,11 +1,11 @@
 
 # $Id$
 
-# Datasets and their expected output (the information that writeval sends to
+# Datasets and their expected output (the information that writedap sends to
 # stdout - not the stuff that should be going into the file).
 
 # URI/COADS:
-set coads "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/nc/coads_climatology.nc"
+set coads "http://test.opendap.org/opendap/nph-dods/data/nc/coads_climatology.nc"
 set coads_sst_ce "SST\\\[0:0\\\]\\\[10:20\\\]\\\[50:60\\\]"
 set coads_dds "Dataset {
     Float64 COADSX\[COADSX = 180\];
@@ -46,7 +46,7 @@ set coads_dds "Dataset {
 } coads_climatology.nc;"
 
 # URI/FNOC
-set fnoc1 "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/nc/fnoc1.nc"
+set fnoc1 "http://test.opendap.org/opendap/nph-dods/data/nc/fnoc1.nc"
 set fnoc1_ce "u\\\[0:0\\\]\\\[0:9\\\]\\\[0:9\\\]"
 set fnoc2 "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/nc/fnoc2.nc"
 set fnoc2_ce "u\\\[0:0\\\]\\\[0:9\\\]\\\[0:9\\\]"
@@ -54,7 +54,7 @@ set fnoc3 "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/nc/fnoc3.nc
 set fnoc3_ce "u\\\[0:0\\\]\\\[0:9\\\]\\\[0:9\\\],v\\\[0:0\\\]\\\[4:9\\\]\\\[4:9\\\]"
 
 # URI/DSP:
-set dsp_1 "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/dsp/f96243170857.img"
+set dsp_1 "http://test.opendap.org/opendap/nph-dods/data/dsp/f96243170857.img"
 set dsp_1_ce "dsp_band_1\\\[20:30\\\]\\\[20:30\\\]"
 set dsp_1_dds "Dataset {
     Grid {
@@ -68,7 +68,7 @@ set dsp_1_dds "Dataset {
     Float64 lon\[lon = 512\];
 } f96243170857;"
 
-set dsp_2 "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/dsp/east.coast.pvu"
+set dsp_2 "http://test.opendap.org/opendap/nph-dods/data/dsp/east.coast.pvu"
 set dsp_2_ce "dsp_band_1\\\[20:30\\\]\\\[20:30\\\]"
 set dsp_2_dds "Dataset {
     Byte dsp_band_1\[line = 512\]\[pixel = 512\];
@@ -76,7 +76,7 @@ set dsp_2_dds "Dataset {
 #} east.coast.pvu;"
 
 # URI/MatLab:
-set nscat_s2 "http://dods.gso.uri.edu/cgi-bin/nph-dsp/data/NSCAT_S2.mat"
+set nscat_s2 "http://test.opendap.org/opendap/nph-dods/data/mat/NSCAT_S2.mat"
 set nscat_s2_dds "Dataset {
     Float64 NSCAT_S2\[NSCAT_S2_row = 153\]\[NSCAT_S2_column = 843\];
 } NSCAT_S2;"
@@ -86,7 +86,7 @@ set nscat_s2_dds "Dataset {
 #		http://dods.jpl.nasa.gov/cgi-bin/hdf/data/nscat/???
 
 # JGOFS:
-set jg_diatoms "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/jg/diatoms"
+set jg_diatoms "http://test.opendap.org/opendap/nph-dods/data/jg/diatoms"
 set jg_diatoms_dds "Dataset {
     Sequence {
         String sta;
@@ -98,7 +98,7 @@ set jg_diatoms_dds "Dataset {
     } Level_0;
 } diatoms;"
 
-set jg_ctd "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/jg/ctd"
+set jg_ctd "http://test.opendap.org/opendap/nph-dods/data/jg/ctd"
 set jg_ctd_dds "Dataset {
     Sequence {
         String sta;
@@ -126,7 +126,7 @@ set jg_ctd_dds "Dataset {
     } Level_0;
 } ctd;"
 
-set jg_bot "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/jg/bot"
+set jg_bot "http://test.opendap.org/opendap/nph-dods/data/jg/bot"
 set jg_bot_dds "Dataset {
     Sequence {
         String event;

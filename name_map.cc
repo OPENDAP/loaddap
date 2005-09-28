@@ -14,7 +14,7 @@ static char rcsid[] not_used = {"$Id$"};
 #include <vector>
 #include <string>
 
-#include <Regex.h>
+#include <GNURegex.h>
 
 #include "escaping.h"
 #include "name_map.h"

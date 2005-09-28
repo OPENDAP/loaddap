@@ -11,10 +11,8 @@
 
 #include "config_writedap.h"
 
-#include <assert.h>
 #include <iostream>
 
-#include <Pix.h>
 #include <string>
 
 #include "InternalErr.h"
