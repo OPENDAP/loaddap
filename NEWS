@@ -1,0 +1,8 @@
+
+News for 3.5.0
+
+9/29/05
+
+Automake build works and loaddap runs under RHEL3 on my X86_64 machine. I
+still have not sirted out where to _install_ the loaddap command, but that
+seems less important than getting this running on OS/X.
