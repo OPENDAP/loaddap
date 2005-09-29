@@ -21,6 +21,8 @@ extern "C" {
 			      const int dims[], double *yp);
     extern mxArray *build_string_var(const char *name, int m, char **s);
 
+    extern MLVars *transfer_variables(const char *lName, MLVars *vars);
+
     extern mxArray *build_ml_vars(const char *name, MLVars *vars);
 
 #ifdef __cplusplus

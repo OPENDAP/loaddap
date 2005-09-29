@@ -52,42 +52,42 @@ AC_CHECK_LIBDAP([3.5.0],
 
 OPENDAP_DEBUG_OPTION
 
-MEX_INIT([MEX],[1],[1],[2])
+dnl MEX_INIT([MEX],[1],[1],[2])
 
-echo "Build OS: $build_os"
+dnl echo "Build OS: $build_os"
 
-linux="no"
-winnt="no"
-macos="no"
-case $build_os in
-*linux*)
-    linux="yes";;
-dnl    EXEEXT=.mexglx;;
-*mingw*)
-    winnt="yes";;
-dnl    EXEEXT=.dll;;
-*cygwin*)
-    winnt="yes";;
-dnl    EXEEXT=.dll;;
-*darwin*)
-    macos="yes";
-dnl    EXEEXT=.mexmac;;
-esac
+dnl linux="no"
+dnl winnt="no"
+dnl macos="no"
+dnl case $build_os in
+dnl *linux*)
+dnl     linux="yes";;
+dnl dnl    EXEEXT=.mexglx;;
+dnl *mingw*)
+dnl     winnt="yes";;
+dnl dnl    EXEEXT=.dll;;
+dnl *cygwin*)
+dnl     winnt="yes";;
+dnl dnl    EXEEXT=.dll;;
+dnl *darwin*)
+dnl     macos="yes";
+dnl dnl    EXEEXT=.mexmac;;
+dnl esac
 
-AM_CONDITIONAL(LINUX, test "$linux" = "yes")
-AM_CONDITIONAL(WINNT, test "$winnt" = "yes")
-AM_CONDITIONAL(MACOS, test "$macos" = "yes")
+dnl AM_CONDITIONAL(LINUX, test "$linux" = "yes")
+dnl AM_CONDITIONAL(WINNT, test "$winnt" = "yes")
+dnl AM_CONDITIONAL(MACOS, test "$macos" = "yes")
 
-dnl
-dnl Matlab Library
-dnl
+dnl dnl
+dnl dnl Matlab Library
+dnl dnl
 
-CHECK_MATLAB
+dnl CHECK_MATLAB
 
-if test "$have_matlab" = "no"
-then
-    AC_MSG_ERROR([Must specify matlab directory using --with-matlab])
-fi
+dnl if test "$have_matlab" = "no"
+dnl then
+dnl     AC_MSG_ERROR([Must specify matlab directory using --with-matlab])
+dnl fi
 
 dnl autoheader macros; tack some text at the top and bottom of config.h.in
 AH_TOP([#ifndef _config_h

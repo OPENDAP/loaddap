@@ -1,4 +1,4 @@
-// -*- mode: c; c-basic-offset: 4 -*-
+/* -*- mode: c; c-basic-offset: 4 -*- */
 
 /* 
    (c) COPYRIGHT URI/MIT 2000
@@ -20,7 +20,7 @@
 static char id[] not_used ={"$Id$"};
 
 #include <errno.h>
-#include<string.h>
+#include <string.h>
 
 #include <mex.h>
 
@@ -998,8 +998,10 @@ do_structure(FILE *fin, variable **vectors, char *prefix, int outermost,
     status = 1;
     if ( use_structures && vars ) {
 	add_ml_var(vars, my_struct);
-    //    else
-    //    status = (mexPutArray(my_struct, "caller") == 0);
+#if 0
+    else
+	status = (mexPutArray(my_struct, "caller") == 0);
+#endif
     }
 
     if (!status) 
@@ -1042,7 +1044,6 @@ do_sequence(FILE *fin, variable **vectors, char *prefix, int outermost,
     MLVars *seq_vars = NULL;
     MLVars *seqVars[32];
     mxArray *v;
-    char *tName;
     char seqVarNames[32][MAX_STR];
     _MLVar *mlV;
     int tcnt;
@@ -1223,7 +1224,7 @@ do_sequence(FILE *fin, variable **vectors, char *prefix, int outermost,
 	    
 	    my_seq = first_ml_var(seq_vars);      
 	    while (my_seq) {
-		tName = mxGetName(my_seq);
+		const char *tName = mxGetName(my_seq);
 		DBG(msg("do_seq: name: %s\n",tName));
 		add_ml_var(vars, my_seq);
 		my_seq = next_ml_var(seq_vars);

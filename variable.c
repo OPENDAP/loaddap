@@ -26,7 +26,6 @@ static char id[]={"$Id$"};
 #include <stdlib.h>
 #include <string.h>
 
-#define MATLAB_MEX_FILE
 #include <mex.h>
 
 /** Allocate storage #CLUMP# elements at a time. */

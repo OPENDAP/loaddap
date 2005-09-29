@@ -7,27 +7,21 @@
 
 AUTOMAKE_OPTIONS = foreign dejagnu
 
-MATLAB_ROOT = /Applications/MATLAB71
-# @MATLAB_ROOT@
-
-# This is a little sloppy, but until I figure out how to set up
-# automake to build loaddap (and thus can use loaddap_CFLAGS), I'm
-# just going to dump the include here and override this for writedap
-# (so it's not looking in the matlab includes...). jhrg 9/26/05
-#AM_CPPFLAGS = -I$(top_srcdir) -I$(MATLAB_ROOT)/extern/include
 AM_CPPFLAGS = -I$(top_srcdir)
 ACLOCAL_AMFLAGS = -I conf
-CMEX = $(MATLAB_ROOT)/bin/mex
+
+# Automake doesn't know about the mex script; we have to jury-rig some
+# things. 9/29/05 jhrg
+#
+MEXFLAGS = $(AM_CPPFLAGS) -V5 -DNO_MX_FREE -DHAVE_CONFIG_H
 
 # These are not used by automake but are often useful for certain types of
 # debugging.
+#
 CXXFLAGS_DEBUG = -g3 -O0 -Wall -fno-defer-pop
 TEST_COV_FLAGS = -ftest-coverage -fprofile-arcs
 
-DIST_SUBDIRS = testsuite win32
-
 bin_PROGRAMS = writedap
-# loaddap
 
 CLIENTSRCS = ClientByte.cc ClientInt32.cc ClientFloat64.cc ClientStr.cc	\
 	ClientUrl.cc ClientArray.cc ClientStructure.cc			\
@@ -51,19 +45,36 @@ LD_HDRS = MLVars.h defines.h dods_memory.h error.h extend.h queue.h	\
 
 writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
 
+# It's possible, according to some web info, to build mex files without
+# using the Mathworks 'mex' script, but I think that it's just too much 
+# extra maintenance work. I'm leaving these here, but I build using mex.
+# jhrg 9/29/05
+#
 # loaddap_SOURCES = $(LD_SRCS)
 # loaddap_CFLAGS  = $(MATLAB_FLAGS) -DNO_MX_FREE -DV5_COMPAT
 # loaddap_LDFLAGS = $(WRAPS) $(MATLAB_LINK)
 # loaddap_LDADD   = $(MATLAB_LIB)
 # loaddap_EXEEXT  = $(MEXEXT)
 
-loaddap.mexmac:
-	mex -V5 -I. -I/usr/local/include/libdap -DHAVE_CONFIG_H \
-		-DDODS_DEBUG -DDODS_DEBUG_2 -output loaddap $(LD_SRCS)
+# A better way to handle building the mex file is to separate the mex file's
+# source code and build so it's in its own directory. Then use the automake
+# variables COMPILE and LINK to force the use of 'mex' when building. Then it
+# should be possible to use loaddap_SOURCES, et c., and get the full power of
+# automake. jhrg 9/29/05
+
+all-local: loaddap
+
+loaddap:
+	mex $(CPPFLAGS) $(MEXFLAGS) -output $@ $(LD_SRCS)
+
+clean-local:
+	-rm -f loaddap.mex*
 
 DEJATOOL = writedap
 RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite
 
-EXTRA_DIST = 
+EXTRA_DIST = win32 testsuite
 
 CLEANFILES = *~ *.log *.sum
+
+# LocalWords:  mex Mathworks automake loaddap jhrg

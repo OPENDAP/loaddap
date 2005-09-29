@@ -901,7 +901,7 @@ transfer_variables(const char *lName, MLVars *vars)
     ret_array = mxCreateStructMatrix(numUniqueVariables, 1, count, &names[0]);
     mxSetName(ret_array, structName);
 
-    // Add exception handling for ret_array == NULL.
+    /* Add exception handling for ret_array == NULL. */
 
     for(i=0; i<count; i++) {
 

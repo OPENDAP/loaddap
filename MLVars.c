@@ -14,7 +14,6 @@
     status of these function calls.
 */
 
-#define MATLAB_MEX_FILE
 #include <mex.h>
 
 #include "MLVars.h"
