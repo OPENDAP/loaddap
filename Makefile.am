@@ -13,7 +13,7 @@ ACLOCAL_AMFLAGS = -I conf
 # Automake doesn't know about the mex script; we have to jury-rig some
 # things. 9/29/05 jhrg
 #
-MEXFLAGS = $(AM_CPPFLAGS) -V5 -DNO_MX_FREE -DHAVE_CONFIG_H
+MEXFLAGS = $(AM_CPPFLAGS) -V5 -DNO_MX_FREE -DHAVE_CONFIG_H -DDODS_DEBUG
 
 # These are not used by automake but are often useful for certain types of
 # debugging.
