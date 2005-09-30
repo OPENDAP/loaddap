@@ -19,12 +19,6 @@ static char rcsid[] not_used = {"$Id$"};
 #include "escaping.h"
 #include "name_map.h"
 
-/*  I expect this should really be here under UNIX also  */
-/*  10/2001 - rom.  */
-#ifdef WIN32
-#include <assert.h>
-#endif
-
 name_map::name_map(char *raw_equiv) 
 {
     _names.push_back(name_equiv(raw_equiv));
@@ -41,15 +35,27 @@ name_map::add(char *raw_equiv)
     _names.push_back(equiv);
 }
 
-
+/** Scan a string and replace anything other than an alphahumeric character
+    with a web-style escape sequence. Then rescan the string and repace the 
+    '%' characters in those escape sequences with and underscore so that 
+    Matlab won't think the are comments.
+    
+    @param name The string to modify
+    @return a new string */
 static string
 munge(string name)
 {
-  unsigned char ascii = *(name.substr(0, 1).data());
-  if (!isalpha(ascii)) name = "ml_" + name;
+    unsigned char ascii = *(name.substr(0, 1).data());
+    if (!isalpha(ascii))
+        name = "ml_" + name;
 
-  name = char2ASCII(name);
-  return char2ASCII(name, "[^A-Za-z0-9_]");
+    name = id2www(name, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_");
+    
+    string::size_type pos;
+    while ((pos = name.find('%')) != string::npos)
+        name.replace(pos, 1, "_");
+    
+    return name;
 }
 
 string
