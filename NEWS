@@ -3,6 +3,12 @@ News for 3.5.0
 
 9/29/05
 
-Automake build works and loaddap runs under RHEL3 on my X86_64 machine. I
-still have not sirted out where to _install_ the loaddap command, but that
-seems less important than getting this running on OS/X.
+The automake build works and loaddap runs under RHEL3 on X86_64 and Mac OS/X
+(both Panther and Tiger).
+
+The software now installs in /usr/local/bin and /usr/local/share/loaddap; 
+both of these must be on your matlabpath. Of course, you can change the prefix
+/usr/local to another directory using ./configure --prefix=/another/place.
+
+The --with-matlab option can be used to specify a particular version of
+Matlab. Otherwise $MATLAB/bin must be on your PATH environment variable.

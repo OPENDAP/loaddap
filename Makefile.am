@@ -13,7 +13,7 @@ ACLOCAL_AMFLAGS = -I conf
 # Automake doesn't know about the mex script; we have to jury-rig some
 # things. 9/29/05 jhrg
 #
-MEXFLAGS = $(AM_CPPFLAGS) -V5 -DNO_MX_FREE -DHAVE_CONFIG_H -DDODS_DEBUG
+MEXFLAGS = $(AM_CPPFLAGS) -V5 -DNO_MX_FREE -DHAVE_CONFIG_H
 
 # These are not used by automake but are often useful for certain types of
 # debugging.
@@ -22,6 +22,8 @@ CXXFLAGS_DEBUG = -g3 -O0 -Wall -fno-defer-pop
 TEST_COV_FLAGS = -ftest-coverage -fprofile-arcs
 
 bin_PROGRAMS = writedap
+pkgdata_SCRIPTS = whodap.m
+dist_pkgdata_DATA = loaddap.m
 
 CLIENTSRCS = ClientByte.cc ClientInt32.cc ClientFloat64.cc ClientStr.cc	\
 	ClientUrl.cc ClientArray.cc ClientStructure.cc			\
@@ -62,19 +64,38 @@ writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
 # should be possible to use loaddap_SOURCES, et c., and get the full power of
 # automake. jhrg 9/29/05
 
-all-local: loaddap
+all-local: loaddap-stamp
 
-loaddap:
-	mex $(CPPFLAGS) $(MEXFLAGS) -output $@ $(LD_SRCS)
+loaddap-stamp:
+	mex $(CPPFLAGS) $(MEXFLAGS) -output $@ $(LD_SRCS) \
+		&& touch loaddap-stamp
 
 clean-local:
 	-rm -f loaddap.mex*
+	-rm loaddap-stamp
+
+install-exec-local:
+	$(INSTALL_PROGRAM) loaddap.mex* $(DESTDIR)$(bindir)
+
+uninstall-local:
+	rm -f $(DESTDIR)$(bindir)/loaddap.mex*       
 
 DEJATOOL = writedap
 RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite
 
-EXTRA_DIST = win32 testsuite
+EXTRA_DIST = win32 testsuite $(LD_SRCS) $(LD_HDRS) loaddap.m whodap.m \
+	README INSTALL NEWS
 
 CLEANFILES = *~ *.log *.sum
+
+###########################################################################
+
+# Build linux RPMs
+
+srpm:
+	rpmbuild -ts @PACKAGE@-@PACKAGE_VERSION@.tar.gz
+
+rpm:
+	rpmbuild -tb @PACKAGE@-@PACKAGE_VERSION@.tar.gz
 
 # LocalWords:  mex Mathworks automake loaddap jhrg
