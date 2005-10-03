@@ -1,31 +1,21 @@
 function values = loaddap([switches,] URL [, URL])
 %--------------------------------------------------------------------
-%     Copyright 1997,1998,1999,2001 (C) URI/MIT
+%     Copyright 1997,1998,1999,2001 (C) URI/MIT, 2005 OPeNDAP
 %     $Revision$
 %
 %  function values = loaddap([switches,] URL [options] [, URL [options]])
 %
 % DESCRIPTION:
 %  
-%  loaddap is an interface to the Distributed Oceanographic Data System
-%  (DODS) for Matlab 5 and 6. To find out more about DODS, including
-%  information on data available within the system, see the DODS home page
-%  http://unidata.ucar.edu/packages/dods/. loaddap should be called with a
-%  DODS URL which references data, in which case the command will access the
+%  loaddap is an interface to DAP2-compilant data servers such for Matlab 
+%  5, 6 amd 7. loaddap should be called with a
+%  DAP URL which references data, in which case the command will access the
 %  dataset and create scalars, vectors and/or matrices in Matlab to hold
 %  those data. 
 %  
 %  loaddap used to be limited to scalar, vector and matrix (2D) data.
 %  However, starting with version 3.1.3, loaddap can intern N-dimensional
 %  objects. 
-%
-%  loaddap used to be shipped with a Web browser helper application that
-%  could be used in conjunction with the DODS web interface. The helper
-%  made it possible to route URLs directly to loaddap from the the
-%  interface without using cut an paste. However, it was complicated to
-%  set up and prone to failure. We suggest that users simply use cut and
-%  paste. We're no longer supporting the (semi)automated transfer of URLs
-%  to loaddap. 10/10/2001 jhrg
 %
 % SWITCHES:
 %  -e: Use the new error reporting scheme (see the description under Notes).
@@ -37,7 +27,6 @@ function values = loaddap([switches,] URL [, URL])
 %  -k: Concatenate like-named variables. Only tested for N=1,2.
 %  -n: Use the full name of a variable. (An old option; this is the default.)
 %  -s: Return a vector of variable names along with the variables themselves.
-%  -t[abclmpstu]: Enable HTTP tracing (only for the hardcore...).
 %
 % PER URL OPTIONS:
 %  -r: Rename a variable. Usage: `-r <var>:<new name>'.
@@ -107,8 +96,7 @@ function values = loaddap([switches,] URL [, URL])
 %  interned as if it was a Structure variable in the DDS object. 
 %  
 % INPUT:
-%  A DODS URL, locator URL or nothing, optionally prefixed by command
-%  options.
+%  A DAP2 URL optionally prefixed by command options.
 %
 % OUTPUT:
 %  One or more Matlab variables.
@@ -142,5 +130,5 @@ function values = loaddap([switches,] URL [, URL])
 % CALLEE: loaddap.mex
 %
 % AUTHORS: Glenn Flierl, MIT
-%	   James Gallagher, URI
+%	   James Gallagher, OPeNDAP
 %---------------------------------------------------------------------

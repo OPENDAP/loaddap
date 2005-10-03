@@ -67,7 +67,7 @@ writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
 all-local: loaddap-stamp
 
 loaddap-stamp:
-	mex $(CPPFLAGS) $(MEXFLAGS) -output $@ $(LD_SRCS) \
+	mex $(CPPFLAGS) $(MEXFLAGS) -output loaddap $(LD_SRCS) \
 		&& touch loaddap-stamp
 
 clean-local:
@@ -84,7 +84,7 @@ DEJATOOL = writedap
 RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite
 
 EXTRA_DIST = win32 testsuite $(LD_SRCS) $(LD_HDRS) loaddap.m whodap.m \
-	README INSTALL NEWS
+	README INSTALL NEWS loaddap.spec COPYING COPYRIGHT_URI
 
 CLEANFILES = *~ *.log *.sum
 
