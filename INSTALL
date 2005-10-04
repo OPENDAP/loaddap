@@ -106,7 +106,11 @@ NOTES
     Make sure to update Welcome.html, ReadMe.txt and License.txt. Note
     that those files can be edited fairly easily in emacs using
     set-fill-column 55. If they are wider than 55 columns they look
-    awful.
+    awful. Since a .pkg file is really a directory (aka bundle) you'll
+    need to put the in either a tar.gz file or a disk image. To make a
+    disk image use DiskUtility and choose 'New Image.' Make the disk
+    image 300k bigger then the size of the package. Once created, copy
+    the package to the image.
 
   o DEBUGGING AIDS
 
