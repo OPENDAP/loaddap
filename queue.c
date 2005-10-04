@@ -1,3 +1,28 @@
+/*
+// -*- mode: c++; c-basic-offset:4 -*-
+
+// This file is part of loaddap.
+
+
+// Copyright (c) 2005 OPeNDAP, Inc.
+// Author: James Gallagher <jgallagher@opendap.org>
+//
+// This is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This software is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
+// You can contact OPeNDAP, Inc. at PO Box 112, Saunderstown, RI. 02874-0112.
+*/
 
 /* (c) COPYRIGHT URI/MIT 1996
    Please read the full copyright statement in the file COPYRIGHT.
@@ -12,54 +37,6 @@
    These functions return -1 to indicate an error and 0 or some positive
    value (e.g., the queue id) to indicate success.
 */
-
-/* 
- * $Log: queue.c,v $
- * Revision 1.3  2003/12/08 17:59:50  edavis
- * Merge release-3-4 into trunk
- *
- * Revision 1.1.1.1  2003/10/22 19:43:35  dan
- * Version of the Matlab CommandLine client which uses Matlab Structure
- * variables to maintain the shape of the underlying DODS data.
- * Revision 1.1.1.1.2.1  2003/10/27 16:48:07  dan
- * Changed config include to 'config_writedap.h' to designate
- * new version of 'writeval' now called 'writedap'.  The only
- * substantive change in 'writedap' is that nested sequence
- * variables are now supported.
- *
- * Revision 1.2  2003/10/23 18:34:02  dan
- * Changed config include to config_writedap.h from config_writeval.h
- * This is to remain consistent with the renaming used from loaddods
- * to loaddap.  To support nested sequences writeval was modified
- * to send an end-of-sequence marker to delimit sequence instances.
- *
- *
- * Revision 1.6  2000/06/15 00:01:33  jimg
- * Merged with 3.1.5
- *
- * Revision 1.5.8.1  2000/06/14 20:46:01  jimg
- * Fixed an error in the instrumentation; a variable was misspelled.
- *
- * Revision 1.5  1999/04/30 17:06:58  jimg
- * Merged with no-gnu and release-2-24
- *
- * Revision 1.4.28.1  1999/04/20 15:55:57  jimg
- * Fixed copyright and log comments.
- *
- * Revision 1.4  1996/10/29 21:44:42  jimg
- * Added string.h to included files
- *
- * Revision 1.3  1996/10/23 23:57:16  jimg
- * Added MAX_QUEUE_LEN constant.
- * Fixed up error messages.
- *
- * Revision 1.2  1996/10/07 21:08:58  jimg
- * Fixed the return values; -1 for error and 0 or greater for success. This
- * is true for all the functions that return a result.
- *
- * Revision 1.1  1996/10/07 19:10:31  jimg
- * Created from code in urlqueue and loaddods.
- */
 
 static char id[]={"$Id$"};
 
