@@ -39,11 +39,11 @@ WV_SRCS = write_dap.cc name_map.cc MetadataProcessing.cc		\
 	LoaddodsProcessing.cc LoaddodsProcessing.h			\
 	MetadataProcessing.h config_writedap.h nan_hack.h name_map.h
 
-LD_SRCS = loaddap.c variable.c queue.c extend.c error.c MLVars.c	\
+LD_SRCS = loaddap.c variable.c extend.c error.c MLVars.c	\
 	process_values.c 
 
 LD_HDRS = MLVars.h defines.h dods_memory.h error.h extend.h queue.h	\
-	variable.h 
+	variable.h queue.c
 
 writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
 
@@ -98,4 +98,12 @@ srpm:
 rpm:
 	rpmbuild -tb @PACKAGE@-@PACKAGE_VERSION@.tar.gz
 
+###########################################################################
+
+# Build OS/X Packages
+
+pkg:
+	./configure --prefix=`pwd`/mac_osx
+	make clean install
+	
 # LocalWords:  mex Mathworks automake loaddap jhrg

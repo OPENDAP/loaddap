@@ -82,6 +82,10 @@ static char id[] not_used ={"$Id$"};
 #include "extend.h"
 #include "variable.h"
 
+#if !defined(WIN32) || !defined(__APPLE_CC__)
+#include "queue.h"
+#endif
+
 #ifdef WIN32
 #define PATH_DELIMITER_STR ";"
 #define PATH_DELIMITER_CHAR ';'
@@ -89,7 +93,6 @@ static char id[] not_used ={"$Id$"};
 #define PATH_SEPARATOR_CHAR '\\'
 #define isnan(x) _isnan(x)
 #else
-#include "queue.h"
 #define PATH_DELIMITER_STR ":"
 #define PATH_DELIMITER_CHAR ':'
 #define PATH_SEPARATOR "/"
@@ -272,7 +275,7 @@ get_pathname(char *command)
 	strcat(writedap_path, command);
 
 #ifndef DMALLOC
-	/* Don't do this if usig dmalloc since pathname was allocated by
+	/* Don't do this if using dmalloc since pathname was allocated by
 	   Matlab, not dmalloc and dmalloc won't let you free it. 9/22/2000
 	   jhrg */
 	mxFree(pathname);
@@ -311,8 +314,6 @@ lock_mex_function()
 
     /* Free allocated memory */
 #ifndef DMALLOC
-    /* Don't do this if usig dmalloc since pathname was allocated by Matlab,
-       not dmalloc and dmalloc won't let you free it. 9/22/2000 jhrg */
     mxFree(pathname);
 #endif
   }
@@ -328,9 +329,11 @@ lock_mex_function()
   assume that it is a Matlab `mat' file and load it without any additional
   processing.
   
-  NB: Memory allocated by mxCalloc() is automatically freed on exit from the
+  @note Memory allocated by mxCalloc() is automatically freed on exit from the
   command (by Matlab), so there is no need to call mxFree() on mxCalloc'd
   blocks. 
+
+  @note Support for the browser option
 
   @return A URL to a DODS dataset or NULL if no further action is required. */
 
@@ -553,7 +556,8 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
 	num_return_args = 0;
     }
 
-#ifndef WIN32  /*  We're omitting the communication w/browser under win32  */
+#if !defined(WIN32) && !defined(__APPLE_CC__)
+    /*  We're omitting the communication w/browser under win32  */
     if (s[0] == '*' || s[0] == '?' || s[0] == '\0') {
 	key_t msgqid = 3075;
 	long queue_id;
@@ -680,7 +684,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
     {
 	int status;
 	status = pclose(fin);
-#if 0
+#if 1
 	if (status != 0)
 	    err_msg(\
 "Error: The loaddap helper application writedap reported an error (%d). \n\

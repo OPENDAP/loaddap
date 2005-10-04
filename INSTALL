@@ -98,7 +98,15 @@ NOTES
 
   o To build a rpm file for a source or binary distribution: 1) Use 'make
     dist' to build a tar.gz file; and 2) Use 'make srpm' and 'make rpm' to
-    build the binary distributions.
+    build the binary distributions. You may have to to be root to do
+    this, depending on how RPM is set up for you.
+
+  o To build a Mac OS/X package, use the 'pkg' target of the Makfile
+    and then start PackageMaker and open loaddap_osx_package.pmsp.
+    Make sure to update Welcome.html, ReadMe.txt and License.txt. Note
+    that those files can be edited fairly easily in emacs using
+    set-fill-column 55. If they are wider than 55 columns they look
+    awful.
 
   o DEBUGGING AIDS
 
@@ -125,3 +133,5 @@ NOTES
 
     - To build with program instrumentation use `--enable-debug=<level>'
       where <level> is 1 or 2.
+
+  
