@@ -1,9 +1,35 @@
 
  $Id$
  
-I've updated this code for libdap 3.5.2. To build you will need Matlab's
-bin directory on your PATH. The software installs in /usr/local/bin by
-default and you'll need to add that directory to matlabpath. jhrg 9/30/05
+Be sure to add both /usr/local/share/loaddap and /usr/local/bin to
+your matlabpath! For example, you could add
+
+     addpath /usr/local/share/loaddap
+     addpath /usr/local/bin
+
+to startup.m. The order of the paths' in the matlabpath variable is
+important! However you add the paths, /usr/local/bin should appear
+before /usr/local/share/loaddap. If the order is reversed you will get
+a error in matlab about mismatched parentheses. Here's what matlabpath
+looks like when it's set correctly:
+
+     >> matlabpath
+
+                MATLABPATH
+
+        /usr/local/bin
+        /usr/local/share/loaddap
+        /Applications/MATLAB71/toolbox/matlab/general
+	.
+	.
+	.
+
+Although the documentation says that you must use the -nojvm option
+when starting Matlab, that is not really true based on the latest
+testing. The loaddap command correctly reads and interns values when
+you start Matlab either with or without the -nojvm option. However,
+the verbose output from loaddap is lost when you do not start Matlab
+using -nojvm.
 
 -------------------------------------------------------------------------------
 

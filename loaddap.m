@@ -7,8 +7,8 @@ function values = loaddap([switches,] URL [, URL])
 %
 % DESCRIPTION:
 %  
-%  loaddap is an interface to DAP2-compilant data servers such for Matlab 
-%  5, 6 amd 7. loaddap should be called with a
+%  loaddap is an interface to DAP2-compliant data servers such for Matlab 
+%  5, 6 and 7. loaddap should be called with a
 %  DAP URL which references data, in which case the command will access the
 %  dataset and create scalars, vectors and/or matrices in Matlab to hold
 %  those data. 

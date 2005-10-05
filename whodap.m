@@ -23,7 +23,7 @@ function text = whodap(url)
 %  A DAP2 URL.
 %
 % OUTPUT:
-%  A DAP2-accessable Dataset descriptor structure, as text.
+%  A DAP2-accessible Dataset descriptor structure, as text.
 %
 % EXAMPLE:
 %  whodap('http://test.opendap.org/opendap/nph-dods/data/coads.nc')

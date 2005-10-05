@@ -7,7 +7,7 @@ Installing the OPeNDAP Matlab client
 
 This version of loaddap has been tested with Matlab 7. It may build with 
 versions as old as Matlab 5, but that has not been tested. You must use
-the -nojvm option to matlab to use loaddap on certain patforms such as
+the -nojvm option to matlab to use loaddap on certain platforms such as
 Mac OS/X. 
 
 Note to maintainers: 'make dist' works but 'make distcheck' fails because
@@ -31,26 +31,26 @@ BUILDING THE SOFTWARE
   1. Type `./configure' at the system prompt. On some systems you may have
      to type `sh configure'.
 
-  2. Type `make' to build the clien, `make check' to run the tests. You
+  2. Type `make' to build the client, `make check' to run the tests. You
      must have DejaGNU to run `make check.' 
 
   4. If you have the DejaGNU test software installed, you can type `make
      check' to test the writedap program. To test loaddap, run matlab and
-     type `test_loaddap'.  You should see messsages about various tests and
+     type `test_loaddap'.  You should see messages about various tests and
      the word `PASS' for each of them.  If a test does not pass, contact the
      OPeNDAP support center:
 
        support@unidata.ucar.edu
 
   3. Type `make install' to install the client binary and it's helper 
-     programs. By default the stofware installs in /usr/local/bin and 
+     programs. By default the software installs in /usr/local/bin and 
      /usr/local/share/loaddap. Make sure that both of these directories
      are on you matlabpath. To change the root directory from /usr/local
      to something else, use the --prefix option of configure.
 
   SGI Note:
      If you are building on an SGI machine, it is possible that your build
-     of loaddods.mex* will fail due to architecture incompatibilities.
+     of loaddap.mex* will fail due to architecture incompatibilities.
      See our "How do I build the Matlab server and client on SGI?" FAQ
      for details on how to complete the build:
    
@@ -101,7 +101,7 @@ NOTES
     build the binary distributions. You may have to to be root to do
     this, depending on how RPM is set up for you.
 
-  o To build a Mac OS/X package, use the 'pkg' target of the Makfile
+  o To build a Mac OS/X package, use the 'pkg' target of the Makefile
     and then start PackageMaker and open loaddap_osx_package.pmsp.
     Make sure to update Welcome.html, ReadMe.txt and License.txt. Note
     that those files can be edited fairly easily in emacs using

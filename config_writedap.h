@@ -6,6 +6,4 @@
 #include <config.h>
 #endif
 
-#define MAX_QUEUE_LEN 8192
-
 #endif /* DODS_CONFIG_WV_H_ */

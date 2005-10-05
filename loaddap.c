@@ -82,7 +82,7 @@ static char id[] not_used ={"$Id$"};
 #include "extend.h"
 #include "variable.h"
 
-#if !defined(WIN32) || !defined(__APPLE_CC__)
+#if 0
 #include "queue.h"
 #endif
 
@@ -127,25 +127,20 @@ static char id[] not_used ={"$Id$"};
 
 #ifdef WIN32
 #define DODS_BASE_COMMAND "writedap.exe"
-#else
-#define DODS_BASE_COMMAND "writedap"
-#endif
-
-#define BROWSER_COMMAND "netscape -remote 'openURL(%s)'"
-#ifdef WIN32
 #define DODS_COMPLETE_COMMAND "%s -f -n %s -- \"%s\""
 #else
+#define DODS_BASE_COMMAND "writedap"
 #define DODS_COMPLETE_COMMAND "%s -f -n %s -- %s"
 #endif
-#define DEFAULT_LOCATOR "http://unidata.ucar.edu/packages/dods/"
+
+// #define BROWSER_COMMAND "netscape -remote 'openURL(%s)'"
+// #define DEFAULT_LOCATOR "http://unidata.ucar.edu/packages/dods/"
+
 #define MAX_STR 256
 #define BIG_STR 8192
+#define MAX_URL_LEN 8192
 
-#ifdef DODS_VERSION
-static char *dods_version = DODS_VERSION;
-#else
-static char *dods_version = "unknown";
-#endif /* VERSION */
+static char *dods_version = PACKAGE_VERSION;
 
 int process_values(FILE *fin);
 
@@ -187,21 +182,6 @@ mxArray **return_args;
     @see num_return_args
     @see return_args */
 int current_arg = 0;
-
-/** Return the DODS Root directory pathname. */
-
-#if 0
-static char *
-dods_root()
-{
-    static char *dods_root = 0;
-
-    if (!dods_root)
-	dods_root = (getenv("DODS_ROOT") ? getenv("DODS_ROOT") : DODS_ROOT);
-
-    return dods_root;
-}
-#endif
 
 /** Escape all characters that the Bourne shell treats as special. Storage
   for the new string is allocated by this function and must be freed by the
@@ -287,7 +267,9 @@ get_pathname(char *command)
 
 /** Lock the mex function in memory. This is a work-around for a bug in gcc
     on linux. See Mathworks solution #26304. This is not the same as the
-    Matlab function mexLock(). */
+    Matlab function mexLock(). 
+    
+    This may no longer be necessary. 10/4/05 jhrg */
 static void
 lock_mex_function()
 {
@@ -333,7 +315,7 @@ lock_mex_function()
   command (by Matlab), so there is no need to call mxFree() on mxCalloc'd
   blocks. 
 
-  @note Support for the browser option
+  @note Support for the browser option has been removed.
 
   @return A URL to a DODS dataset or NULL if no further action is required. */
 
@@ -341,7 +323,7 @@ static char *
 init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
 {
     int i;			/* Count prhs[] elements. */
-    char *s = mxCalloc(MAX_QUEUE_LEN, sizeof(char)); /* Return this array. */
+    char *s = mxCalloc(MAX_URL_LEN, sizeof(char)); /* Return this array. */
     DBGM(mexPrintf("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, s));
 
     for (i = 0; i < nrhs; ++i) {
@@ -354,8 +336,7 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
     /* If there are two arguments, assume that the first is a set of command
        line options. Extract them and set the global `command_opt' string. If
        there is only one string, assume it is a URL and that no options were
-       given, unless either the first character is a `-' or the only
-       character is `*'. For some obscure reason, ? also works as *. */
+       given. */
 
     if (nrhs == 0) {
 	command_opts[0] = '\0';
@@ -363,9 +344,13 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
     }
     else if (nrhs == 1) {
 	command_opts[0] = '\0';
-	mxGetString(prhs[0], s, (MAX_QUEUE_LEN-1));
+	mxGetString(prhs[0], s, (MAX_URL_LEN-1));
 	/* If the first char of `s' is `-' assume that s contains options 
-           and since nrhs == 1, that no URL or filename was given. */
+           and since nrhs == 1, that no URL or filename was given. 
+           
+           I think this was possible when the code used to optionally read from
+           a browser, but it is an error now given that the 'browser' option
+           has been removed. 10/4/05 jhrg. */
 	if (s[0] == '-') {
 	    strncpy(command_opts, s, (MAX_STR-1));
 	    command_opts[(MAX_STR-1)] = '\0';
@@ -374,10 +359,13 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
     }
     else if (nrhs == 2) {
 	mxGetString(prhs[0], command_opts, (MAX_STR-1));
-	mxGetString(prhs[1], s, (MAX_QUEUE_LEN-1));
+	mxGetString(prhs[1], s, (MAX_URL_LEN-1));
     }	
     else {			/* (nrhs > 2 || nrhs < 1) */
+#if 0
 	msg("usage: loaddap [options] [url | `*' | `?']\n");
+#endif
+	msg("usage: loaddap [options] url\n");
 	return NULL;
     }
 
@@ -556,8 +544,8 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
 	num_return_args = 0;
     }
 
-#if !defined(WIN32) && !defined(__APPLE_CC__)
-    /*  We're omitting the communication w/browser under win32  */
+#if 0
+    /*  We're omitting the communication w/browser. */
     if (s[0] == '*' || s[0] == '?' || s[0] == '\0') {
 	key_t msgqid = 3075;
 	long queue_id;
@@ -603,13 +591,13 @@ void
 mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
 {
     char *command = 0;
-    char *dods_url = 0, *dods_url_escaped = 0;
+    char *dods_url = 0;
+    char *dods_url_escaped = 0;
     char *pathname = 0;
     FILE *fin;
-
-#ifdef ARCH_GLNX86
+    
+    // This function is null for anything except linux.
     lock_mex_function();
-#endif
 
     /* Get the URL and set global options. */
     if (!(dods_url = init(nlhs, plhs, nrhs, prhs)))
@@ -684,14 +672,12 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
     {
 	int status;
 	status = pclose(fin);
-#if 1
 	if (status != 0)
 	    err_msg(\
 "Error: The loaddap helper application writedap reported an error (%d). \n\
        This may be due to an earlier error. However, if there was no previous\n\
        error message, please report this to support@unidata.ucar.edu.\n",
                     status);
-#endif
     }
 
     fflush(stderr);

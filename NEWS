@@ -1,6 +1,11 @@
 
 News for 3.5.0
 
+10/4/05
+
+Built OS/X packages. See INSTALL for information about targets in the
+Makefile for OS/X package creation.
+
 9/29/05
 
 The automake build works and loaddap runs under RHEL3 on X86_64 and Mac OS/X
