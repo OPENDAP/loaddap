@@ -92,10 +92,10 @@ CLEANFILES = *~ *.log *.sum
 
 # Build linux RPMs
 
-srpm:
+srpm: dist
 	rpmbuild -ts @PACKAGE@-@PACKAGE_VERSION@.tar.gz
 
-rpm:
+rpm: dist
 	rpmbuild -tb @PACKAGE@-@PACKAGE_VERSION@.tar.gz
 
 ###########################################################################
