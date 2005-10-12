@@ -133,8 +133,10 @@ static char id[] not_used ={"$Id$"};
 #define DODS_COMPLETE_COMMAND "%s -f -n %s -- %s"
 #endif
 
-// #define BROWSER_COMMAND "netscape -remote 'openURL(%s)'"
-// #define DEFAULT_LOCATOR "http://unidata.ucar.edu/packages/dods/"
+#if 0
+#define BROWSER_COMMAND "netscape -remote 'openURL(%s)'"
+#define DEFAULT_LOCATOR "http://unidata.ucar.edu/packages/dods/"
+#endif
 
 #define MAX_STR 256
 #define BIG_STR 8192
@@ -596,7 +598,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
     char *pathname = 0;
     FILE *fin;
     
-    // This function is null for anything except linux.
+    /* This function is null for anything except linux. */
     lock_mex_function();
 
     /* Get the URL and set global options. */
