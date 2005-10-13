@@ -3,7 +3,7 @@
 #
 # 5/17/2005 jhrg
 #
-# $Id: Makefile.am 12148 2005-09-12 21:30:51Z jimg $
+# $Id$
 
 AUTOMAKE_OPTIONS = foreign dejagnu
 
