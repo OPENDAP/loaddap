@@ -14,11 +14,10 @@ interns it in the Matlab workspace. The whodap
 function provides a listing of the variables in a
 dataset. Both commands accept DAP URLs as arguments.
 
-Make sure to add /usr/local/bin and
-/usr/local/share/loaddap to your matlabpath (see 'help
-addpath' in Matlab). If you use an installation
-directory other than /usr/local, you will need to set
-the corresponding paths.
+Make sure to add /usr/bin and /usr/share/loaddap to
+your matlabpath (see 'help addpath' in Matlab). If you
+use an installation directory other than /usr, you
+will need to set the corresponding paths.
 
  whodap <dataset URL>
 

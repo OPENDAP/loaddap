@@ -100,10 +100,10 @@ rpm: dist
 
 ###########################################################################
 
-# Build OS/X Packages
+# Build OS/X Packages. 
 
 pkg:
 	./configure --prefix=`pwd`/mac_osx
 	make clean install
-	
+
 # LocalWords:  mex Mathworks automake loaddap jhrg
