@@ -38,7 +38,7 @@ proc writedap_start { {switches ""} {urls ""} {file ""}} {
 	catch "exec ./writedap $switches -- $urls" comp_output
     } else {
 	if {$verbose >= 1} {
-	    send_user "Testing writedap $switches -- $urls >& $file ...\n"
+	    send_user "Testing writedap $switches -- $urls > $file ...\n"
 	    exp_internal 1
 	}
 	catch "exec ./writedap $switches -- $urls > $file" comp_output
@@ -49,7 +49,9 @@ proc writedap_load {} {
 }
 
 proc writedap_exit {} {
-    send -raw ""
+    # I think this only needs to be sent when the program being tested is
+    # interactive. jhrg 12/21/05
+    # send -raw ""
 }
 
 proc writedap_version {} {

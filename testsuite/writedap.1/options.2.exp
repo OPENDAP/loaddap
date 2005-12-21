@@ -37,7 +37,7 @@ compare_stdout "testsuite/data/writedap/coads.data" "$test_name: coads"
 # Test Array of Bytes.
 
 writedap_start "-a -f" "${dsp_2}?${dsp_2_ce}"
-compare_stdout "testsuite/data/writedap/dsp_2.data" "$test_name: dsp 2"
+compare_stdout "testsuite/data/writedap/dsp_2.data" "$test_name: dsp 2" 1
 
 # Test Strings and the weird DDDMMSSH translation.
 

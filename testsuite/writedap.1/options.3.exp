@@ -37,7 +37,7 @@ compare_stdout "testsuite/data/writedap/coads.data2" "$test_name: coads"
 # Test Array of Bytes.
 
 writedap_start "-a" "${dsp_2}?${dsp_2_ce}"
-compare_stdout "testsuite/data/writedap/dsp_2.data2" "$test_name: dsp 2"
+compare_stdout "testsuite/data/writedap/dsp_2.data2" "$test_name: dsp 2" 1
 
 
 

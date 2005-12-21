@@ -12,33 +12,33 @@ set coads_dds "Dataset {
     Float64 COADSY\[COADSY = 90\];
     Float64 TIME\[TIME = 12\];
     Grid {
-     ARRAY:
+      Array:
         Float32 SST\[TIME = 12\]\[COADSY = 90\]\[COADSX = 180\];
-     MAPS:
+      Maps:
         Float64 TIME\[TIME = 12\];
         Float64 COADSY\[COADSY = 90\];
         Float64 COADSX\[COADSX = 180\];
     } SST;
     Grid {
-     ARRAY:
+      Array:
         Float32 AIRT\[TIME = 12\]\[COADSY = 90\]\[COADSX = 180\];
-     MAPS:
+      Maps:
         Float64 TIME\[TIME = 12\];
         Float64 COADSY\[COADSY = 90\];
         Float64 COADSX\[COADSX = 180\];
     } AIRT;
     Grid {
-     ARRAY:
+      Array:
         Float32 UWND\[TIME = 12\]\[COADSY = 90\]\[COADSX = 180\];
-     MAPS:
+      Maps:
         Float64 TIME\[TIME = 12\];
         Float64 COADSY\[COADSY = 90\];
         Float64 COADSX\[COADSX = 180\];
     } UWND;
     Grid {
-     ARRAY:
+      Array:
         Float32 VWND\[TIME = 12\]\[COADSY = 90\]\[COADSX = 180\];
-     MAPS:
+      Maps:
         Float64 TIME\[TIME = 12\];
         Float64 COADSY\[COADSY = 90\];
         Float64 COADSX\[COADSX = 180\];
@@ -48,9 +48,9 @@ set coads_dds "Dataset {
 # URI/FNOC
 set fnoc1 "http://test.opendap.org/opendap/nph-dods/data/nc/fnoc1.nc"
 set fnoc1_ce "u\\\[0:0\\\]\\\[0:9\\\]\\\[0:9\\\]"
-set fnoc2 "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/nc/fnoc2.nc"
+set fnoc2 "http://test.opendap.org/opendap/nph-dods/data/nc/fnoc2.nc"
 set fnoc2_ce "u\\\[0:0\\\]\\\[0:9\\\]\\\[0:9\\\]"
-set fnoc3 "http://dodsdev.gso.uri.edu/cgi-bin/dods-3.2/nph-dods/data/nc/fnoc3.nc"
+set fnoc3 "http://test.opendap.org/opendap/nph-dods/data/nc/fnoc3.nc"
 set fnoc3_ce "u\\\[0:0\\\]\\\[0:9\\\]\\\[0:9\\\],v\\\[0:0\\\]\\\[4:9\\\]\\\[4:9\\\]"
 
 # URI/DSP:
@@ -58,9 +58,9 @@ set dsp_1 "http://test.opendap.org/opendap/nph-dods/data/dsp/f96243170857.img"
 set dsp_1_ce "dsp_band_1\\\[20:30\\\]\\\[20:30\\\]"
 set dsp_1_dds "Dataset {
     Grid {
-     ARRAY:
+     Array:
         Byte dsp_band_1\[lat = 512\]\[lon = 512\];
-     MAPS:
+     Maps:
         Float64 lat\[lat = 512\];
         Float64 lon\[lon = 512\];
     } dsp_band_1;
@@ -148,6 +148,3 @@ set jg_bot_dds "Dataset {
         } Level_1;
     } Level_0;
 } bot;"
-
-
-

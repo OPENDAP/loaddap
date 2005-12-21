@@ -47,7 +47,7 @@ compare_stdout $coads_dds "$test_name: coads"
 # compare_stdout $dsp_1_dds "$test_name: dsp 1"
 
 writedap_start "-D" $dsp_2
-compare_stdout $dsp_2_dds "$test_name: dsp 2"
+compare_stdout $dsp_2_dds "$test_name: dsp 2" 1
 
 # the JG server does not have these datasets any more. 
 # writedap_start "-D" $jg_diatoms
