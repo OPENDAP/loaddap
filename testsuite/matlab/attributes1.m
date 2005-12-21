@@ -8,10 +8,10 @@ disp 'Test attributes from fnoc1: ';
 
 load testsuite/matlab/attributes1.mat
 
-base_url = 'http://dods.gso.uri.edu/cgi-bin/nph-';
+base_url = 'http://test.opendap.org/opendap/nph-dods';
 
-fnoc1_attr = [base_url 'nc/data/fnoc1.nc'];
-attr=loaddods('-A', fnoc1_attr);
+fnoc1_attr = [base_url '/data/nc/fnoc1.nc'];
+attr=loaddap('-A', fnoc1_attr);
 
 if isequal(attr_d, attr)
    disp 'PASS';

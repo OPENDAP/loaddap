@@ -80,6 +80,9 @@ install-exec-local:
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/loaddap.mex*       
 
+check-local:
+	@echo "If there's some way to run the test_loaddap.m file, do that here"
+
 DEJATOOL = writedap
 RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite
 

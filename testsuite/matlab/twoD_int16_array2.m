@@ -8,10 +8,10 @@ disp 'Test 2d int16 array (with index shuffling): ';
 
 load testsuite/matlab/twoD_int16_array2_data.mat;
 
-base_url = 'http://dods.gso.uri.edu/cgi-bin/nph-';
+base_url = 'http://test.opendap.org/opendap/nph-dods';
 
-fnoc1 = [base_url 'nc/data/fnoc1.nc?u[0:15][0][0:20]'];
-loaddods(fnoc1);
+fnoc1 = [base_url '/data/nc/fnoc1.nc?u[0:15][0][0:20]'];
+loaddap(fnoc1);
 
 if all(u == u_data)
    disp 'PASS';

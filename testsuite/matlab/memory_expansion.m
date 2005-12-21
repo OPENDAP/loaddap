@@ -13,13 +13,13 @@ test_limit = 10000;
 
 % Use a local URL for this test. Caching will pay off here. 4/19/2000 jhrg
 % base_url = 'http://dods.gso.uri.edu/cgi-bin/nph-';
-base_url = 'http://dcz.dods.org/test-3.2/nph-dods';
+base_url = 'http://test.opendap.org/opendap/nph-dods';
 
 fnoc1 = [base_url '/data/nc/fnoc1.nc?u'];
 
 ii = 0;
 while (ii < test_limit)
-    loaddods(fnoc1);
+    loaddap(fnoc1);
     ii = ii + 1;
 end
 

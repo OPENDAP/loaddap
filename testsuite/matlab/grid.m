@@ -14,10 +14,10 @@ disp 'Test grid load: ';
 
 load testsuite/matlab/grid_data.mat;
 
-base_url = 'http://dods.gso.uri.edu/cgi-bin/nph-';
+base_url = 'http://test.opendap.org/opendap/nph-dods';
 
-coads = [base_url 'nc/data/coads_climatology.nc?SST'];
-loaddods(coads);
+coads = [base_url '/data/nc/coads_climatology.nc?SST'];
+loaddap(coads);
 
 if all(SST == SST_d) & all(TIME == TIME_d) & all(COADSX == COADSX_d) & all(COADSY == COADSY_d)
    disp 'PASS';

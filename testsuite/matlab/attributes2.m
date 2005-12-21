@@ -10,7 +10,7 @@ load testsuite/matlab/attributes2.mat
 
 base_url='http://maewest.gso.uri.edu/cgi-bin/nph-ff/catalog/htn_v1.dat'
 
-str_attr=loaddods('-A', base_url);
+str_attr=loaddap('-A', base_url);
 
 if isequal(str_attr_d, str_attr)
    disp 'PASS';

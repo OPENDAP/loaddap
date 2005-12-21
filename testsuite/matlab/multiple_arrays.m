@@ -8,10 +8,10 @@ disp 'Test loading multiple arrays: ';
 
 load testsuite/matlab/multiple_arrays_data.mat;
 
-base_url = 'http://dods.gso.uri.edu/cgi-bin/nph-';
+base_url = 'http://test.opendap.org/opendap/nph-dods';
 
-fnoc1 = [base_url 'nc/data/fnoc1.nc?lat,lon,time,u,v'];
-loaddods(fnoc1);
+fnoc1 = [base_url '/data/nc/fnoc1.nc?lat,lon,time,u,v'];
+loaddap(fnoc1);
 
 if all(u == u_data) & all(v == v_data) & all(lat == lat_data) & all(lon == lon_data) & all(time == time_data)
    disp 'PASS';

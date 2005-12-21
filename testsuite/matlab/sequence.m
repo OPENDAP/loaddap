@@ -14,10 +14,10 @@ disp 'Test sequence load: ';
 
 load testsuite/matlab/sequence_data.mat;
 
-base_url = 'http://dods.gso.uri.edu/cgi-bin/nph-';
+base_url = 'http://test.opendap.org/opendap/nph-dods';
 
-hdf1 = [base_url 'hdf/data/quikscat.hdf?wvc_row_time__0'];
-loaddods(hdf1);
+hdf1 = [base_url '/data/hdf/quikscat.hdf?wvc_row_time__0'];
+loaddap(hdf1);
 
 if all(wvc_row_time__0 == wvc_row_time__0_data)
    disp 'PASS';
