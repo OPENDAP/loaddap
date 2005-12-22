@@ -66,7 +66,7 @@ writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
 
 all-local: loaddap-stamp
 
-loaddap-stamp:
+loaddap-stamp: $(LD_SRCS) $(LD_HDRS)
 	mex $(CPPFLAGS) $(MEXFLAGS) -output loaddap $(LD_SRCS) \
 		&& touch loaddap-stamp
 

@@ -687,7 +687,8 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
 
         int status;
         status = pclose(fin);
-        if (status != 0) {
+        /* Added errno ECHILD for fc4 64-bit work-around */
+        if (status != 0 && errno != ECHILD) {
             err_msg(\
 "Error: Communication with the loaddap helper application writedap: \n\
 %s\n", strerror(errno));
