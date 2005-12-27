@@ -1,4 +1,21 @@
 
+News for 3.5.1
+
+12/27/05
+
+I updated the build scripts including the ones for Mac OS/X dmg and 
+linux rpm. I've also added some information to the readme about bug 280
+(http://scm.opendap.org:8090/trac/ticket/280). The problem is that Matlab
+comes with an older copy of libgcc than newer Linux OS distributions. This
+is documented on the Mathworks web site; see the README file.
+
+I fixed bug 277 where loaddap and writedap don't communicate correctly
+on 64-bit linux distributions.
+
+I've started updating the in-Matlab tests for loaddap, although there are
+still problems with the tests. The loaddap tool itself seems fine and the 
+dejaGNU tests all work as expected.
+
 News for 3.5.0
 
 10/4/05

@@ -1,7 +1,7 @@
 
 Name: loaddap
 Summary: The OPeNDAP Matlab Command Line Interface Client
-Version: 3.5.0
+Version: 3.5.1
 Release: 1
 
 Source0: http://www.opendap.org/pub/3.5/source/%{name}-%{version}.tar.gz

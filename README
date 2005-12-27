@@ -31,6 +31,29 @@ you start Matlab either with or without the -nojvm option. However,
 the verbose output from loaddap is lost when you do not start Matlab
 using -nojvm.
 
+Note: For some of the binary builds you may see a message like:
+
+  Unable to load mex file:
+  /home/xcst/codes_programms/cmex/yprime.mexglx.
+  /usr/local/matlab7/bin/glnx86/../../sys/os/glnx86/libgcc_s.so.1:
+  version `GCC_3.3' not found (required by /usr/lib/libstdc++.so.6)
+  ??? Invalid MEX-file '/home/xcst/codes_programms/cmex/yprime.mexglx': 
+
+This happens because some linux distributions ship with newer versions of
+the GNU gcc compiler than the version Mathworks uses to build Matlab. A fix 
+for this (documented on the Mathworks web site) is to rename 
+<matlab root>/sys/os/glnx86/libgcc_s.so.1 to something else such as 
+libgcc_s.so.1.orig. With that change Matlab will now use the libgcc library
+bundled with your operating system. It's better to rename the library and not
+delete it just in case the version bundled with you OS doesn't work with
+your copy of Maltab (in which case you can just undothe rename; you can't
+use loaddap, but at least Matlab will still work).
+
+You may also get this error if you compile loaddap yourself. In that case
+you have two choices. Either use the above fix or get and install the same
+version of GNU's gcc compiler as was used to build your copy of Matlab and 
+use that to build libdap and loaddap.
+
 -------------------------------------------------------------------------------
 
 For installation information, see the file INSTALL.
