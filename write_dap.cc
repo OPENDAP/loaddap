@@ -152,7 +152,7 @@ name_from_url(string url)
 // terminated.
 
 void
-smart_newline(ostream &os, Type type)
+smart_newline(FILE *os, Type type)
 {
     switch (type) {
       case dods_byte_c:
@@ -163,7 +163,7 @@ smart_newline(ostream &os, Type type)
       case dods_float32_c:
       case dods_float64_c:
       case dods_array_c:
-	os << endl;
+	fprintf(os, "\n");
 	break;
 
 	// strings are lumped in with the ctors because strings end in a
@@ -177,7 +177,7 @@ smart_newline(ostream &os, Type type)
 	break;
     }
     
-    os.flush();
+    fflush(os);
 }
 
 static void
@@ -188,8 +188,8 @@ process_data(Connect &url, DDS *dds)
     
     DDS::Vars_iter q;
     for (q = dds->var_begin(); q != dds->var_end(); ++q) {
-	(*q)->print_val(cout, "", true);
-	smart_newline(cout, (*q)->type());
+	(*q)->print_val(stdout);
+	smart_newline(stdout, (*q)->type());
     }
 }
 
@@ -351,7 +351,7 @@ main(int argc, char * argv[])
 		ClientTypeFactory factory;
 		DDS dds(&factory);
 		url->request_dds(dds);
-		dds.print();
+		dds.print(stdout);
 	    }
 	    catch (Error &e) {
 		output_error_object(e);

@@ -38,6 +38,7 @@
 #include "config_writedap.h"
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include "InternalErr.h"
@@ -84,20 +85,23 @@ ClientArray::read(const string &)
 }
 
 void
-ClientArray::print_val(ostream &os, string, bool print_decl_p)
+ClientArray::print_val(FILE *os, string, bool print_decl_p)
 {
+    ostringstream ss;
     if (print_decl_p) {
-	os << type_name() << endl << var()->type_name() << " " 
+	ss << type_name() << endl << var()->type_name() << " " 
 	   << get_matlab_name() << " " << dimensions(true)
 	   << endl;
 
 	// Write the actual dimension sizes on a spearate line.
 	for (Pix p = first_dim(); p; next_dim(p))
-	    os << dimension_size(p, true) << " ";
+	    ss << dimension_size(p, true) << " ";
 
-	os << endl;
+	ss << endl;
     }
 
+    fprintf(os, "%s", ss.str().c_str());
+    
     for (int i = 0; i < length(); ++i)
 	var(i)->print_val(os, "", false);
 }    

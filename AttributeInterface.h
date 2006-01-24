@@ -36,6 +36,8 @@
     @author jhrg */
 class AttributeInterface {
  public:
+    virtual ~AttributeInterface() {}
+    
     /** Access an attribute table (an instance of AttrTable)
 	@return AttrTable \& */
     virtual AttrTable &getAttrTable() = 0;

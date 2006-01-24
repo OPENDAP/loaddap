@@ -58,10 +58,10 @@ public:
     // print_val_by_rows, so code that uses print_val will work fine.
     // 1/15/2002 jhrg
 
-    virtual void print_one_row(ostream &os, int row, string space,
+    virtual void print_one_row(FILE *os, int row, string space,
 			       bool print_row_num = false);
 
-    virtual void print_val_by_rows(ostream &os, string space = "",
+    virtual void print_val_by_rows(FILE *os, string space = "",
 				   bool print_decl_p = true,
 				   bool print_row_numners = true);
 

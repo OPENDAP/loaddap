@@ -49,7 +49,7 @@
 extern name_map names;
 extern bool translate;
 
-extern void smart_newline(ostream &os, Type type);
+extern void smart_newline(FILE *os, Type type);
 
 Structure *
 NewStructure(const string &n)
@@ -82,7 +82,7 @@ ClientStructure::read(const string &)
 }
 
 void 
-ClientStructure::print_val(ostream &os, string space, bool print_decls)
+ClientStructure::print_val(FILE *os, string space, bool print_decls)
 {
     if (print_decls) {
 	int numElements = 0;
@@ -90,7 +90,8 @@ ClientStructure::print_val(ostream &os, string space, bool print_decls)
 	for (Constructor::Vars_iter p = var_begin(); p != var_end(); ++p)
 	    numElements++;
 
-	os << type_name() << endl << get_matlab_name() << " " << numElements << endl;
+	fprintf(os, "%s\n%s %d\n", type_name().c_str(),
+                get_matlab_name().c_str(), numElements);
     }
     
     for (Constructor::Vars_iter p = var_begin(); p != var_end(); ++p) {

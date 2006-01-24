@@ -72,29 +72,30 @@ ClientGrid::read(const string &)
 }
 
 void
-ClientGrid::print_val(ostream &os, string space, bool print_decl_p)
+ClientGrid::print_val(FILE *os, string space, bool print_decl_p)
 {
     if (print_decl_p) {
-	os << type_name() << endl << names.lookup(name(), translate) << endl;
+	fprintf(os, "%s\n%s\n", type_name().c_str(),
+                names.lookup(name(), translate).c_str());
 
 	// We can only store one array in a grid right now.
-	os << "array 1" << endl;
+	fprintf(os, "array 1\n");
     }
 
     array_var()->print_val(os, space, print_decl_p);
-    os << endl;
+    fprintf(os, "\n");
 
     if (print_decl_p) {
-	os << "maps ";
+	fprintf(os, "maps ");
 	int i = 0;
 	for (Pix p = first_map_var(); p; next_map_var(p))
 	    ++i;
-	os << i << endl;
+	fprintf(os, "%d\n", i);
     }
 
     for (Pix p = first_map_var(); p; next_map_var(p)) {
 	map_var(p)->print_val(os, space, print_decl_p);
-	os << endl;
+	fprintf(os, "\n");
     }
 }
 

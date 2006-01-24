@@ -81,7 +81,7 @@ public:
 	@param os Print to this stream.
 	@param space Unused by this version of print\_val.
 	@param print\_decl\_p Unused. */
-    virtual void print_val(ostream &os, string space = "", 
+    virtual void print_val(FILE *os, string space = "", 
 			   bool print_decl_p = true);
 
     /** Get this instances attribute table.

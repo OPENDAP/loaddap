@@ -126,13 +126,13 @@ count_elements(ClientSequence *sp, bool flat)
 // winds up calling these methods. It's a little twisted, but no more than
 // usual. 1/15/2002 jhrg
 void 
-ClientSequence::print_one_row(ostream &os, int row, string space,
-			      bool print_row_num)
+ClientSequence::print_one_row(FILE *os, int row, string space,
+			      bool /*print_row_num*/)
 {
-    os << type_name() << endl << get_matlab_name();
+    fprintf(os, "%s\n%s", type_name().c_str(), get_matlab_name().c_str());
 
     int i = count_elements(this, false);
-    os << " " << i << endl;
+    fprintf(os, " %d\n", i);
 
     const int elements = element_count();
     for (int j = 0; j < elements; ++j) {
@@ -149,8 +149,11 @@ ClientSequence::print_one_row(ostream &os, int row, string space,
             // 1/15/2003 danh
             switch ( bt_ptr->type() ) {
             case dods_array_c:
-		os << endl;
+		fprintf(os, "\n");
 		break;
+                
+            default:
+                break;
 	    
 	    }
 	}	
@@ -160,15 +163,15 @@ ClientSequence::print_one_row(ostream &os, int row, string space,
 
 // Sequence::print_val(...) passes false for the print_row_numbers parameter.
 void 
-ClientSequence::print_val_by_rows(ostream &os, string space,
-				  bool print_decl_p,
-				  bool print_row_numners)
+ClientSequence::print_val_by_rows(FILE *os, string space,
+				  bool /*print_decl_p*/,
+				  bool /*print_row_numners*/)
 {
     const int rows = number_of_rows();
     for (int i = 0; i < rows; ++i) {
 	print_one_row(os, i, space, false);
     }
-    os << "EndSequence" << endl;
+    fprintf(os, "EndSequence\n");
 }
 
 AttrTable &
