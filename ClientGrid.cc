@@ -86,17 +86,27 @@ ClientGrid::print_val(FILE *os, string space, bool print_decl_p)
     fprintf(os, "\n");
 
     if (print_decl_p) {
-	fprintf(os, "maps ");
+	fprintf(os, "maps %d\n", static_cast<int>(map_end() - map_begin()));
+#if 0
 	int i = 0;
 	for (Pix p = first_map_var(); p; next_map_var(p))
 	    ++i;
 	fprintf(os, "%d\n", i);
+#endif
     }
 
+    Map_iter p = map_begin();
+    while (p != map_end()) {
+        (*p)->print_val(os, space, print_decl_p);
+        fprintf(os, "\n");
+        ++p;
+    }
+#if 0
     for (Pix p = first_map_var(); p; next_map_var(p)) {
 	map_var(p)->print_val(os, space, print_decl_p);
 	fprintf(os, "\n");
     }
+#endif
 }
 
 AttrTable &

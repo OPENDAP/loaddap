@@ -67,9 +67,10 @@ protected:
 	from AttrTable in addition to the DODS variable classes. */
     DDS meta_dds;
 
+#if 0
     /** Allow only children to create an empty MetadataProcessing object. */
     MetadataProcessing();
-
+#endif
     /** Search, using names, for the attribtue container that's got the same
 	name as the variable #btp#. This method is not very smart and will
 	not know what to do if two containers/variables have the same name. */

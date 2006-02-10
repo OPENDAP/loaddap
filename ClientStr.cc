@@ -97,7 +97,7 @@ ClientStr::read(const string &)
 }
 
 void 
-ClientStr::print_val(ostream &os, string, bool print_decl_p)
+ClientStr::print_val(FILE *os, string, bool print_decl_p)
 {
     bool print_as_float = false;
     double val = 0.0;
@@ -123,19 +123,25 @@ ClientStr::print_val(ostream &os, string, bool print_decl_p)
 
     if (print_as_float) {
 	if (print_decl_p)
-	    os << "Float64" << endl << get_matlab_name() << endl;
+            fprintf(os, "Float64\n%s\n", get_matlab_name().c_str());
+//	    ss << "Float64" << endl << get_matlab_name() << endl;
+
 
 	if (ascii)
-	    os << val << " ";
+            fprintf(os, "%lf ", val);
+//	    ss << val << " ";
 	else
-	    os.write((char *)&val, sizeof(double));
+            fwrite((void *)&val, sizeof(double), 1, os);
+//	    os.write((char *)&val, sizeof(double));
     }
     else {
 	if (print_decl_p)
-	    os << type_name() << endl << get_matlab_name() 
-		<< endl;
+            fprintf(os, "%s\n%s\n", type_name(), get_matlab_name().c_str());
+//	    os << type_name() << endl << get_matlab_name() << endl;
 
-	os << _buf << endl;
+        // There's no special case for ASCII since this is a String.
+        fprintf(os, "%s ", _buf.c_str());
+//	os << _buf << endl;
     }
 }
 

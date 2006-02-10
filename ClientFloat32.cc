@@ -74,27 +74,24 @@ ClientFloat32::read(const string &)
 }
 
 void
-ClientFloat32::print_val(ostream &os, string, bool print_decl_p)
+ClientFloat32::print_val(FILE *os, string, bool print_decl_p)
 {
-    os.precision(DODS_FLT_DIG);
-
     if (print_decl_p)
-        os << type_name() << endl << get_matlab_name() << endl;
-        //os << type_name() << endl << names.lookup(name(), translate) << endl;
+      fprintf(os, "%s\n%s\n", type_name().c_str(), get_matlab_name().c_str());
 
     if (translate) {
-	dods_float64 df = _buf;
-	if (ascii)
-	    os << df << " ";
-	else
-	    os.write((char *)&df, sizeof(dods_float64));
+        dods_float64 df = _buf;
+        if (ascii)
+            fprintf(os, "%lg ", df);
+        else
+            fwrite((void *)&df, sizeof(dods_float32), 1, os);
     }
     else {
-	if (ascii)
-	    os << _buf << " ";
-	else
-	    os.write((char *)&_buf, sizeof(dods_float32));
-    }
+        if (ascii)
+            fprintf(os, "%g ", (dods_float32)_buf);
+        else
+            fwrite((void *)&_buf, sizeof(dods_float32), 1, os);
+    }   
 }
 
 AttrTable &

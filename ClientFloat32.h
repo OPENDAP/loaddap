@@ -51,7 +51,7 @@ public:
     
     virtual bool read(const string &dataset);
 
-    virtual void print_val(ostream &os, string space = "", 
+    virtual void print_val(FILE *os, string space = "", 
 			   bool print_decl_p = true);
 
     virtual AttrTable &getAttrTable();

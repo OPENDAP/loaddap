@@ -57,9 +57,11 @@ protected:
     /** Print an attribute table. DODS Strings and URLs are externalized as
 	strings, all numeric types are externalized as Float64s. */
     void print_attr_table(AttrTable &at, ostream &os);
-    
+
+#if 0    
     /** Only let children create empty instances */
     LoaddodsProcessing();
+#endif
 
 public:
     /** Create an empty MetadataProcessing object. */

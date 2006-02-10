@@ -71,17 +71,15 @@ ClientFloat64::read(const string &)
 }
 
 void
-ClientFloat64::print_val(ostream &os, string, bool print_decl_p)
+ClientFloat64::print_val(FILE *os, string, bool print_decl_p)
 {
-    os.precision(15);
-
     if (print_decl_p)
-        os << type_name() << endl << get_matlab_name() << endl;
+      fprintf(os, "%s\n%s\n", type_name().c_str(), get_matlab_name().c_str());
 
-    if (ascii)
-	os << _buf << " ";
-    else
-	os.write((char *)&_buf, sizeof(dods_float64));
+        if (ascii)
+            fprintf(os, "%lf ", _buf);
+        else
+            fwrite((void *)&_buf, sizeof(dods_float64), 1, os);
 }
 
 AttrTable &

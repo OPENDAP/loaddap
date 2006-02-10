@@ -52,6 +52,8 @@ static char rcsid[] not_used = {"$Id$"};
 
 #include <BaseType.h>
 #include <Connect.h>
+#include <Response.h>
+#include <StdinResponse.h>
 
 #include "LoaddodsProcessing.h"
 #include "ClientByte.h"
@@ -133,6 +135,8 @@ usage()
     cout << usage_msg << endl;
 }
 
+#if 0
+// Not used. jhrg 2/10/06
 static string
 name_from_url(string url)
 {
@@ -145,6 +149,7 @@ name_from_url(string url)
 
     return name;
 }
+#endif
 
 // Not that smart... Print a new line after writing one of the simple data
 // types. This is called by the ctor's write_val() mfuncs so that individual
@@ -194,7 +199,7 @@ process_data(Connect &url, DDS *dds)
 }
 
 static void
-process_per_url_options(int &i, int argc, char *argv[])
+process_per_url_options(int &i, int /* argc*/, char *argv[])
 {
     names.delete_all();	// Clear the global name map for this URL.
 
@@ -247,12 +252,14 @@ main(int argc, char * argv[])
 {
     GetOpt getopt (argc, argv, "VvwnfFat:AD");
     int option_char;
-    bool cexpr = false;
     bool show_dds = false;
     bool show_das = false;
     string expr = "";
+#if 0
+    bool cexpr = false;
     char *tcode = NULL;
     int topts = 0;
+#endif
     // Connect dummy("http");
 
 #ifdef WIN32
@@ -300,7 +307,8 @@ main(int argc, char * argv[])
 
 	    ClientTypeFactory factory;
 	    DataDDS data(&factory);
-	    url->read_data(data, stdin);
+            StdinResponse r(stdin);
+	    url->read_data(data, &r);
 
 	    process_data(*url, &data);
 	}
@@ -331,8 +339,8 @@ main(int argc, char * argv[])
 	    try {
 		ClientTypeFactory factory;
 		DataDDS data(&factory);
-
-		url->read_data(data, fopen(argv[i], "r"));
+                Response r(fopen(argv[i], "r"));
+		url->read_data(data, &r);
 		process_data(*url, &data);
 	    }
 	    catch (Error &e) {

@@ -175,9 +175,11 @@ MetadataProcessing::add_global_attributes(DAS &das, string global_cont_name)
     meta_dds.add_var(cs);
 }
 
+#if 0
 MetadataProcessing::MetadataProcessing()
 {
 }
+#endif
 
 MetadataProcessing::MetadataProcessing(DDS &dds): meta_dds(dds)
 {

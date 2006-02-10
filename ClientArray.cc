@@ -94,9 +94,15 @@ ClientArray::print_val(FILE *os, string, bool print_decl_p)
 	   << endl;
 
 	// Write the actual dimension sizes on a spearate line.
+        Dim_iter i = dim_begin();
+        while (i != dim_end()) {
+            ss << dimension_size(i, true) << " ";
+            ++i;
+        }
+#if 0            
 	for (Pix p = first_dim(); p; next_dim(p))
 	    ss << dimension_size(p, true) << " ";
-
+#endif
 	ss << endl;
     }
 

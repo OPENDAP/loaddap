@@ -38,7 +38,7 @@
 
 #include "debug.h"
 
-#include "Pix.h"
+//#include "Pix.h"
 
 #include "dods-datatypes.h"
 #include "InternalErr.h"
@@ -67,7 +67,11 @@ extern bool translate;
 void
 LoaddodsProcessing::print_attr_table(AttrTable &at, ostream &os)
 {
+    AttrTable::Attr_iter p = at.attr_begin();
+    while (p != at.attr_end()) {
+#if 0
     for (Pix p = at.first_attr(); p; at.next_attr(p)) {
+#endif
 	int attr_num = at.get_attr_num(p);
 	switch (at.get_attr_type(p)) {
 	  case Attr_container: {
@@ -115,7 +119,9 @@ LoaddodsProcessing::print_attr_table(AttrTable &at, ostream &os)
 	    }
 	    break;
 	}
-    }
+        
+        ++p;                    // Next attribute
+    }                           // This is the end of the loop
 }
 
 // The number of attributes is, from the Matlab view, the number of entries
@@ -202,9 +208,11 @@ LoaddodsProcessing::print_attributes(BaseType &bt, ostream &os)
     }
 }
 
+#if 0
 LoaddodsProcessing::LoaddodsProcessing()
 {
 }
+#endif
 
 LoaddodsProcessing::LoaddodsProcessing(DDS &dds) : MetadataProcessing(dds)
 {
@@ -321,10 +329,17 @@ add_size_attr(BaseType &bt)
 void 
 LoaddodsProcessing::add_size_attributes()
 {
+    DDS::Vars_iter p = meta_dds.var_begin();
+    while (p != meta_dds.var_end()) {
+        add_size_attr(*(*p));
+        ++p;
+    }
+#if 0
     for (Pix p = meta_dds.first_var(); p; meta_dds.next_var(p)) {
 	BaseType &bt = *meta_dds.var(p);
 	add_size_attr(bt);
     }
+#endif
 }
 
 static void
@@ -338,8 +353,15 @@ add_realname_attr(BaseType &bt)
 	  case dods_grid_c: {
 	      ClientGrid &g = dynamic_cast<ClientGrid &>(bt);
 	      add_realname_attr(*g.array_var());
+              Grid::Map_iter p = g.map_begin();
+              while (p != g.map_end()) {
+                  add_realname_attr(*(*p));
+                  ++p;
+              }
+#if 0
 	      for (Pix p = g.first_map_var(); p; g.next_map_var(p))
 		  add_realname_attr(*g.map_var(p));
+#endif
 	      break;
 	  }
 	  case dods_structure_c:  {

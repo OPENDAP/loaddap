@@ -88,24 +88,23 @@ ClientByte::read(const string &)
 }
 
 void
-ClientByte::print_val(ostream &os, string, bool print_decl_p)
+ClientByte::print_val(FILE *os, string, bool print_decl_p)
 {
     if (print_decl_p)
-      os << type_name() << endl << get_matlab_name() << endl;
-      //os << type_name() << endl << names.lookup(name(), translate) << endl;
+      fprintf(os, "%s\n%s\n", type_name().c_str(), get_matlab_name().c_str());
 
     if (numeric_to_float) {
 	dods_float64 df = _buf;
-	if (ascii)
-	    os << df << " ";
-	else
-	    os.write((char *)&df, sizeof(dods_float64));
+        if (ascii)
+            fprintf(os, "%lf ", df);
+        else
+            fwrite((void *)&df, sizeof(dods_float64), 1, os);
     }
     else {
-	if (ascii)
-	    os << (unsigned int)_buf << " ";
-	else
-	    os.write((char *)&_buf, sizeof(dods_byte));
+        if (ascii)
+            fprintf(os, "%d ", (unsigned int)_buf);
+        else
+            fwrite((void *)&_buf, sizeof(dods_byte), 1, os);
     }	
 }
 
