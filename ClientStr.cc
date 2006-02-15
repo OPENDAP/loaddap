@@ -131,16 +131,16 @@ ClientStr::print_val(FILE *os, string, bool print_decl_p)
             fprintf(os, "%lf ", val);
 //	    ss << val << " ";
 	else
-            fwrite((void *)&val, sizeof(double), 1, os);
+	    fwrite((void *)&val, sizeof(double), 1, os);
 //	    os.write((char *)&val, sizeof(double));
     }
     else {
 	if (print_decl_p)
-            fprintf(os, "%s\n%s\n", type_name(), get_matlab_name().c_str());
+            fprintf(os, "%s\n%s\n", type_name().c_str(), get_matlab_name().c_str());
 //	    os << type_name() << endl << get_matlab_name() << endl;
 
         // There's no special case for ASCII since this is a String.
-        fprintf(os, "%s ", _buf.c_str());
+        fprintf(os, "%s\n", _buf.c_str());
 //	os << _buf << endl;
     }
 }
