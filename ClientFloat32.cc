@@ -45,6 +45,7 @@
 #include "dods-limits.h"
 #include "ClientFloat32.h"
 #include "name_map.h"
+#include "debug.h"
 
 extern name_map names;
 extern bool translate;
@@ -79,12 +80,14 @@ ClientFloat32::print_val(FILE *os, string, bool print_decl_p)
     if (print_decl_p)
       fprintf(os, "%s\n%s\n", type_name().c_str(), get_matlab_name().c_str());
 
+    DBG( cerr << "CF32: Translate: " << translate << ";" << endl;)
+
     if (translate) {
         dods_float64 df = _buf;
         if (ascii)
             fprintf(os, "%lg ", df);
         else
-            fwrite((void *)&df, sizeof(dods_float32), 1, os);
+            fwrite((void *)&df, sizeof(dods_float64), 1, os);
     }
     else {
         if (ascii)
