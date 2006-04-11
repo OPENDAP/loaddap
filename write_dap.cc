@@ -82,6 +82,8 @@ static char rcsid[] not_used = {"$Id$"};
 #include <io.h>
 #endif
 
+using namespace std;
+
 name_map names;
 bool ascii = false;
 bool translate = false;
@@ -191,6 +193,8 @@ process_data(Connect &url, DDS *dds)
     if (verbose)
 	cerr << "Server version: " << url.get_version() << endl;
     
+    DBG(cerr << "process_data(): translate:" << translate << ";" << endl);
+
     DDS::Vars_iter q;
     for (q = dds->var_begin(); q != dds->var_end(); ++q) {
 	(*q)->print_val(stdout);
@@ -239,7 +243,7 @@ output_error_object(Error &e)
 {
     if (e.OK()) {
 	cout << "Error" << endl;
-	cout << e.error_message() << endl << endl;
+	cout << e.get_error_message() << endl << endl;
     }
 }
 
