@@ -583,9 +583,9 @@ read_string_value(FILE *fin)
     int is_quoted = FALSE;
     int first_line = TRUE;
     char *value = NULL;
-    char *lbuf = mxMalloc(sizeof(char) * MAX_STR);
+    char *lbuf = mxMalloc(sizeof(char) * BIG_STR);
 
-    fgets(lbuf, MAX_STR-1, fin);
+    fgets(lbuf, BIG_STR-1, fin);
     is_quoted = (*lbuf == '"');
 
     len = strlen(lbuf);
@@ -602,7 +602,7 @@ read_string_value(FILE *fin)
 	   : !IS_END_NEWLINE(lbuf, len))
       {
 	first_line = FALSE;
-	fgets(lbuf, MAX_STR-1, fin);
+	fgets(lbuf, BIG_STR-1, fin);
 	len = strlen(lbuf);
 	value = mxRealloc(value, sizeof(char) * (len + strlen(value) + 1));
 	strncat(value, lbuf, len);
@@ -752,6 +752,7 @@ do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
 	}
       else
 	{
+	  DBG(msg("do_array: name: %s\n",name));
 	  if (!intern(name, ndims, dims, yp, extend_existing_variables))
 	    return FALSE;
 	}
