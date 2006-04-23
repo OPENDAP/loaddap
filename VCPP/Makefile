@@ -1,66 +1,60 @@
-
-# Base Dods distribution Directory
-DODSDIR		= ..\..\..\..
+# Makefile for loaddap (under VC++ on win32)
 
 # Setup directories for intermediate files and built components
-OBJDIR		= objects
-INSTALLLIBDIR	= $(DODSDIR)\lib
-INSTALLEXEDIR	= $(DODSDIR)\bin
-
-# Directories of prebuilt libraries
-LIBDIR		= $(DODSDIR)\lib
-
-# Header Directories
-INCDIR		= $(DODSDIR)\include
+OBJDIR		= .\objects
+SRCDIR		= ..
+INSTALLLIBDIR	= ..\..\prepkg\lib
+INSTALLDLLDIR	= ..\..\prepkg\dll
+INSTALLBINDIR	= ..\..\prepkg\bin
+INSTALLETCDIR	= ..\..\prepkg\etc
+INSTALLINCDIR	= ..\..\prepkg\include
 
 # Setup basic compiler flags for all .obj's
 CC		= cl
-CFLAGS		= /nologo /MT /W0 /GR /GX /c
-#CFLAGS		= /MTd /Zi /W3 /GR /GX /c			# debug
+CFLAGS		= /nologo /MT /W0 /GR /EHsc /c
+#CFLAGS		= /MTd /W3 /GR /EHsc /c		# debug
 
 # Linker flags
 LINK		= link
-LIBPATH		= /libpath:$(LIBDIR)
-DODSLIBS	= libdap++.lib pthreadVCE.lib libcurl.lib librx.lib libz.lib libxdr.lib
+LIBPATH		= /libpath:$(INSTALLLIBDIR)
+DODSLIBS	= libdapMT.lib pthreadVC.lib libcurl.lib zlib.lib libxdr.lib
 SYSLIBS		= ws2_32.lib wsock32.lib advapi32.lib
 LINKLIBS	= $(DODSLIBS) $(SYSLIBS)
 LFLAGS		= /nologo /subsystem:console $(LINKLIBS) /machine:I386 $(LIBPATH)
-#LFLAGS		= /DEBUG /subsystem:console $(LINKLIBS) /machine:I386 $(LIBPATH)	# debug
-
+#LFLAGS		= /DEBUG /subsystem:console $(LINKLIBS) /machine:I386 $(LIBPATH) # debug
 
 # Setup cmex flags
-CMEX		= cmex
+CMEX		= mex
 CMEXFLAGS	=
-CMEXLIBS	= $(LIBDIR)\libcurl.lib $(LIBDIR)\librx.lib $(LIBDIR)\libz.lib
-CMEXDODSLIBS	= $(CMEXLIBS) $(LIBDIR)\libdap++.lib $(LIBDIR)\libxdr.lib
+CMEXLIBS	= libcurl.lib zlib.lib
+CMEXDODSLIBS	= $(CMEXLIBS) $(INSTALLLIBDIR)\libdapMT.lib libxdr.lib
 CMEXLINKLIBS	= $(CMEXDODSLIBS) user32.lib
 
 # Setup compiler includes and defines for libraries and .exe's
-INCS		= /I . /I .. /I $(INCDIR) /I $(INCDIR)\w3c-libwww /I $(INCDIR)
-DEFS		= /D WIN32 /D _CONSOLE /D DODS_VERSION=\"3.2.2\" /D VERSION=\"3.2.2\"
-#DEFS		= /D DODS_DEBUG /D DODS_DEBUG2 /D WIN32 /D _CONSOLE /D DODS_VERSION=\"3.2.2\" /D VERSION=\"3.2.2\"    # debug
+INCS		= /I . /I .. /I $(INSTALLINCDIR)
+DEFS		= /D WIN32 /D _CONSOLE /D V5_COMPAT
 CPPFLAGS	= $(DEFS) $(INCS)
 
 # Combine compiler flags
 OBJFLAGS	= $(CFLAGS) $(CPPFLAGS)
 
 # Define the targets
-TARGETS		= $(OBJDIR)\loaddods.dll $(OBJDIR)\writeval.exe
+TARGETS		= $(OBJDIR)\loaddap.dll $(OBJDIR)\writedap.exe
 
 # Clear built-in rules and set new ones
 .SUFFIXES :
 .SUFFIXES :	.obj .cc .c
 
 {..}.c{$(OBJDIR)}.obj:
-	@$(CC) $(OBJFLAGS) /Fo$@ /Tc $<
+	$(CC) $(OBJFLAGS) /Fo$@ /Tc $<
 
 .c{$(OBJDIR)}.obj:
-	@$(CC) $(OBJFLAGS) /Fo$@ /Tc $<
+	$(CC) $(OBJFLAGS) /Fo$@ /Tc $<
 
 {..}.cc{$(OBJDIR)}.obj:
-	@$(CC) $(OBJFLAGS) /Fo$@ /Tp $<
+	$(CC) $(OBJFLAGS) /Fo$@ /Tp $<
 
-DLLOBJS		= $(OBJDIR)\loaddods.obj \
+DLLOBJS		= $(OBJDIR)\loaddap.obj \
 		$(OBJDIR)\variable.obj \
 		$(OBJDIR)\extend.obj \
 		$(OBJDIR)\error.obj \
@@ -68,7 +62,7 @@ DLLOBJS		= $(OBJDIR)\loaddods.obj \
 		$(OBJDIR)\process_values.obj \
 		$(OBJDIR)\conpipe.obj
 
-WV_OBJS		= $(OBJDIR)\write_val.obj \
+WD_OBJS		= $(OBJDIR)\write_val.obj \
 		$(OBJDIR)\name_map.obj \
 		$(OBJDIR)\MetadataProcessing.obj \
 		$(OBJDIR)\LoaddodsProcessing.obj
@@ -90,23 +84,19 @@ CLIENTOBJS	= $(OBJDIR)\ClientByte.obj \
 
 all: setup $(TARGETS)
 
-# As long as loaddods.dll exists, it appears nothing went wrong despite the messages
+# As long as loaddap.dll exists, it appears nothing went wrong despite the messages
 # to the contrary.  I expect this problem doesn't show up under Win95/98.
-$(OBJDIR)\loaddods.dll: $(DLLOBJS)
-	@$(CMEX) $(CMEXFLAGS) -output loaddods -outdir $(OBJDIR) $(DLLOBJS) $(CMEXLINKLIBS)
-	@echo "Ignore any cmex link error for loaddods.dll (Matlab bug)"
+$(OBJDIR)\loaddap.dll: $(DLLOBJS)
+	$(CMEX) $(CMEXFLAGS) -output loaddap -outdir $(OBJDIR) $(DLLOBJS) $(CMEXLINKLIBS)
+	@echo "Ignore any cmex link error for loaddap.dll (Matlab bug)"
 
-$(OBJDIR)\writeval.exe: $(WV_OBJS) $(CLIENTOBJS)
-	@$(LINK) $(LFLAGS) /OUT:$(OBJDIR)\writeval.exe $(WV_OBJS) $(CLIENTOBJS) $(LINKLIBS)
+$(OBJDIR)\writedap.exe: $(WD_OBJS) $(CLIENTOBJS)
+	$(LINK) $(LFLAGS) /OUT:$(OBJDIR)\writedap.exe $(WD_OBJS) $(CLIENTOBJS) $(LINKLIBS)
 
 install:
-	copy $(OBJDIR)\loaddods.dll $(INSTALLEXEDIR)
-	copy $(OBJDIR)\writeval.exe $(INSTALLEXEDIR)
+	copy $(OBJDIR)\loaddap.dll $(INSTALLEXEDIR)
+	copy $(OBJDIR)\writedap.exe $(INSTALLEXEDIR)
 
-# Don't use the built-in "extended DOS" commands with all the
-# fancy flags.  Win95/98 systems don't have those so we must
-# keep it simple.  Sticking with no-flag versions of copy, mkdir,
-# rmdir and del are a safe bet.
 setup:
 	@-mkdir $(OBJDIR)
 	@-mkdir $(INSTALLLIBDIR)
