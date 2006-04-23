@@ -32,7 +32,7 @@ CMEXLINKLIBS	= $(CMEXDODSLIBS) user32.lib
 
 # Setup compiler includes and defines for libraries and .exe's
 INCS		= /I . /I .. /I $(INSTALLINCDIR)
-DEFS		= /D WIN32 /D _CONSOLE /D V5_COMPAT
+DEFS		= /D HAVE_CONFIG_H /D WIN32 /D _CONSOLE /D V5_COMPAT
 CPPFLAGS	= $(DEFS) $(INCS)
 
 # Combine compiler flags
