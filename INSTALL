@@ -1,7 +1,7 @@
 
 	$Id$
 
-Updated for version 3.5.0
+Updated for version 3.5.2
 
 Installing the OPeNDAP Matlab client
 
@@ -75,7 +75,7 @@ REQUIREMENTS
     If you're building on Mac OS/X 10.4 (Tiger), you will need to install
     all three of these tools before building even though OS/X includes them.
 
-  o The software requires libdap 3.5.2 or newer.
+  o The software requires libdap 3.6.2 or newer.
   
   o We test loaddap using Matlab 7 although it's possible the software will
     work with Matlab 5 or 6. The $MATLAB/bin directory must be on your path
