@@ -1,4 +1,14 @@
 
+News for 3.5.2
+
+04/19/05
+
+I fixed bug ### where large string variables/attributes cause the client to
+fail.  This was caused by an incorrect use of the MAX_STR constant when the 
+BIG_STR constant should have been used for allocating static character arrays.
+Granted MAX_STR and BIG_STR aren't the best differentiating names but that's
+what we're working with.
+
 News for 3.5.1
 
 12/27/05
