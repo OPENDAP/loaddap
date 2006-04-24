@@ -10,7 +10,7 @@ URL: http://www.opendap.org/
 Group: Development/Libraries
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 License: LGPL/W3C
-Requires: libdap >= 3.5.0
+Requires: libdap >= 3.6.0
 # Mandrake
 #BuildRequires: libcurl3-devel >= 7.10.6 libxml2-devel >= 2.5.7
 # fedora
