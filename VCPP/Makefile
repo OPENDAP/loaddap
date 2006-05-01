@@ -6,6 +6,7 @@ SRCDIR		= ..
 INSTALLLIBDIR	= ..\..\prepkg\lib
 INSTALLDLLDIR	= ..\..\prepkg\dll
 INSTALLBINDIR	= ..\..\prepkg\bin
+INSTALLEXEDIR	= ..\..\prepkg\bin
 INSTALLETCDIR	= ..\..\prepkg\etc
 INSTALLINCDIR	= ..\..\prepkg\include
 
@@ -31,8 +32,8 @@ CMEXDODSLIBS	= $(CMEXLIBS) $(INSTALLLIBDIR)\libdapMT.lib libxdr.lib
 CMEXLINKLIBS	= $(CMEXDODSLIBS) user32.lib
 
 # Setup compiler includes and defines for libraries and .exe's
-INCS		= /I . /I .. /I $(INSTALLINCDIR)
-DEFS		= /D HAVE_CONFIG_H /D WIN32 /D _CONSOLE /D V5_COMPAT
+INCS		= /I . /I $(INSTALLINCDIR) /I $(INSTALLINCDIR)\GNU /I $(INSTALLINCDIR)\gl /I ..
+DEFS		= /D HAVE_CONFIG_H /D WIN32 /D WIN32_LEAN_AND_MEAN /D _CONSOLE /D V5_COMPAT
 CPPFLAGS	= $(DEFS) $(INCS)
 
 # Combine compiler flags
@@ -62,7 +63,7 @@ DLLOBJS		= $(OBJDIR)\loaddap.obj \
 		$(OBJDIR)\process_values.obj \
 		$(OBJDIR)\conpipe.obj
 
-WD_OBJS		= $(OBJDIR)\write_val.obj \
+WD_OBJS		= $(OBJDIR)\write_dap.obj \
 		$(OBJDIR)\name_map.obj \
 		$(OBJDIR)\MetadataProcessing.obj \
 		$(OBJDIR)\LoaddodsProcessing.obj
@@ -74,8 +75,8 @@ CLIENTOBJS	= $(OBJDIR)\ClientByte.obj \
 		$(OBJDIR)\ClientUrl.obj \
 		$(OBJDIR)\ClientArray.obj \
 		$(OBJDIR)\ClientStructure.obj \
-		$(OBJDIR)\ClientList.obj \
 		$(OBJDIR)\ClientSequence.obj \
+		$(OBJDIR)\ClientTypeFactory.obj \
 		$(OBJDIR)\ClientGrid.obj \
 		$(OBJDIR)\ClientUInt32.obj \
 		$(OBJDIR)\ClientInt16.obj \
@@ -84,10 +85,10 @@ CLIENTOBJS	= $(OBJDIR)\ClientByte.obj \
 
 all: setup $(TARGETS)
 
-# As long as loaddap.dll exists, it appears nothing went wrong despite the messages
-# to the contrary.  I expect this problem doesn't show up under Win95/98.
+# As long as loaddap.dll exists, it appears nothing went wrong despite
+# any message to the contrary.
 $(OBJDIR)\loaddap.dll: $(DLLOBJS)
-	$(CMEX) $(CMEXFLAGS) -output loaddap -outdir $(OBJDIR) $(DLLOBJS) $(CMEXLINKLIBS)
+	@-$(CMEX) $(CMEXFLAGS) -output loaddap.dll -outdir $(OBJDIR) $(DLLOBJS) $(CMEXLINKLIBS)
 	@echo "Ignore any cmex link error for loaddap.dll (Matlab bug)"
 
 $(OBJDIR)\writedap.exe: $(WD_OBJS) $(CLIENTOBJS)
@@ -98,16 +99,16 @@ install:
 	copy $(OBJDIR)\writedap.exe $(INSTALLEXEDIR)
 
 setup:
-	@-mkdir $(OBJDIR)
-	@-mkdir $(INSTALLLIBDIR)
-	@-mkdir $(INSTALLEXEDIR)
+	@-md $(OBJDIR)
+	@-md $(INSTALLLIBDIR)
+	@-md $(INSTALLEXEDIR)
 
 clean:
 	@-del $(OBJDIR)\*.dll
 	@-del $(OBJDIR)\*.exe
 	@-del $(OBJDIR)\*.obj
 	@-del $(OBJDIR)\*.map
-	@-rmdir $(OBJDIR)
+	@-rd $(OBJDIR)
 
 #include "dependancies"
 
