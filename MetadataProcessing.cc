@@ -69,7 +69,10 @@ MetadataProcessing::transfer_attr(DAS &das, BaseType &bt)
 	DBG(cerr << " About to cast a " << bt.type_name() << endl);
 
 	AttributeInterface &ai = dynamic_cast<AttributeInterface &>(bt);
+#if 0
+        // Unused
 	AttrTable &at = ai.getAttrTable();
+#endif
 
 	try {
 	    // Use the variable's name to find the correct attribtue table in

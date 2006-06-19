@@ -82,7 +82,7 @@ ClientStructure::read(const string &)
 }
 
 void 
-ClientStructure::print_val(FILE *os, string space, bool print_decls)
+ClientStructure::print_val(FILE *os, string /*space*/, bool print_decls)
 {
     if (print_decls) {
 	int numElements = 0;

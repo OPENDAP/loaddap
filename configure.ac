@@ -44,7 +44,7 @@ dnl Checks for specific libraries
 
 AC_CHECK_LIBDAP([3.5.0],
  [
-  LIBS="$LIBS $DAP_LIBS"
+  LIBS="$LIBS $DAP_CLIENT_LIBS"
   CPPFLAGS="$CPPFLAGS $DAP_CFLAGS"
  ],
  [ AC_MSG_ERROR([Cannot find libdap])

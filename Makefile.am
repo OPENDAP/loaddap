@@ -22,8 +22,7 @@ CXXFLAGS_DEBUG = -g3 -O0 -Wall -fno-defer-pop
 TEST_COV_FLAGS = -ftest-coverage -fprofile-arcs
 
 bin_PROGRAMS = writedap
-pkgdata_SCRIPTS = whodap.m
-dist_pkgdata_DATA = loaddap.m
+bin_SCRIPTS = whodap.m loaddap.m
 
 CLIENTSRCS = ClientByte.cc ClientInt32.cc ClientFloat64.cc ClientStr.cc	\
 	ClientUrl.cc ClientArray.cc ClientStructure.cc			\
