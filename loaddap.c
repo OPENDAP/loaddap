@@ -597,6 +597,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
     char *dods_url = 0;
     char *dods_url_escaped = 0;
     char *pathname = 0;
+    int status;			/* Used below to catch writedap's exit */
     FILE *fin;
     
     /* This function is null for anything except linux. */
@@ -672,27 +673,13 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
 	    fread(&c, 1, 1, fin);
     }
 
-#if 0
-    {
-	int status;
-	status = pclose(fin);
-	if (status != 0) {
-	    err_msg(\
-"Error: The loaddap helper application writedap reported an error (%d). \n\
-       This may be due to an earlier error. However, if there was no previous\n\
-       error message, please report this to support@unidata.ucar.edu.\n",
-                    status);
-    }
-#endif
-
-        int status;
-        status = pclose(fin);
-        /* Added errno ECHILD for fc4 64-bit work-around */
-        if (status != 0 && errno != ECHILD) {
-            err_msg(\
+    status = pclose(fin);
+    /* Added errno ECHILD for fc4 64-bit work-around */
+    if (status != 0 && errno != ECHILD) {
+	err_msg(\
 "Error: Communication with the loaddap helper application writedap: \n\
 %s\n", strerror(errno));
-            err_msg(\
+	err_msg(\
 "This may be due to an earlier error. However, if there was no previous\n\
 error message, please report this to support@unidata.ucar.edu.\n");
     }
