@@ -1,116 +1,148 @@
-# Makefile for loaddap (under VC++ on win32)
+# Makefile for loaddap (using VC++ 8.x on win32)
 
-# Setup directories for intermediate files and built components
-OBJDIR		= .\objects
-SRCDIR		= ..
-INSTALLLIBDIR	= ..\..\prepkg\lib
-INSTALLDLLDIR	= ..\..\prepkg\dll
-INSTALLBINDIR	= ..\..\prepkg\bin
-INSTALLEXEDIR	= ..\..\prepkg\bin
-INSTALLETCDIR	= ..\..\prepkg\etc
-INSTALLINCDIR	= ..\..\prepkg\include
+# Source code and target build areas
+OBJDIR			= .\objects
+SRCDIR			= ..
 
-# Setup basic compiler flags for all .obj's
+# This is the prepackaging area.  Contents should never be on the build path.
+PKGDIR			= ..\..\prepkg\ml-structs
+PKGLIBDIR		= $(PKGDIR)\lib
+PKGDLLDIR		= $(PKGDIR)\dll
+PKGBINDIR		= $(PKGDIR)\bin
+PKGINCDIR		= $(PKGDIR)\include
+PKGIDLDIR		= $(PKGDIR)\idl
+
+# This is the installation area.  Select directories should be on the build
+# in order to pick up the Core headers and libraries only.
+INSTALLDIR		= ..\..
+INSTALLLIBDIR	= $(INSTALLDIR)\lib
+INSTALLDLLDIR	= $(INSTALLDIR)\dll
+INSTALLBINDIR	= $(INSTALLDIR)\bin
+INSTALLINCDIR	= $(INSTALLDIR)\include
+INSTALLIDLDIR	= $(INSTALLDIR)\idl
+
+# This is where we get Core (libdap) related building materials.
+LIBDIR			= $(INSTALLLIBDIR)  # To pickup Core libraries
+INCLUDEDIR		= $(INSTALLINCDIR)  # To pickup Core headers
+
+# Compiler, Linker
 CC		= cl
-CFLAGS		= /nologo /MT /W0 /GR /EHsc /c
-#CFLAGS		= /MTd /W3 /GR /EHsc /c		# debug
+LINK	= link
 
-# Linker flags
-LINK		= link
-LIBPATH		= /libpath:$(INSTALLLIBDIR)
-DODSLIBS	= libdapMT.lib pthreadVC.lib libcurl.lib zlib.lib libxdr.lib
-SYSLIBS		= ws2_32.lib wsock32.lib advapi32.lib
-LINKLIBS	= $(DODSLIBS) $(SYSLIBS)
-LFLAGS		= /nologo /subsystem:console $(LINKLIBS) /machine:I386 $(LIBPATH)
-#LFLAGS		= /DEBUG /subsystem:console $(LINKLIBS) /machine:I386 $(LIBPATH) # debug
+# Setup linker flags for executables
+EMDLFLAGS		= /nologo /libpath:$(LIBDIR) /NODEFAULTLIB:LIBCMT.lib
+
+# Setup link libraries for executables
+EMDLLIBS		= libdapclientMD.lib libdapMD.lib libxml2.lib libcurl.lib zlib.lib libxdr.lib pthreadVC.lib ws2_32.lib wsock32.lib advapi32.lib
+
+# Setup compiler flags
+INCS			= /I . /I $(INCLUDEDIR) /I $(INCLUDEDIR)\GNU /I $(INCLUDEDIR)\gl /I ..
+DEFS			= /D HAVE_CONFIG_H /D WIN32 /D WIN32_LEAN_AND_MEAN /D V5_COMPAT
+MDCFLAGS		= /MD /D HAVE_PTHREAD_H
+CFLAGS			= $(DEFS) $(INCS) /nologo /W0 /GR /EHsc /c
 
 # Setup cmex flags
-CMEX		= mex
-CMEXFLAGS	=
-CMEXLIBS	= libcurl.lib zlib.lib
-CMEXDODSLIBS	= $(CMEXLIBS) $(INSTALLLIBDIR)\libdapMT.lib libxdr.lib
-CMEXLINKLIBS	= $(CMEXDODSLIBS) user32.lib
+CMEX			= mex
+CMEXFLAGS		=
+MEXLLIBS		= libcurl.lib zlib.lib libdapMD.lib libxdr.lib user32.lib
 
-# Setup compiler includes and defines for libraries and .exe's
-INCS		= /I . /I $(INSTALLINCDIR) /I $(INSTALLINCDIR)\GNU /I $(INSTALLINCDIR)\gl /I ..
-DEFS		= /D HAVE_CONFIG_H /D WIN32 /D WIN32_LEAN_AND_MEAN /D _CONSOLE /D V5_COMPAT
-CPPFLAGS	= $(DEFS) $(INCS)
+default:
+	@echo "usage: nmake all; nmake install; nmake package"
 
-# Combine compiler flags
-OBJFLAGS	= $(CFLAGS) $(CPPFLAGS)
+all:	modelMD
 
-# Define the targets
-TARGETS		= $(OBJDIR)\loaddap.dll $(OBJDIR)\writedap.exe
+modelMD:
+	@-md $(OBJDIR)\MD
+	@echo "Building MD model Matlab cmd-line client"
+	@nmake /NOLOGO CFLAGS="$(CFLAGS) $(MDCFLAGS)" LFLAGS="$(MEXLFLAGS)" LIBS="$(MEXLIBS)" OBJDIR=$(OBJDIR)\MD loaddap.dll
+	@nmake /NOLOGO CFLAGS="$(CFLAGS) $(MDCFLAGS)" LFLAGS="$(EMDLFLAGS)" LIBS="$(EMDLLIBS)" OBJDIR=$(OBJDIR)\MD writedap
+	@echo "MD model Matlab cmd-line client is complete"
+
+# Convenience dependancies
+writedap			:	$(OBJDIR)\writedap.exe
+loaddap.dll			:	$(OBJDIR)\loaddap.dll
 
 # Clear built-in rules and set new ones
 .SUFFIXES :
 .SUFFIXES :	.obj .cc .c
 
 {..}.c{$(OBJDIR)}.obj:
-	$(CC) $(OBJFLAGS) /Fo$@ /Tc $<
+	$(CC) $(CFLAGS) /Fo$@ /Tc $<
 
 .c{$(OBJDIR)}.obj:
-	$(CC) $(OBJFLAGS) /Fo$@ /Tc $<
+	$(CC) $(CFLAGS) /Fo$@ /Tc $<
 
 {..}.cc{$(OBJDIR)}.obj:
-	$(CC) $(OBJFLAGS) /Fo$@ /Tp $<
+	$(CC) $(CFLAGS) /Fo$@ /Tp $<
 
 DLLOBJS		= $(OBJDIR)\loaddap.obj \
-		$(OBJDIR)\variable.obj \
-		$(OBJDIR)\extend.obj \
-		$(OBJDIR)\error.obj \
-		$(OBJDIR)\MLVars.obj \
-		$(OBJDIR)\process_values.obj \
-		$(OBJDIR)\conpipe.obj
+			$(OBJDIR)\variable.obj \
+			$(OBJDIR)\extend.obj \
+			$(OBJDIR)\error.obj \
+			$(OBJDIR)\MLVars.obj \
+			$(OBJDIR)\process_values.obj \
+			$(OBJDIR)\conpipe.obj
 
 WD_OBJS		= $(OBJDIR)\write_dap.obj \
-		$(OBJDIR)\name_map.obj \
-		$(OBJDIR)\MetadataProcessing.obj \
-		$(OBJDIR)\LoaddodsProcessing.obj
+			$(OBJDIR)\name_map.obj \
+			$(OBJDIR)\MetadataProcessing.obj \
+			$(OBJDIR)\LoaddodsProcessing.obj
 
 CLIENTOBJS	= $(OBJDIR)\ClientByte.obj \
-		$(OBJDIR)\ClientInt32.obj \
-		$(OBJDIR)\ClientFloat64.obj \
-		$(OBJDIR)\ClientStr.obj \
-		$(OBJDIR)\ClientUrl.obj \
-		$(OBJDIR)\ClientArray.obj \
-		$(OBJDIR)\ClientStructure.obj \
-		$(OBJDIR)\ClientSequence.obj \
-		$(OBJDIR)\ClientTypeFactory.obj \
-		$(OBJDIR)\ClientGrid.obj \
-		$(OBJDIR)\ClientUInt32.obj \
-		$(OBJDIR)\ClientInt16.obj \
-		$(OBJDIR)\ClientUInt16.obj \
-		$(OBJDIR)\ClientFloat32.obj
-
-all: setup $(TARGETS)
+			$(OBJDIR)\ClientInt32.obj \
+			$(OBJDIR)\ClientFloat64.obj \
+			$(OBJDIR)\ClientStr.obj \
+			$(OBJDIR)\ClientUrl.obj \
+			$(OBJDIR)\ClientArray.obj \
+			$(OBJDIR)\ClientStructure.obj \
+			$(OBJDIR)\ClientSequence.obj \
+			$(OBJDIR)\ClientTypeFactory.obj \
+			$(OBJDIR)\ClientGrid.obj \
+			$(OBJDIR)\ClientUInt32.obj \
+			$(OBJDIR)\ClientInt16.obj \
+			$(OBJDIR)\ClientUInt16.obj \
+			$(OBJDIR)\ClientFloat32.obj
 
 # As long as loaddap.dll exists, it appears nothing went wrong despite
 # any message to the contrary.
 $(OBJDIR)\loaddap.dll: $(DLLOBJS)
-	@-$(CMEX) $(CMEXFLAGS) -output loaddap.dll -outdir $(OBJDIR) $(DLLOBJS) $(CMEXLINKLIBS)
+	-$(CMEX) $(MEXLFLAGS) -output $@ -outdir $(OBJDIR) $(DLLOBJS) $(CLLIBS)
 	@echo "Ignore any cmex link error for loaddap.dll (Matlab bug)"
 
 $(OBJDIR)\writedap.exe: $(WD_OBJS) $(CLIENTOBJS)
-	$(LINK) $(LFLAGS) /OUT:$(OBJDIR)\writedap.exe $(WD_OBJS) $(CLIENTOBJS) $(LINKLIBS)
+	$(LINK) $(LFLAGS) /OUT:$@ $(WD_OBJS) $(CLIENTOBJS) $(LIBS)
 
-install:
-	copy $(OBJDIR)\loaddap.dll $(INSTALLEXEDIR)
-	copy $(OBJDIR)\writedap.exe $(INSTALLEXEDIR)
+install: mkinstdirs
+	copy $(OBJDIR)\MD\loaddap.dll* $(INSTALLDLLDIR)
+	mt -nologo -manifest $(INSTALLDLLDIR)\loaddap.dll.manifest -outputresource:$(INSTALLDLLDIR)\loaddap.dll;2
+	del $(INSTALLDLLDIR)\loaddap.dll.manifest
 
-setup:
-	@-md $(OBJDIR)
-	@-md $(INSTALLLIBDIR)
-	@-md $(INSTALLEXEDIR)
+	copy $(OBJDIR)\MD\writedap.exe* $(INSTALLBINDIR)
+	mt -nologo -manifest $(INSTALLBINDIR)\writedap.exe.manifest -outputresource:$(INSTALLBINDIR)\writedap.exe;1
+	del $(INSTALLBINDIR)\writedap.exe.manifest
+
+package: mkpkgdirs
+	copy $(OBJDIR)\MD\loaddap.dll* $(PKGDLLDIR)
+	mt -nologo -manifest $(PKGDLLDIR)\loaddap.dll.manifest -outputresource:$(PKGDLLDIR)\loaddap.dll;2
+	del $(PKGDLLDIR)\loaddap.dll.manifest
+
+	copy $(OBJDIR)\MD\writedap.exe* $(PKGBINDIR)
+	mt -nologo -manifest $(PKGBINDIR)\writedap.exe.manifest -outputresource:$(PKGBINDIR)\writedap.exe;1
+	del $(PKGBINDIR)\writedap.exe.manifest
+
+mkinstdirs:
+	@-md $(INSTALLBINDIR)
+	@-md $(INSTALLDLLDIR)
+	
+mkpkgdirs:
+	@-md $(PKGBINDIR)
+	@-md $(PKGDLLDIR)
 
 clean:
-	@-del $(OBJDIR)\*.dll
-	@-del $(OBJDIR)\*.exe
-	@-del $(OBJDIR)\*.obj
-	@-del $(OBJDIR)\*.map
-	@-rd $(OBJDIR)
+	@-rd /Q /S $(OBJDIR) $(PKGDIR)
 
-#include "dependancies"
+!INCLUDE "dependancies"
+
 
 
 
