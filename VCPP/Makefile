@@ -1,16 +1,23 @@
 # Makefile for loaddap (using VC++ 8.x on win32)
 
-# Source code and target build areas
+# Source code, samples, docs and target build areas
 OBJDIR			= .\objects
 SRCDIR			= ..
+DOCDIR			= .\doc
+SAMPLEDIR		= .\sample
 
 # This is the prepackaging area.  Contents should never be on the build path.
-PKGDIR			= ..\..\prepkg\ml-structs
+# Fill in the VERSION (e.g., "= 3.5.2") to generate a final, version stamped
+# release of the product.
+PRODUCT			= ml-structs
+VERSION			=
+PKGDIR			= ..\..\prepkg\opendap\$(PRODUCT)$(VERSION)
 PKGLIBDIR		= $(PKGDIR)\lib
 PKGDLLDIR		= $(PKGDIR)\dll
 PKGBINDIR		= $(PKGDIR)\bin
+PKGETCDIR		= $(PKGDIR)\etc
 PKGINCDIR		= $(PKGDIR)\include
-PKGIDLDIR		= $(PKGDIR)\idl
+PKGSAMPLEDIR	= $(PKGDIR)\sample
 
 # This is the installation area.  Select directories should be on the build
 # in order to pick up the Core headers and libraries only.
@@ -18,8 +25,8 @@ INSTALLDIR		= ..\..
 INSTALLLIBDIR	= $(INSTALLDIR)\lib
 INSTALLDLLDIR	= $(INSTALLDIR)\dll
 INSTALLBINDIR	= $(INSTALLDIR)\bin
+INSTALLETCDIR	= $(INSTALLDIR)\etc
 INSTALLINCDIR	= $(INSTALLDIR)\include
-INSTALLIDLDIR	= $(INSTALLDIR)\idl
 
 # This is where we get Core (libdap) related building materials.
 LIBDIR			= $(INSTALLLIBDIR)  # To pickup Core libraries
@@ -112,7 +119,7 @@ $(OBJDIR)\loaddap.dll: $(DLLOBJS)
 $(OBJDIR)\writedap.exe: $(WD_OBJS) $(CLIENTOBJS)
 	$(LINK) $(LFLAGS) /OUT:$@ $(WD_OBJS) $(CLIENTOBJS) $(LIBS)
 
-install: mkinstdirs
+install: all mkinstdirs
 	copy $(OBJDIR)\MD\loaddap.dll* $(INSTALLDLLDIR)
 	mt -nologo -manifest $(INSTALLDLLDIR)\loaddap.dll.manifest -outputresource:$(INSTALLDLLDIR)\loaddap.dll;2
 	del $(INSTALLDLLDIR)\loaddap.dll.manifest
@@ -121,7 +128,7 @@ install: mkinstdirs
 	mt -nologo -manifest $(INSTALLBINDIR)\writedap.exe.manifest -outputresource:$(INSTALLBINDIR)\writedap.exe;1
 	del $(INSTALLBINDIR)\writedap.exe.manifest
 
-package: mkpkgdirs
+package: all mkpkgdirs document
 	copy $(OBJDIR)\MD\loaddap.dll* $(PKGDLLDIR)
 	mt -nologo -manifest $(PKGDLLDIR)\loaddap.dll.manifest -outputresource:$(PKGDLLDIR)\loaddap.dll;2
 	del $(PKGDLLDIR)\loaddap.dll.manifest
@@ -137,6 +144,11 @@ mkinstdirs:
 mkpkgdirs:
 	@-md $(PKGBINDIR)
 	@-md $(PKGDLLDIR)
+
+document:
+	@-md $(PKGSAMPLEDIR)
+	copy $(SAMPLEDIR)\* $(PKGSAMPLEDIR)
+	copy $(DOCDIR)\readme.txt $(PKGDIR)
 
 clean:
 	@-rd /Q /S $(OBJDIR) $(PKGDIR)
