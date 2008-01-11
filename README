@@ -1,10 +1,8 @@
 
  $Id$
  
-Be sure to add both /usr/local/share/loaddap and /usr/local/bin to
-your matlabpath! For example, you could add
+Be sure to add /usr/local/bin to your matlabpath! For example, you could add
 
-     addpath /usr/local/share/loaddap
      addpath /usr/local/bin
 
 to startup.m. The order of the paths' in the matlabpath variable is
@@ -13,16 +11,17 @@ before /usr/local/share/loaddap. If the order is reversed you will get
 a error in matlab about mismatched parentheses. Here's what matlabpath
 looks like when it's set correctly:
 
+<code>
      >> matlabpath
 
                 MATLABPATH
 
         /usr/local/bin
-        /usr/local/share/loaddap
         /Applications/MATLAB71/toolbox/matlab/general
 	.
 	.
 	.
+</code>
 
 Although the documentation says that you must use the -nojvm option
 when starting Matlab, that is not really true based on the latest
@@ -33,11 +32,13 @@ using -nojvm.
 
 Note: For some of the binary builds you may see a message like:
 
+<code>
   Unable to load mex file:
   /home/xcst/codes_programms/cmex/yprime.mexglx.
   /usr/local/matlab7/bin/glnx86/../../sys/os/glnx86/libgcc_s.so.1:
   version `GCC_3.3' not found (required by /usr/lib/libstdc++.so.6)
   ??? Invalid MEX-file '/home/xcst/codes_programms/cmex/yprime.mexglx': 
+</code>
 
 This happens because some linux distributions ship with newer versions of
 the GNU gcc compiler than the version Mathworks uses to build Matlab. A fix 
@@ -60,17 +61,18 @@ For installation information, see the file INSTALL.
 
 CONTENTS OF THIS DIRECTORY
 
-  The two main programs in this directory are loaddap and whodap.  These are
-  Matlab command line clients from OPeNDAP which provide a way to read data
-  from DAP-enabled servers directly into Matlab. The loaddap function reads data
-  from an OPeNDAP server and interns it in the Matlab workspace.  The whodap
-  function provides a listing of the variables in a dataset. Both
-  commands accept DAP URLs as arguments.
+The two main programs in this directory are loaddap and whodap.  These
+are Matlab command line clients from OPeNDAP which provide a way to
+read data from DAP-enabled servers directly into Matlab. The loaddap
+function reads data from an OPeNDAP server and interns it in the
+Matlab workspace.  The whodap function provides a listing of the
+variables in a dataset. Both commands accept DAP URLs as arguments.
 
-    whodap <dataset URL>
+whodap <dataset URL>
 
-  Example
+Example
 
+<code>
     >> whodap http://www.opendap.org/opendap/nph-dods/data/fnoc1.nc
     Dataset {
 	Int16 u[time_a = 16][lat = 17][lon = 21];
@@ -81,9 +83,11 @@ CONTENTS OF THIS DIRECTORY
     } fnoc1;
 
     loaddap <dataset URL>?<variables>
+</code>
 
-  Example:
+Example:
 
+<code>
     >> loaddap 'http://www.opendap.org/opendap/nph-dods/data/fnoc1.nc?u,v'
 
     Reading: http://www.opendap.org/opendap/nph-dods/data/fnoc1.nc
@@ -91,70 +95,74 @@ CONTENTS OF THIS DIRECTORY
     Server version: nc/3.4.8
     Creating matrix u (16 x 17 x 21) with 5712 elements.
     Creating matrix v (16 x 17 x 21) with 5712 elements.
+</code>
 
-  Note that you need the quotes around the argument to loaddap
-  because Matlab recognizes commas as special characters.
+Note that you need the quotes around the argument to loaddap because
+Matlab recognizes commas as special characters.
 
-  Both whodap and loaddap have online help (type `help loaddap' at the
-  Matlab prompt). Loaddap has many options, all described in the on-line
-  help. It can accept multiple URLs, rename variables, be used to read
-  dataset attribute information and be used in assignment statements. Here's
-  an example of loaddap called with an option and returning values using an
-  assignment statement. The -e option tells loaddap to use the new error
-  reporting scheme (see help for details). The values of u and v are stored
-  in a and b.
+Both whodap and loaddap have online help (type `help loaddap' at the
+Matlab prompt). Loaddap has many options, all described in the on-line
+help. It can accept multiple URLs, rename variables, be used to read
+dataset attribute information and be used in assignment
+statements. Here's an example of loaddap called with an option and
+returning values using an assignment statement. The -e option tells
+loaddap to use the new error reporting scheme (see help for
+details). The values of u and v are stored in a and b.
 
+<code>
     >> [a, b] = loaddap('-e', 'http://www.opendap.org/opendap/nph-dods/data/fnoc1.nc?u,v');   
     Reading: http://www.opendap.org/opendap/nph-dods/data/fnoc1.nc
       Constraint: u,v
     Server version: nc/3.1.0
     >> 
+</code>
 
 OTHER CONTENTS OF THIS DIRECTORY
 
-  In addition to the two user programs, this directory includes:
+In addition to the two user programs, this directory includes:
 
-    writedap - Dereferences a DAP URL and returns a mixed ASCII and binary
-      stream of data. loaddap calls writedap to perform the actual data
-      fetch and this program must be in the same directory as loaddap. While
-      this program was originally intended to be used with loaddap, it can
-      also be used for other purposes as well. For example a user could save
-      binary data to a file with writedap. Note that with the `-f' option
-      writedap translates all simple types to either Float64 or String.
+writedap - Dereferences a DAP URL and returns a mixed ASCII and binary
+stream of data. loaddap calls writedap to perform the actual data
+fetch and this program must be in the same directory as loaddap. While
+this program was originally intended to be used with loaddap, it can
+also be used for other purposes as well. For example a user could save
+binary data to a file with writedap. Note that with the `-f' option
+writedap translates all simple types to either Float64 or String.
 
-      writedap can also be used to read from standard input, write ASCII
-      output and access the DDS for a given dataset. See writedap's online 
-      help for information about these options.
+writedap can also be used to read from standard input, write ASCII
+output and access the DDS for a given dataset. See writedap's online
+help for information about these options.
 
 BACKGROUND TECHNICAL INFORMATION
 
-  The following provides background technical information on the design of
-  loaddap.
+The following provides background technical information on the design
+of loaddap.
 
-  There are two programs that comprise the OPeNDAP-Matlab command line
-  interface; loaddap and whodap. Both of these communicate with a
-  third program called writedap. writedap is a DAP2 client; programs pass 
-  writedap one or more URLs along with some options, and writedap returns
-  the results from a DAP-enabled server.
+There are two programs that comprise the OPeNDAP-Matlab command line
+interface; loaddap and whodap. Both of these communicate with a third
+program called writedap. writedap is a DAP2 client; programs pass
+writedap one or more URLs along with some options, and writedap
+returns the results from a DAP-enabled server.
 
 A grammar for writedap
 
-  Note: writedap supports all of the DAP2 datatypes even though this
-  documentation doesn't show it.
+Note: writedap supports all of the DAP2 datatypes even though this
+documentation doesn't show it.
 
-  Here is a pseudo grammar describing the output of writedap. I used *
-  as the Kleene closure (zero or more) and + as one or more. The idea
-  is simple; write the type and name of the variable each on one line
-  and data for it on the following line. For constructor types (Grid,
-  Sequence, Structure) it becomes more complex, but not much. For
-  arrays write Array, newline, the type, the name, the number of
-  dimensions, newline, a list of dimension sizes, newline and the
-  data. Finish by writing a newline.
+Here is a pseudo grammar describing the output of writedap. I used *
+as the Kleene closure (zero or more) and + as one or more. The idea is
+simple; write the type and name of the variable each on one line and
+data for it on the following line. For constructor types (Grid,
+Sequence, Structure) it becomes more complex, but not much. For arrays
+write Array, newline, the type, the name, the number of dimensions,
+newline, a list of dimension sizes, newline and the data. Finish by
+writing a newline.
 
-  While this means sending out some extra characters it makes the
-  output of writedap very simple to parse.  Strings are individually
-  terminated by a newline. A second newline follows the last string.
+While this means sending out some extra characters it makes the output
+of writedap very simple to parse.  Strings are individually terminated
+by a newline. A second newline follows the last string.
 
+<code>
   <data request> :: <variable>*
 
   <variable> :: <simple variable>
@@ -191,17 +199,17 @@ A grammar for writedap
                       'map <num of arrays>\n' (<array variable>)+ 
 
   <error> :: Error '\n' <message> '\n'
+</code>
 
-  Note:
-    The vector type's data is sent using the print_val() method of the
-    vector's contained type. That is, for a vector of int32s, the contained
-    type is int32 and the print_val() method of the int32 class is used to
-    send the vector's values. This method writes binary values and
-    terminates them with a `\n'.  Thus, the vector variable's print_val()
-    methods do not need to send the `\n'.  Since we know that all vector and
-    ctor types must ultimately `lead to' simple types, it is sufficient to
-    have the simple types handle writing the `\n' separators. Having the
-    ctors (and vectors) do this too just means more information for the
-    recipient to parse.
+Note: The vector type's data is sent using the print_val() method of
+the vector's contained type. That is, for a vector of int32s, the
+contained type is int32 and the print_val() method of the int32 class
+is used to send the vector's values. This method writes binary values
+and terminates them with a `\n'.  Thus, the vector variable's
+print_val() methods do not need to send the `\n'.  Since we know that
+all vector and ctor types must ultimately `lead to' simple types, it
+is sufficient to have the simple types handle writing the `\n'
+separators. Having the ctors (and vectors) do this too just means more
+information for the recipient to parse.
 
 

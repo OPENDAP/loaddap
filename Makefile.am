@@ -102,10 +102,34 @@ rpm: dist
 
 ###########################################################################
 
-# Build OS/X Packages. 
+# Build OS/X Packages. The strange operations with configure and make
+# are there so that the values built into dap-config will match the mac
+# osx install dirs and not the temp directory used to build the packages
 
-pkg:
-	./configure --prefix=`pwd`/mac_osx
-	make clean install
+PACKAGEMAKER=/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker*
+
+clean-pkg:
+	-rm -rf mac_osx @PACKAGE@-@PACKAGE_VERSION@.pkg
+	-rm -rf @PACKAGE@-@PACKAGE_VERSION@
+
+pkg-build:
+	./configure --prefix=/usr/local $(PKG_CONFIGURE_FLAGS)
+	make clean all
+	DESTDIR=${PWD}/mac_osx make install
+
+pkg-main:
+	./OSX_Resources/update_mac_package_contents.pl
+	${PACKAGEMAKER} -build -p @PACKAGE@-@PACKAGE_VERSION@.pkg \
+		-f mac_osx/usr/local/bin/ \
+		-ds -r OSX_Resources -i OSX_Resources/Info.plist \
+		-d OSX_Resources/Description.plist
+
+pkg-dmg:
+	mkdir @PACKAGE@-@PACKAGE_VERSION@
+	mv @PACKAGE@-@PACKAGE_VERSION@.pkg @PACKAGE@-@PACKAGE_VERSION@
+	cp README README.* NEWS @PACKAGE@-@PACKAGE_VERSION@
+	dropdmg -i --sanitize-for-servers --format zlib @PACKAGE@-@PACKAGE_VERSION@
+
+pkg: clean-pkg pkg-build pkg-main pkg-dmg
 
 # LocalWords:  mex Mathworks automake loaddap jhrg
