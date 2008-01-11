@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IFPkgDescriptionDescription</key>
+	<string>The loaddap command extension for Matlab 7.1+ (i.e.,
+	mex file). This requires the libdap package. The command must
+	be accessible to Matlab by adding its directory to matlabpath.</string>
+	<key>IFPkgDescriptionTitle</key>
+	<string>OPeNDAP loaddap Package</string>
+</dict>
+</plist>
