@@ -8,10 +8,6 @@
 	<string>opendap.loaddap</string>
 	<key>CFBundleShortVersionString</key>
 	<string>3.5.2</string>
-	<key>IFMajorVersion</key>
-	<integer>3</integer>
-	<key>IFMinorVersion</key>
-	<integer>5</integer>
 	<key>IFPkgFlagAllowBackRev</key>
 	<true/>
 	<key>IFPkgFlagAuthorizationAction</key>

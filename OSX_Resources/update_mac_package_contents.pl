@@ -24,11 +24,6 @@ sub substitute_values {
   my $get_info = 0;
   my $short_version = 0;
   my $installed_size = 0;
-  my $major_version = 0;
-  my $minor_version = 0;
-
-  my ($major_version_number, $minor_version_number)
-    = ($version_number =~ /([0-9]+)\.([0-9]+)\..*/);
 
   open INFO_PLIST, $info_plist or die("Could not open $info_plist\n");
   open OUT, ">$info_plist.out"  or die("Could not open $info_plist.out\n");
@@ -43,12 +38,6 @@ sub substitute_values {
     } elsif ( /IFPkgFlagInstalledSize/ ) {
       $installed_size = 1;
       print OUT $_ ;
-    } elsif ( /IFMajorVersion/ ) {
-      $major_version = 1;
-      print OUT $_ ;
-    } elsif ( /IFMinorVersion/ ) {
-      $minor_version = 1;
-      print OUT $_ ;
     } elsif ( $get_info == 1 && /^(\s*)<string>[0-9.]+, (.*)<\/string>/ ) {
       print OUT "$1<string>$version_number, $2</string>\n" ;
       $get_info = 0;
@@ -58,14 +47,6 @@ sub substitute_values {
     } elsif ( $installed_size == 1 && /^(\s*)<integer>.*/ ) {
       print OUT "$1<integer>$package_size</integer>\n" ;
       $installed_size = 0;
-
-    } elsif ( $major_version == 1 && /^(\s*)<integer>.*/ ) {
-      print OUT "$1<integer>$major_version_number</integer>\n" ;
-      $major_version = 0;
-    } elsif ( $minor_version == 1 && /^(\s*)<integer>.*/ ) {
-      print OUT "$1<integer>$minor_version_number</integer>\n" ;
-      $minor_version = 0;
-
     } else {
       print OUT $_ ;
     }
