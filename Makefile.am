@@ -110,7 +110,6 @@ PACKAGEMAKER=/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/P
 
 clean-pkg:
 	-rm -rf mac_osx @PACKAGE@-@PACKAGE_VERSION@.pkg
-	-rm -rf @PACKAGE@-@PACKAGE_VERSION@
 
 pkg-build:
 	./configure --prefix=/usr/local $(PKG_CONFIGURE_FLAGS)
@@ -125,9 +124,11 @@ pkg-main:
 		-d OSX_Resources/Description.plist
 
 pkg-dmg:
+	-rm -rf @PACKAGE@-@PACKAGE_VERSION@
+	-rm -rf @PACKAGE@-@PACKAGE_VERSION@.dmg*
 	mkdir @PACKAGE@-@PACKAGE_VERSION@
 	mv @PACKAGE@-@PACKAGE_VERSION@.pkg @PACKAGE@-@PACKAGE_VERSION@
-	cp README README.* NEWS @PACKAGE@-@PACKAGE_VERSION@
+	cp README NEWS ChangeLog @PACKAGE@-@PACKAGE_VERSION@
 	dropdmg -i --sanitize-for-servers --format zlib @PACKAGE@-@PACKAGE_VERSION@
 
 pkg: clean-pkg pkg-build pkg-main pkg-dmg

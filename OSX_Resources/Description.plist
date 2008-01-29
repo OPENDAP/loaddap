@@ -3,9 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>IFPkgDescriptionDescription</key>
-	<string>The loaddap command extension for Matlab 7.1+ (i.e.,
-	mex file). This requires the libdap package. The command must
-	be accessible to Matlab by adding its directory to matlabpath.</string>
+	<string>The loaddap command extension for Matlab 7.1+ (i.e., mex file). This requires the libdap package. The command must be accessible to Matlab by adding its directory to matlabpath.</string>
 	<key>IFPkgDescriptionTitle</key>
 	<string>OPeNDAP loaddap Package</string>
 </dict>

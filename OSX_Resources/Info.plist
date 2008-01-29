@@ -5,7 +5,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>3.5.2, loaddap</string>
 	<key>CFBundleIdentifier</key>
-	<string>opendap.loaddap</string>
+	<string>org.opendap.loaddap</string>
 	<key>CFBundleShortVersionString</key>
 	<string>3.5.2</string>
 	<key>IFPkgFlagAllowBackRev</key>
@@ -23,7 +23,7 @@
 	<key>IFPkgFlagInstallFat</key>
 	<false/>
 	<key>IFPkgFlagInstalledSize</key>
-	<integer>3280</integer>
+	<integer>3664</integer>
 	<key>IFPkgFlagIsRequired</key>
 	<false/>
 	<key>IFPkgFlagOverwritePermissions</key>
