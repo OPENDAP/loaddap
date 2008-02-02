@@ -34,6 +34,8 @@
 
 #include "BaseTypeFactory.h"
 
+using namespace libdap ;
+
 class ClientByte;
 class ClientInt16;
 class ClientUInt16;

@@ -40,6 +40,8 @@
 #include "AttrTable.h"
 #include "AttributeInterface.h"
 
+using namespace libdap ;
+
 class ClientFloat64: public Float64, public AttributeInterface {
 private:
     AttrTable _attr;

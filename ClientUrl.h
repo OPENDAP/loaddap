@@ -38,6 +38,8 @@
 
 #include "Url.h"
 
+using namespace libdap ;
+
 class ClientUrl: public Url {
 public:
     ClientUrl(const string &n = (char *)0);

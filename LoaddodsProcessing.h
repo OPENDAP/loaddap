@@ -34,6 +34,8 @@
 #include "InternalErr.h"
 #include "MetadataProcessing.h"
 
+using namespace libdap ;
+
 /** Print out text and binary values which the loaddods ML command extension
     can read and use to build a representation of this dataset. The dataset
     is represented as a ML structure where each field is a variable. For each

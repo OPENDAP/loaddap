@@ -39,6 +39,8 @@
 #include "Sequence.h"
 #include "AttributeInterface.h"
 
+using namespace libdap ;
+
 class ClientSequence: public Sequence, public AttributeInterface {
 private:
     AttrTable _attr;

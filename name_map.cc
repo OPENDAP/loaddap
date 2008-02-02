@@ -43,6 +43,8 @@ static char rcsid[] not_used = {"$Id$"};
 #include "escaping.h"
 #include "name_map.h"
 
+using namespace libdap ;
+
 name_map::name_map(char *raw_equiv) 
 {
     _names.push_back(name_equiv(raw_equiv));

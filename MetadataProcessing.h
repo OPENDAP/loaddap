@@ -33,6 +33,8 @@
 #include "DDS.h"
 #include "BaseType.h"
 
+using namespace libdap ;
+
 /** Combine DAS with DDS information for a dataset. The
     DDS is used to find the structure of the dataset (something that the DAS
     currently lacks). An instance of this class is first initialized using a

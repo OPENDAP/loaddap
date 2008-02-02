@@ -39,6 +39,8 @@
 #include "Array.h"
 #include "AttributeInterface.h"
 
+using namespace libdap ;
+
 /** This class provides access to Array data retrieved using the DAP
     protocol. The DAP protocol can be used to transport data values as well
     as metadata. Using the AttributeInterface of this class, metadata from

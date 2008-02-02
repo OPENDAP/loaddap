@@ -39,6 +39,8 @@
 #include "Grid.h"
 #include "AttributeInterface.h"
 
+using namespace libdap ;
+
 class ClientGrid: public Grid, public AttributeInterface {
 private:
     AttrTable _attr;

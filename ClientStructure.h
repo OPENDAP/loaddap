@@ -39,6 +39,8 @@
 #include "Structure.h"
 #include "AttributeInterface.h"
 
+using namespace libdap ;
+
 class ClientStructure: public Structure, public AttributeInterface {
 private:
     AttrTable _attr;

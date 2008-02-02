@@ -40,6 +40,8 @@
 #include "AttrTable.h"
 #include "AttributeInterface.h"
 
+using namespace libdap ;
+
 class ClientInt16: public Int16, public AttributeInterface {
 private:
     AttrTable _attr;

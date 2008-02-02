@@ -27,6 +27,9 @@
 #define __attribtue_interface_h
 
 #include "AttrTable.h"
+
+using namespace libdap ;
+
 /** This class supplies an interface which children of BaseType can use to
     access an AttrTable instance. The child classes must supply the AttrTable
     instance. 
