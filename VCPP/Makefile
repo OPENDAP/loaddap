@@ -50,8 +50,8 @@ CFLAGS			= $(DEFS) $(INCS) /nologo /W0 /GR /EHsc /c
 
 # Setup cmex flags
 CMEX			= mex
-CMEXFLAGS		=
-MEXLLIBS		= libcurl.lib zlib.lib libdapMD.lib libxdr.lib user32.lib
+CMEXFLAGS		= -I. -I.. -DHAVE_CONFIG_H -DWIN32 -V5
+# MEXLLIBS		= libcurl.lib zlib.lib libdapMD.lib libxdr.lib user32.lib
 
 default:
 	@echo "usage: nmake all; nmake install; nmake package"
@@ -61,13 +61,13 @@ all:	modelMD
 modelMD:
 	@-md $(OBJDIR)\MD
 	@echo "Building MD model Matlab cmd-line client"
-	@nmake /NOLOGO CFLAGS="$(CFLAGS) $(MDCFLAGS)" LFLAGS="$(MEXLFLAGS)" LIBS="$(MEXLIBS)" OBJDIR=$(OBJDIR)\MD loaddap.dll
+	@nmake /NOLOGO loaddap.mexw32
 	@nmake /NOLOGO CFLAGS="$(CFLAGS) $(MDCFLAGS)" LFLAGS="$(EMDLFLAGS)" LIBS="$(EMDLLIBS)" OBJDIR=$(OBJDIR)\MD writedap
 	@echo "MD model Matlab cmd-line client is complete"
 
 # Convenience dependancies
 writedap			:	$(OBJDIR)\writedap.exe
-loaddap.dll			:	$(OBJDIR)\loaddap.dll
+loaddap.mexw32		:	$(OBJDIR)\loaddap.mexw32
 
 # Clear built-in rules and set new ones
 .SUFFIXES :
@@ -82,14 +82,14 @@ loaddap.dll			:	$(OBJDIR)\loaddap.dll
 {..}.cc{$(OBJDIR)}.obj:
 	$(CC) $(CFLAGS) /Fo$@ /Tp $<
 
-DLLOBJS		= $(OBJDIR)\loaddap.obj \
-			$(OBJDIR)\variable.obj \
-			$(OBJDIR)\extend.obj \
-			$(OBJDIR)\error.obj \
-			$(OBJDIR)\MLVars.obj \
-			$(OBJDIR)\process_values.obj \
-			$(OBJDIR)\conpipe.obj
-
+MEXSRCS		= $(SRCDIR)\loaddap.c \
+			$(SRCDIR)\variable.c \
+			$(SRCDIR)\extend.c \
+			$(SRCDIR)\error.c \
+			$(SRCDIR)\MLVars.c \
+			$(SRCDIR)\process_values.c \
+			conpipe.c
+			
 WD_OBJS		= $(OBJDIR)\write_dap.obj \
 			$(OBJDIR)\name_map.obj \
 			$(OBJDIR)\MetadataProcessing.obj \
@@ -112,9 +112,9 @@ CLIENTOBJS	= $(OBJDIR)\ClientByte.obj \
 
 # As long as loaddap.dll exists, it appears nothing went wrong despite
 # any message to the contrary.
-$(OBJDIR)\loaddap.dll: $(DLLOBJS)
-	-$(CMEX) $(MEXLFLAGS) -output $@ -outdir $(OBJDIR) $(DLLOBJS) $(CLLIBS)
-	@echo "Ignore any cmex link error for loaddap.dll (Matlab bug)"
+$(OBJDIR)\loaddap.mexw32: $(MESXRCS)
+	@-md $(OBJDIR)
+	$(CMEX) $(CMEXFLAGS) -outdir $(OBJDIR) $(MEXSRCS)
 
 $(OBJDIR)\writedap.exe: $(WD_OBJS) $(CLIENTOBJS)
 	$(LINK) $(LFLAGS) /OUT:$@ $(WD_OBJS) $(CLIENTOBJS) $(LIBS)

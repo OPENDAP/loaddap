@@ -100,10 +100,14 @@ static char id[] not_used ={"$Id$"};
 #define PATH_SEPARATOR_CHAR '/'
 #endif
 
+#if 0
+#ifndef CONST
 #ifdef WIN32
 #define CONST
 #else
 #define CONST const
+#endif
+#endif
 #endif
 
 #if DMALLOC
@@ -323,7 +327,7 @@ lock_mex_function()
   @return A URL to a DODS dataset or NULL if no further action is required. */
 
 static char *
-init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
+init(int nlhs, mxArray *plhs[], const int nrhs, const mxArray *prhs[])
 {
     int i;			/* Count prhs[] elements. */
     char *s = mxCalloc(MAX_URL_LEN, sizeof(char)); /* Return this array. */
@@ -391,7 +395,7 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
 	FILE *fin;
 	char *pathname;
 	char *command;
-
+    DBG(msg("Entering -V\n");)
 	pathname = get_pathname(DODS_BASE_COMMAND);
 	if (!pathname) {
 	    err_msg(\
@@ -410,7 +414,7 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
 		     command));
 
 	/* If the user called loaddap('-V') using the assignment syntax,
-	   then make user that the version number string is assigned to the
+	   then make sure that the version number string is assigned to the
 	   LHS identifier given by the user. Otherwise, dump the version
 	   strings to stderr. 4/20/99 jhrg */
 	if (nlhs > 0) {
@@ -429,6 +433,7 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
            DBG(msg("command: %s\n", command));
            fin = popen(command, "r");
 #endif
+		   if (fin) {
 	    fgets(ver, MAX_STR, fin);
 	    DBG(msg("Writedap version string: %s\n", ver));
 	    pclose(fin);
@@ -436,6 +441,7 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
 	    strcat(ver, dods_version);
 	    plhs[0] = mxCreateString(ver);
 	    mxSetName(plhs[0], "dods_version");
+		   }
 	}
 	else {
 	    sprintf(command, DODS_COMPLETE_COMMAND, pathname, 
@@ -446,7 +452,8 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
 #else
 	    fin = popen(command, "r");
 #endif
-	    pclose(fin);
+		if (fin)
+			pclose(fin);
 	    msg("loaddap: %s\n", dods_version);
 	}
 
@@ -591,7 +598,7 @@ init(int nlhs, mxArray *plhs[], const int nrhs, CONST mxArray *prhs[])
 }
 
 void 
-mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
+mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     char *command = 0;
     char *dods_url = 0;
@@ -599,7 +606,8 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, CONST mxArray *prhs[])
     char *pathname = 0;
     int status;			/* Used below to catch writedap's exit */
     FILE *fin;
-    
+    mexPrintf("Entering loaddap\n");
+
     /* This function is null for anything except linux. */
     lock_mex_function();
 
