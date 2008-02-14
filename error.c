@@ -144,7 +144,7 @@ _intern_dods_err(int _err_state)
     array_ptr = mxCreateDoubleMatrix(1, 1, mxREAL);
     if (!array_ptr)
 	mexErrMsgTxt("Internal Error in the reporting system (1)\n\
-Please report this error to support@unidata.ucar.edu");
+Please report this error to support@opendap.org");
     mxSetName(array_ptr, "dods_err");
     mxSetPr(array_ptr, dde);
     mexPutArray(array_ptr, "caller");   
@@ -161,7 +161,7 @@ _intern_msg(char *_msg)
     error = mexPutArray(pm, "caller");
     if (error)
 	mexErrMsgTxt("Internal Error in the reporting system (1)\n\
-Please report this error to support@unidata.ucar.edu");
+Please report this error to support@opendap.org");
 }
 
 /** Initialize the error reporting subsystem of loaddods. 
@@ -193,33 +193,29 @@ err_init(int compat_mode)
 void 
 msg(const char *m, ...) 
 {
-#ifdef WIN32
-	char s[MSG_STR];
-#endif
+    char s[MSG_STR];
 
     va_list arg;
     va_start(arg, m);
 
-#ifdef WIN32
-	/*  There is no proper way output to the matlab window under   */
-	/*  win32 except via mexPrintf().  We _must_ use that in the   */
-	/*  win32 case.  I believe any *printf()'s aren't really valid */
-	/*  for unix in cmex files, but they get by.  See the matlab   */
-	/*  documentation for mexPrintf().  In any case, references to */
-	/*  stdout, stdin, stderr are not valid for code executing     */
-	/*  within win32 non-console programs even though they will    */
-	/*  compile ok.  Perhaps we should go with this code in the    */
-	/*  unix case also ??                                          */
-	vsprintf(s, m, arg);
-#else
-    vfprintf(stderr, m, arg);
-#endif
+    /* This is an old comment by Rob Morris from when he ported the code to
+       Win XP. He's right, using printf, fprintf, et c. is not supported by
+       Matlab any more. jhrg 2/13/2008 */
+
+    /*  There is no proper way output to the matlab window under   */
+    /*  win32 except via mexPrintf().  We _must_ use that in the   */
+    /*  win32 case.  I believe any *printf()'s aren't really valid */
+    /*  for unix in cmex files, but they get by.  See the matlab   */
+    /*  documentation for mexPrintf().  In any case, references to */
+    /*  stdout, stdin, stderr are not valid for code executing     */
+    /*  within win32 non-console programs even though they will    */
+    /*  compile ok.  Perhaps we should go with this code in the    */
+    /*  unix case also ??                                          */
+    vsprintf(s, m, arg);
 
     va_end(arg);
 
-#ifdef WIN32
-	mexPrintf(s);
-#endif
+    mexPrintf(s);
 }
 
 /** Write a message to the Matlab variable dods_err_msg. Also set the Matlab
@@ -234,16 +230,11 @@ err_msg(const char *m, ...)
     va_list arg;
     va_start(arg, m);
 
-    if (_comp_mode)
-	{
-#ifdef WIN32
+    if (_comp_mode) {
 	char s[MSG_STR];
 	vsprintf(s, m, arg);
 	mexPrintf(s);
-#else
-	vfprintf(stderr, m, arg);
-#endif
-	}
+    }
     else {
 	char s[MSG_STR];
 	vsprintf(s, m, arg);
@@ -277,15 +268,10 @@ perr_msg(const char *m, ...)
 
     if (_comp_mode) {
 	char *em = strerror(errno);
-#ifdef WIN32
 	char s[MSG_STR];
 	vsprintf(s, m, arg);
 	mexPrintf(s);
 	mexPrintf("%s\n", em ? em: "");
-#else
-	vfprintf(stderr, m, arg);
-	fprintf(stderr, "%s\n", em ? em: "");
-#endif
     }
     else {
 	char *em = strerror(errno);
@@ -327,79 +313,3 @@ main(int argc, char *argv[])
 }
 
 #endif
-
-/* 
- * $Log: error.c,v $
- * Revision 1.2  2003/12/08 17:59:50  edavis
- * Merge release-3-4 into trunk
- *
- * Revision 1.1.1.1  2003/10/22 19:43:29  dan
- * Version of the Matlab CommandLine client which uses Matlab Structure
- * variables to maintain the shape of the underlying DODS data.
- *
- * Revision 1.10  2001/08/27 18:06:57  jimg
- * Merged release-3-2-5.
- *
- * Revision 1.9.2.1  2000/12/13 01:33:31  jimg
- * Added defines.h or moved it after other preprocessor lines
- *
- * Revision 1.9  2000/11/22 23:43:00  jimg
- * Merge with pre-release 3.2
- *
- * Revision 1.3.2.9  2000/09/22 20:54:04  jimg
- * Added dmalloc stuff in DMALLOC guard
- *
- * Revision 1.8  2000/07/21 10:21:56  rmorris
- * Merged with win32-mlclient-branch.
- *
- * Revision 1.6.2.1  2000/06/26 23:02:21  rmorris
- * Modification for port to win32.
- *
- * Revision 1.7  2000/06/20 21:40:09  jimg
- * Merged with 3.1.6
- *
- * Revision 1.3.2.8  2000/06/20 20:36:46  jimg
- * Imporved error messages and fixed some doc++ comments (although some
- * problems remain).
- *
- * Revision 1.6  2000/04/20 23:38:13  jimg
- * Merged with release 3.1.3
- *
- * Revision 1.3.2.7  2000/04/20 19:54:48  jimg
- * *** empty log message ***
- *
- * Revision 1.3.2.6  2000/04/20 19:45:14  jimg
- * Changed some int variables to size_t.
- *
- * Revision 1.3.2.5  2000/04/19 05:58:33  jimg
- * Added two more calls to va_end().
- *
- * Revision 1.3.2.4  2000/04/14 16:46:02  edavis
- * Fixed some variable argument list stuff that died on DEC.
- *
- * Revision 1.5  2000/04/01 01:16:24  jimg
- * Merged with release-3-1-2
- *
- * Revision 1.3.2.3  2000/03/29 03:37:34  jimg
- * Added perr_msg() which prints a message along with a system error message
- * simplar to perror().
- *
- * Revision 1.3.2.2  2000/02/19 00:36:14  jimg
- * Switched from the ML 4 to 5 API.
- *
- * Revision 1.4  1999/11/09 06:43:41  jimg
- * result of merge with 3-1-1
- *
- * Revision 1.3.2.1  1999/11/02 23:49:37  jimg
- * Added instrumentation
- *
- * Revision 1.3  1999/07/24 00:09:29  jimg
- * Added include of config_writeval
- *
- * Revision 1.2  1999/04/30 17:06:57  jimg
- * Merged with no-gnu and release-2-24
- *
- * Revision 1.1.2.1  1999/04/29 20:10:26  jimg
- * Added
- * 
- */

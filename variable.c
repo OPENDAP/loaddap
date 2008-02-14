@@ -100,9 +100,9 @@ add_var(variable *vars, char *name, type t)
 
     /* Make new element. */
     var = (variable *)mxMalloc(sizeof(variable));
-    DBGM(fprintf(stderr, "mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, var));
+    DBGM(msg("mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, var));
     var->name = (char *)mxMalloc(sizeof(char) * (strlen(name) + 1));
-    DBGM(fprintf(stderr, "mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, 
+    DBGM(msg("mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, 
 		 var->name));
     strcpy(var->name, name);
     var->type = t;
@@ -114,15 +114,13 @@ add_var(variable *vars, char *name, type t)
       case float64:
 	var->data = (double *)mxMalloc(sizeof(double) * CLUMP);
 	var->size = CLUMP;
-	DBGM(fprintf(stderr, "mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, 
-		     var->data));
+	DBGM(msg("mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, var->data));
 	break;
 
       case string:
 	var->sdata = (char **)mxMalloc(sizeof(char *) * CLUMP);
 	var->size = CLUMP;
-	DBGM(fprintf(stderr, "mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, 
-		     var->sdata));
+	DBGM(msg("mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, var->sdata));
 
 	break;
 
@@ -153,7 +151,7 @@ add_float64_value(variable *var, double value)
 	var->data = (double *)mxRealloc(var->data, 
 				      sizeof(double) * (var->size + CLUMP));
 	var->size += CLUMP;
-	DBG2(fprintf(stderr, "mxRealloc: %x (%d bytes)\n", var->data, \
+	DBG2(msg("mxRealloc: %x (%d bytes)\n", var->data, \
 		     sizeof(double) * (var->size + CLUMP)));
     }
     
@@ -181,7 +179,7 @@ add_string_value(variable *var, char *value)
 	var->sdata = (char **)mxRealloc(var->sdata, 
 				      sizeof(char *) * (var->size + CLUMP));
 	var->size += CLUMP;
-	DBG2(fprintf(stderr, "mxRealloc: %x (%d bytes)\n", var->sdata, \
+	DBG2(msg("mxRealloc: %x (%d bytes)\n", var->sdata, \
 		     sizeof(char *) * (var->size + CLUMP)));
     }
 
@@ -191,7 +189,7 @@ add_string_value(variable *var, char *value)
 
     mxAssertS(var->length < var->size, "");
     var->sdata[var->length] = (char *)mxMalloc(string_len + 1);
-    DBGM(fprintf(stderr, "mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, 
+    DBGM(msg("mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, 
 		 var->sdata[var->length]));
 
     strcpy(var->sdata[var->length++], value);
@@ -212,115 +210,12 @@ free_vars(variable *vars)
 
     do {
 	vars = vars->next;
-	DBGM(fprintf(stderr, "mxFree (%s:%d): %x\n", __FILE__, __LINE__, 
-		     v->name));
+	DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, v->name));
 	mxFree(v->name);
 	/* Don't free data (but I don't understand why). 2/18/2000 jhrg */
 
-	DBGM(fprintf(stderr, "mxFree (%s:%d): %x\n", __FILE__, __LINE__, v));
+	DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, v));
 	mxFree(v);
 	v = vars;
     } while (vars);
 }
-
-/* 
- * $Log: variable.c,v $
- * Revision 1.2  2003/12/08 17:59:50  edavis
- * Merge release-3-4 into trunk
- *
- * Revision 1.1.1.1  2003/10/22 19:43:35  dan
- * Version of the Matlab CommandLine client which uses Matlab Structure
- * variables to maintain the shape of the underlying DODS data.
- *
- * Revision 1.17  2003/04/22 14:47:25  dan
- * Removed changes added to maintain DDS structure, these
- * changes have been placed on the structure-format1 branch
- * until the GUI is ready to use them.
- *
- * Revision 1.15  2001/08/27 18:06:57  jimg
- * Merged release-3-2-5.
- *
- * Revision 1.14.2.1  2000/12/13 01:33:31  jimg
- * Added defines.h or moved it after other preprocessor lines
- *
- * Revision 1.14  2000/11/22 23:43:00  jimg
- * Merge with pre-release 3.2
- *
- * Revision 1.9.8.7  2000/09/22 20:54:04  jimg
- * Added dmalloc stuff in DMALLOC guard
- *
- * Revision 1.13  2000/07/21 10:21:56  rmorris
- * Merged with win32-mlclient-branch.
- *
- * Revision 1.11.2.1  2000/06/26 23:03:39  rmorris
- * Mods for port to win32.
- *
- * Revision 1.12  2000/06/20 21:40:09  jimg
- * Merged with 3.1.6
- *
- * Revision 1.9.8.6  2000/06/20 20:36:46  jimg
- * Imporved error messages and fixed some doc++ comments (although some
- * problems remain).
- *
- * Revision 1.11  2000/04/20 23:38:13  jimg
- * Merged with release 3.1.3
- *
- * Revision 1.9.8.5  2000/04/20 19:45:15  jimg
- * Changed some int variables to size_t.
- *
- * Revision 1.9.8.4  2000/04/19 05:40:28  jimg
- * Added conditional efence malloc defines.
- *
- * Revision 1.9.8.3  2000/04/18 22:34:54  jimg
- * Added assert calls.
- * Fixed a bug in the allocation of memory when adding to a vector. This fixed
- * used the new `size' field. Before length was compared to CLUMP, not the
- * number of elements currently allocated (what size holds).
- *
- * Revision 1.10  2000/04/01 01:16:24  jimg
- * Merged with release-3-1-2
- *
- * Revision 1.9.8.2  2000/03/28 23:59:39  jimg
- * Removed the freeing of data since this causes dangling pointers (I don't
- * understand why that's the case since I thought all those *values* were
- * copied...). Also, remove the reorganize_strings() function since strings are
- * now interned using the new ML string array.
- *
- * Revision 1.9.8.1  2000/02/19 00:36:15  jimg
- * Switched from the ML 4 to 5 API.
- *
- * Revision 1.9  1999/04/30 17:06:58  jimg
- * Merged with no-gnu and release-2-24
- *
- * Revision 1.8.14.1  1999/04/29 18:48:30  jimg
- * Fixed comments and copyright.
- *
- * Revision 1.8  1998/09/16 23:03:43  jimg
- * Fixed the mxCalloc/allocator prototype.
- *
- * Revision 1.7  1998/03/21 00:18:58  jimg
- * Added some documentation.
- * Added reorganize_strings() which simplifies interning vectors of strings.
- *
- * Revision 1.6  1998/03/20 00:34:09  jimg
- * Moved many defines to a new header file: defines.h
- *
- * Revision 1.5  1997/12/16 01:01:28  jimg
- * Fixed bug where max_string_len was set to an incorrect value.
- * Moved structure definition to header file.
- *
- * Revision 1.4  1996/12/18 00:51:32  jimg
- * Added include for dmalloc.
- *
- * Revision 1.3  1996/10/29 21:44:43  jimg
- * Added string.h to included files
- *
- * Revision 1.2  1996/10/25 23:04:41  jimg
- * Added debugging statements for malloc/realloc/free.
- * Added support for string vectors.
- * Removed assert.h since that breaks compilation with gcc - gcc will reference
- * `__eprintf' which cmex cannot find.
- *
- * Revision 1.1  1996/10/23 23:55:06  jimg
- * Created.
- */

@@ -33,7 +33,7 @@
       jhrg,jimg		James Gallagher (jgallagher@gso.uri.edu)
 */
 
-/**
+/*
    loaddap is a Matlab 4 command which loads the variables specified by a
    DODS URL into Matlab. Because of limitations on the data types which
    Matlab 4 can process, there are some DODS datasets, or parts of some
@@ -200,7 +200,7 @@ quote_for_shell(char *src)
     char *c;
     size_t dest_size = 3 * strlen(src) + 1; /* Used in an a assert, too */
     char *dest = mxCalloc(dest_size, sizeof(char));
-    DBGM(fprintf(stderr, "mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, dest));
+    DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, dest));
     
     *dest = '\0';
 #ifdef WIN32
@@ -219,10 +219,10 @@ quote_for_shell(char *src)
 	src = ++c;
     }
     strcat(dest, src);
-    DBG(mexPrintf("quote_for_shell (%s:%d) src: %s\n", 
-		  __FILE__, __LINE__, src));
-    DBG(mexPrintf("quote_for_shell (%s:%d) dest: %s\n", 
-		  __FILE__, __LINE__, dest));
+
+    DBG(msg("quote_for_shell (%s:%d) src: %s\n", __FILE__, __LINE__, src));
+    DBG(msg("quote_for_shell (%s:%d) dest: %s\n", __FILE__, __LINE__, dest));
+
     mxAssertS(strlen(dest) + strlen(src) + 1 <= dest_size, "");
 
     return dest;
@@ -277,61 +277,61 @@ get_pathname(char *command)
     Matlab function mexLock(). 
     
     This may no longer be necessary. 10/4/05 jhrg */
-static void
-lock_mex_function()
-{
+ static void
+     lock_mex_function()
+ {
 #ifdef ARCH_GLNX86
-  DBG(msg("In lock_mex_function\n"));
-  if (!mexIsLocked()) {
-    mxArray *lhs[1];
-    mxArray *rhs[1];
-    char *pathname = NULL;
+     DBG(msg("In lock_mex_function\n"));
+     if (!mexIsLocked()) {
+	 mxArray *lhs[1];
+	 mxArray *rhs[1];
+	 char *pathname = NULL;
     
-    DBG(msg("In locking mex function!\n"));
-    mexLock();
+	 DBG(msg("In locking mex function!\n"));
+	 mexLock();
     
-    /* Get mex file name */
-    rhs[0] = mxCreateString(mexFunctionName());
+	 /* Get mex file name */
+	 rhs[0] = mxCreateString(mexFunctionName());
 
-    /* Get full path to mex file */
-    mexCallMATLAB(1, lhs, 1, rhs, "which");
+	 /* Get full path to mex file */
+	 mexCallMATLAB(1, lhs, 1, rhs, "which");
 
-    /* Permanantly load mex file */
-    pathname = mxArrayToString(lhs[0]);
-    if (dlopen(pathname, RTLD_NOW) == NULL)
-      mexErrMsgTxt("Could not load mex file!");
+	 /* Permanantly load mex file */
+	 pathname = mxArrayToString(lhs[0]);
+	 if (dlopen(pathname, RTLD_NOW) == NULL)
+	     mexErrMsgTxt("Could not load mex file!");
 
-    /* Free allocated memory */
+	 /* Free allocated memory */
 #ifndef DMALLOC
-    mxFree(pathname);
+	 mxFree(pathname);
 #endif
-  }
+     }
 #endif
-}
+ }
 
 /** Read the command arguments and perform initial actions. If the command is
-  called with no argument or with a "*" or "?", start up the WWW browser and
-  open the default DODS locator page. If the argument is "*" or "?" followed
-  by a URL then use that URL as the `locator page'. Finally, if the command
-  is given a URL (without a prefix of "*" or "?") return that without any
-  further actions. If the command argument ends with the suffix ".mat",
-  assume that it is a Matlab `mat' file and load it without any additional
-  processing.
+    called with no argument or with a "*" or "?", start up the WWW browser
+    and open the default DODS locator page. If the argument is "*" or "?"
+    followed by a URL then use that URL as the `locator page'. Finally, if
+    the command is given a URL (without a prefix of "*" or "?") return that
+    without any further actions. If the command argument ends with the suffix
+    ".mat", assume that it is a Matlab `mat' file and load it without any
+    additional processing.
   
-  @note Memory allocated by mxCalloc() is automatically freed on exit from the
-  command (by Matlab), so there is no need to call mxFree() on mxCalloc'd
-  blocks. 
+    @note Memory allocated by mxCalloc() is automatically freed on exit from
+    the command (by Matlab), so there is no need to call mxFree() on
+    mxCalloc'd blocks.
 
-  @note Support for the browser option has been removed.
+    @note Support for the browser option has been removed.
 
-  @return A URL to a DODS dataset or NULL if no further action is required. */
-
+    @return A URL to a DODS dataset or NULL if no further action is
+    required. */
 static char *
 init(int nlhs, mxArray *plhs[], const int nrhs, const mxArray *prhs[])
 {
     int i;			/* Count prhs[] elements. */
     char *s = mxCalloc(MAX_URL_LEN, sizeof(char)); /* Return this array. */
-    DBGM(mexPrintf("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, s));
+    DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, s));
 
     for (i = 0; i < nrhs; ++i) {
 	if (!mxIsChar(prhs[i])) {
@@ -395,7 +395,7 @@ init(int nlhs, mxArray *plhs[], const int nrhs, const mxArray *prhs[])
 	FILE *fin;
 	char *pathname;
 	char *command;
-    DBG(msg("Entering -V\n");)
+
 	pathname = get_pathname(DODS_BASE_COMMAND);
 	if (!pathname) {
 	    err_msg(\
@@ -410,8 +410,7 @@ init(int nlhs, mxArray *plhs[], const int nrhs, const mxArray *prhs[])
 	command = mxCalloc(strlen(command_opts) + strlen(pathname) 
 			   + strlen("2>&1") + strlen(DODS_COMPLETE_COMMAND) 
 			   + 1, sizeof(char));
-	DBGM(fprintf(stderr, "mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, 
-		     command));
+	DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, command));
 
 	/* If the user called loaddap('-V') using the assignment syntax,
 	   then make sure that the version number string is assigned to the
@@ -423,8 +422,7 @@ init(int nlhs, mxArray *plhs[], const int nrhs, const mxArray *prhs[])
             /* Route stderr (which is where writedap sends the version
                information) to stdout so that we can read it from pin. */
 #ifdef WIN32
-           sprintf(command, DODS_COMPLETE_COMMAND, pathname, 
-              command_opts, "");
+           sprintf(command, DODS_COMPLETE_COMMAND, pathname, command_opts, "");
            DBG(msg("command: %s\n", command));
            fin = openpipe(command, true);
 #else
@@ -433,32 +431,30 @@ init(int nlhs, mxArray *plhs[], const int nrhs, const mxArray *prhs[])
            DBG(msg("command: %s\n", command));
            fin = popen(command, "r");
 #endif
-		   if (fin) {
-	    fgets(ver, MAX_STR, fin);
-	    DBG(msg("Writedap version string: %s\n", ver));
-	    pclose(fin);
-	    strcat(ver, "loaddap: ");
-	    strcat(ver, dods_version);
-	    plhs[0] = mxCreateString(ver);
-	    mxSetName(plhs[0], "dods_version");
-		   }
+	   if (fin) {
+	       fgets(ver, MAX_STR, fin);
+	       DBG(msg("Writedap version string: %s\n", ver));
+	       pclose(fin);
+	       strcat(ver, "loaddap: ");
+	       strcat(ver, dods_version);
+	       plhs[0] = mxCreateString(ver);
+	       mxSetName(plhs[0], "dods_version");
+	   }
 	}
 	else {
-	    sprintf(command, DODS_COMPLETE_COMMAND, pathname, 
-		    command_opts, "");
+	    sprintf(command, DODS_COMPLETE_COMMAND, pathname, command_opts, "");
 	    DBG(msg("command: %s\n", command));
 #ifdef WIN32
 	    fin = openpipe(command, false);
 #else
 	    fin = popen(command, "r");
 #endif
-		if (fin)
-			pclose(fin);
+	    if (fin)
+		pclose(fin);
 	    msg("loaddap: %s\n", dods_version);
 	}
 
-	DBGM(mexPrintf("mxFree (%s:%d): %x\n", __FILE__, __LINE__, 
-		     pathname));
+	DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, pathname));
 	/* mxFree(pathname); */
 	return NULL;
     }
@@ -606,7 +602,8 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     char *pathname = 0;
     int status;			/* Used below to catch writedap's exit */
     FILE *fin;
-    mexPrintf("Entering loaddap\n");
+
+    DBG(msg("Entering loaddap\n"));
 
     /* This function is null for anything except linux. */
     lock_mex_function();
@@ -635,7 +632,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     command = mxCalloc(strlen(pathname) +strlen(dods_url_escaped) 
 		       + strlen(command_opts) + strlen(DODS_COMPLETE_COMMAND)
 		       + 1, sizeof(char));
-    DBGM(mexPrintf("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, 
+    DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, 
 		 command));
 
     sprintf(command, DODS_COMPLETE_COMMAND, pathname, command_opts, 
@@ -716,22 +713,19 @@ error message, please report this to support@unidata.ucar.edu.\n");
 
     /* dods_url now points to a static string created in init(...). */
     if (dods_url) {
-	DBGM(mexPrintf("mxFree (%s:%d): %x\n", __FILE__, __LINE__, 
-		     dods_url));
+	DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, dods_url));
 	mxFree(dods_url);
 	dods_url = 0;
     }
 
     if (dods_url_escaped) {
-	DBGM(mexPrintf("mxFree (%s:%d): %x\n", __FILE__, __LINE__, 
-		     dods_url_escaped));
+	DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, dods_url_escaped));
 	mxFree(dods_url_escaped);
 	dods_url_escaped = 0;
     }
 
     if (command) {
-	DBGM(mexPrintf("mxFree (%s:%d): %x\n", __FILE__, __LINE__, 
-		     command));
+	DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, command));
 	mxFree(command);
 	command = 0;
     }

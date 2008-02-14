@@ -178,8 +178,7 @@ build_variable_name_vector()
     size_t number_of_vars = (size_t)get_number_of_variables();
 
     names = (char **)mxCalloc(number_of_vars, sizeof(char *));
-    DBGM(mexPrintf("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, 
-		   names));
+    DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, names));
 
     /* Load strings into names vector. */ 
     name = get_variable_name(TRUE);
@@ -677,8 +676,7 @@ print_array_creation_msg(char *name, int num_elems, int ndims, int dims[])
       msg("Creating scalar %s.\n", name);
       break;
     case 1:
-      msg("Creating vector %s with %d elements.\n",
-	  name, num_elems);
+      msg("Creating vector %s with %d elements.\n", name, num_elems);
       break;
     default: 
       {
@@ -719,7 +717,7 @@ do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
   strcpy(child,name);
 
   dims = mxCalloc((size_t)ndims, sizeof(int));
-  DBGM(mexPrintf("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, dims));
+  DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, dims));
 
   if (!read_array_dims(fin, ndims, dims))
     return FALSE;
@@ -737,8 +735,7 @@ do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
       || strcmp(element_type, "Float64") == 0) 
     {
       double *yp = (double *) mxCalloc(num_elems, sizeof(double));
-      DBGM(mexPrintf("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, 
-		     yp));
+      DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, yp));
 
       fread(yp, sizeof(double), num_elems, fin);
 
@@ -861,8 +858,7 @@ do_list(FILE *fin, variable **vectors, char *prefix, int outermost,
 	|| strcmp(element_type, "Int32") == 0
 	|| strcmp(element_type, "Float64") == 0) {
 	double *yp = (double *) mxCalloc((size_t) length, sizeof(double));
-	DBGM(mexPrintf("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, 
-		     yp));
+	DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, yp));
 
 	/* Note that according to a message from ML support, I should free yp
 	   after once I've interned the data in a ML variable (in the
@@ -1691,70 +1687,3 @@ transfer_arrays(variable *var, MLVars *ml_struct)
     
     return TRUE;
 }
-
-/* 
-   $Log: process_values.c,v $
-   Revision 1.4  2004/07/08 20:50:03  jimg
-   Merged release-3-4-5FCS
-
-
-
-   Revision 1.10  2003/04/22 14:46:47  dan
-   Removed changes added to maintain DDS structure, these
-   changes have been placed on the structure-format1 branch
-   until the GUI is ready to use them.
-
-   Revision 1.8  2003/01/29 15:43:52  dan
-   Resolved conflict on merge, caused by PWEST's removal
-   of the SLLIST includes in a previous update on the trunk.
-
-   Revision 1.7  2001/10/14 01:12:27  jimg
-   Merged with release-3-2-7.
-
-   Revision 1.4.2.4  2002/07/31 03:05:51  dan
-   Removed strip of quotation character in read_string_value
-   function.
-
-   Revision 1.4.2.3  2001/10/10 21:14:37  jimg
-   Changed include of mex.h from "mex.h" to <mex.h> so that it won't be
-   included in the Makefile.in's dependencies. This maens builders are
-   less likely to have to run make depend.
-
-   Revision 1.6  2001/09/29 00:08:01  jimg
-   Merged with 3.2.6.
-
-   Revision 1.4.2.2  2001/08/29 23:11:35  edavis
-   Changed C++ comment to a C comment.
-
-   Revision 1.4.2.1  2001/08/21 16:51:22  dan
-   Removed call to remove null axis from singleton matrices.
-
-   Revision 1.4  2000/11/22 23:43:00  jimg
-   Merge with pre-release 3.2
-
-   Revision 1.3.4.1  2000/11/22 23:38:42  jimg
-   Fixed the treatment of quoted strings. If a qutoed string starts with a
-   newline (as its first character) then do_string() was interpreting the
-   starting quote as the end quote.
-
-   Revision 1.1.2.5  2000/09/22 20:54:04  jimg
-   Added dmalloc stuff in DMALLOC guard
-
-   Revision 1.3  2000/08/31 22:33:14  rmorris
-   Small change to us _isnan() instead of isnan() under win32.
-
-   Revision 1.2  2000/08/30 00:13:29  jimg
-   Merged with 3.1.7
-
-   Revision 1.1.2.4  2000/08/21 19:51:42  jimg
-   Fixed processing of arrays of strings, although in a particularly gross
-   way. Maybe this code can be cleaned up so that its easier to work with...
-
-   Revision 1.1.2.3  2000/08/21 18:38:58  jimg
-   Moved the addition of structure and array handlers to a spearate branch
-   (more-datatype-handlers).
-
-   Revision 1.1.2.1  2000/08/17 23:56:48  jimg
-   Factored the code that reads and processes variables and values into
-   process_values.c (from loaddods.c).
-*/

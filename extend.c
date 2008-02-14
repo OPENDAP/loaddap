@@ -375,8 +375,7 @@ extend_array(const char *name, const int ndims, const int dims[], double *pr2)
 	return FALSE;
     }
 
-    DBG2(fprintf(stderr, "m1: %x, r1: %d, c1: %d, pr1: %x\n", m1, r1, c1,\
-		 pr1));
+    DBG2(msg("m1: %x, r1: %d, c1: %d, pr1: %x\n", m1, r1, c1, pr1));
     
     if (ISVECTOR(r1, c1) && ISVECTOR(r2, c2)) {
 	s1 = MAX(r1, c1);
@@ -388,8 +387,7 @@ extend_array(const char *name, const int ndims, const int dims[], double *pr2)
 	m2 = mxCreateDoubleMatrix(r, c, mxREAL); /* free with mxDestroyArray */
 
 	pr = (double *)mxCalloc(s1 + s2, sizeof(double));
-	DBGM(fprintf(stderr, "mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, 
-		     pr));
+	DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, pr));
 
 	/* Copy old and new data */
 	memcpy(pr, pr1, s1 * sizeof(double));
@@ -404,8 +402,7 @@ extend_array(const char *name, const int ndims, const int dims[], double *pr2)
 	m2 = mxCreateDoubleMatrix(r, c, mxREAL);
 
 	pr = (double *)mxCalloc(s1 + s2, sizeof(double));
-	DBGM(fprintf(stderr, "mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, 
-		     pr));
+	DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, pr));
 	
 	if (c1 == c2) {
 	    /* When columns are equal, extend by catenating rows. Given that
@@ -432,13 +429,10 @@ extend_array(const char *name, const int ndims, const int dims[], double *pr2)
             int *new_dims = (int *) mxMalloc( ndims * sizeof(int));
 	    double *prp;
 	    double *pr1p = (double *)mxCalloc(r1 * c1, sizeof(double));
-            DBGM(fprintf(stderr, "mxMalloc (%s:%d): %x\n", __FILE__,
-                         __LINE__, new_dims));
-	    DBGM(fprintf(stderr, "mxCalloc (%s:%d): %x\n", __FILE__, 
-			 __LINE__, pr1p));
+            DBGM(msg("mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, new_dims));
+	    DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__,  __LINE__, pr1p));
 	    prp = (double *)mxCalloc(r * c, sizeof(double));
-	    DBGM(fprintf(stderr, "mxCalloc (%s:%d): %x\n", __FILE__, 
-			 __LINE__, prp));
+	    DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, prp));
 
 	    cm2rm_limited(pr1p, pr1, ndims, dims);
 
@@ -451,14 +445,11 @@ extend_array(const char *name, const int ndims, const int dims[], double *pr2)
 	    new_dims[1] = c;
 	    rm2cm(prp, pr, ndims, new_dims);
 
-            DBGM(fprintf(stderr, "mxFree (%s:%d): %x\n", __FILE__, __LINE__, 
-                         new_dims));
+            DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, new_dims));
             mxFree( new_dims);
-	    DBGM(fprintf(stderr, "mxFree (%s:%d): %x\n", __FILE__, __LINE__, 
-			 pr));
+	    DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, pr));
 	    mxFree(pr);
-	    DBGM(fprintf(stderr, "mxFree (%s:%d): %x\n", __FILE__, __LINE__, 
-			 pr1p));
+	    DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, pr1p));
 	    mxFree(pr1p);
 	    /* Don't free pr1 since Matlab manages that memory */
 
@@ -478,20 +469,18 @@ extend_array(const char *name, const int ndims, const int dims[], double *pr2)
 		         4 5 6 9 10
 	    */
 	    double *pr2p = (double *)mxCalloc(r2 * c2, sizeof(double));
-	    DBGM(fprintf(stderr, "mxCalloc (%s:%d): %x\n", __FILE__, 
-			 __LINE__, pr2p));
+	    DBGM(msg("mxCalloc (%s:%d): %x\n", __FILE__, __LINE__, pr2p));
 
 	    rm2cm(pr2p, pr2, ndims, dims);
 	    
 	    memcpy(pr, pr1, s1 * sizeof(double));
 	    memcpy(pr + s1, pr2p, s2 * sizeof(double));
 	    
-	    DBGM(fprintf(stderr, "mxFree (%s:%d): %x\n", __FILE__, __LINE__, 
-			 pr2p));
+	    DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, pr2p));
 	    mxFree(pr2p);
 	}
 
-	DBG2(fprintf(stderr, "matrix:\n"));
+	DBG2(msg("matrix:\n"));
     }
     else {
 	err_msg(
@@ -500,8 +489,8 @@ extend_array(const char *name, const int ndims, const int dims[], double *pr2)
 	return FALSE;
     }
 
-    DBG2(fprintf(stderr, "s1: %d, s2: %d\n", s1, s2));
-    DBG2(fprintf(stderr, "r: %d, c: %d\n", r, c));
+    DBG2(msg("s1: %d, s2: %d\n", s1, s2));
+    DBG2(msg("r: %d, c: %d\n", r, c));
 
     /* set name and data of new matrix */
     mxSetPr(m2, pr);
@@ -529,8 +518,7 @@ extend_strings(const char *name, int m, char **s)
     int status;
     int i;
     char *orig_strings = mxArrayToString(mp);
-    DBGM(fprintf(stderr, "mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, 
-		 orig_strings));
+    DBGM(msg("mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, orig_strings));
     
     new_strings = (char **)mxMalloc((rows + m) * sizeof(char *));
 
@@ -583,21 +571,19 @@ add_new_variable(const char *name)
 	if (variables.len == 0) {
 	    variables.name = (char **)mxMalloc(variables.size 
 					       * sizeof(char *));
-	    DBGM(fprintf(stderr, "mxMalloc (%s:%d): %x\n", __FILE__, 
-			 __LINE__, variables.name));
+	    DBGM(msg("mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, variables.name));
 	}
 	else {
 	    variables.name = (char **)mxRealloc(variables.name,
 						variables.size 
 						* sizeof(char *));
-	    DBGM(fprintf(stderr, "mxRealloc (%s:%d): %x\n", __FILE__, 
-			 __LINE__, variables.name));
+	    DBGM(msg("mxRealloc (%s:%d): %x\n", __FILE__, __LINE__, variables.name));
 	}
     }
 
     variables.name[variables.len] = (char *)mxMalloc(strlen(name)+1);
-    DBGM(fprintf(stderr, "mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, 
-		 variables.name[variables.len]));
+    DBGM(msg("mxMalloc (%s:%d): %x\n", __FILE__, __LINE__, 
+	      variables.name[variables.len]));
     strcpy(variables.name[variables.len++], name);
 }
 
@@ -610,13 +596,11 @@ clear_existing_variables()
 {
     while (variables.len > 0) {
 	variables.len--;
-	DBGM(fprintf(stderr, "mxFree (%s:%d): %x\n", __FILE__, __LINE__,
-		     variables.name[variables.len]));
+	DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, variables.name[variables.len]));
 	mxFree(variables.name[variables.len]);
     }
     if (variables.size > 0) {
-	DBGM(fprintf(stderr, "mxFree (%s:%d): %x\n", __FILE__, __LINE__,
-		     variables.name));
+	DBGM(msg("mxFree (%s:%d): %x\n", __FILE__, __LINE__, variables.name));
 	mxFree(variables.name);
     }
 
@@ -1173,161 +1157,3 @@ mexFunction(int nlhs, mxArray *plhs[], const int nrhs, mxArray *prhs[])
 }
 
 #endif
-
-/* 
- * $Log: extend.c,v $
- * Revision 1.3  2004/07/08 20:50:03  jimg
- * Merged release-3-4-5FCS
- *
- * Revision 1.27  2001/08/27 18:06:57  jimg
- * Merged release-3-2-5.
- * Revision 1.1.1.1.2.2  2004/04/16 19:34:05  dan
- * Fixed compile-time problems that gcc-2.95.3 was having that gcc-3.3
- * was not.
- *
- * Revision 1.2  2003/12/08 17:59:50  edavis
- * Merge release-3-4 into trunk
- *
- * Revision 1.1.1.1  2003/10/22 19:43:30  dan
- * Version of the Matlab CommandLine client which uses Matlab Structure
- * variables to maintain the shape of the underlying DODS data.
- *
- * Revision 1.30  2003/04/22 14:45:28  dan
- * Removed changes added to maintain DDS structure, these
- * changes have been placed on the structure-format1 branch
- * until the GUI is ready to use them.
- *
- * Revision 1.28  2003/01/29 15:43:52  dan
- * Resolved conflict on merge, caused by PWEST's removal
- * of the SLLIST includes in a previous update on the trunk.
- *
- *
- * Revision 1.26.2.2  2001/11/09 13:43:15  rmorris
- * clear_existing_variables() had a out-of-bounds indexing problem
- * into variables.name.  From 0 to n-1, not 1 to n.  Apparently went
- * unnoticed under UNIX but manifested itself under win32.
- *
- * Revision 1.26.2.1  2000/12/13 01:39:13  jimg
- * Moved a decrement operation from within a call to mxFree
- *
- * Revision 1.26  2000/11/22 23:43:00  jimg
- * Merge with pre-release 3.2
- *
- * Revision 1.16.18.13  2000/09/22 20:54:04  jimg
- * Added dmalloc stuff in DMALLOC guard
- *
- * Revision 1.25  2000/07/21 10:21:56  rmorris
- * Merged with win32-mlclient-branch.
- *
- * Revision 1.23.2.2  2000/07/10 19:39:32  rmorris
- * Attempts to minimize error messages during compilation on win32.
- *
- * Revision 1.23.2.1  2000/06/26 23:03:39  rmorris
- * Mods for port to win32.
- *
- * Revision 1.24  2000/06/20 21:40:09  jimg
- * Merged with 3.1.6
- *
- * Revision 1.16.18.12  2000/06/20 20:36:46  jimg
- * Imporved error messages and fixed some doc++ comments (although some
- * problems remain).
- *
- * Revision 1.16.18.11  2000/06/12 21:40:11  jimg
- * Moved the debugging code in extend_array so that it falls after the
- * declarations; gcc complained.
- *
- * Revision 1.16.18.10  2000/06/12 18:27:02  edavis
- * In extend_array(), allocate new_dims[] dynamically.
- *
- * Revision 1.16.18.9  2000/06/02 23:03:33  jimg
- * Fixes for AttrTables with no entries.
- * Added support for name translation and a DODS_ML_Real_Name attribute.
- * Changed the `size' attribtue's name to DODS_ML_Size.
- *
- * Revision 1.16.18.8  2000/06/01 01:33:53  jimg
- * Added support for writevals new attribute mode.
- *
- * Revision 1.16.18.7  2000/05/12 19:17:20  jimg
- * Made more functions static.
- * Added a get variable number function.
- *
- * Revision 1.16.18.6  2000/04/20 19:45:14  jimg
- * Changed some int variables to size_t.
- *
- * Revision 1.16.18.5  2000/04/19 05:39:06  jimg
- * Added conditional efence malloc defines.
- *
- * Revision 1.16.18.4  2000/04/11 21:48:59  jimg
- * Added support for n-dimensional arrays. the Concatenation option (see
- * loaddods.c and the -k switch) is *not* supported for N > 2, though.
- *
- * Revision 1.16.18.3  2000/04/01 00:36:06  jimg
- * Added error message when reading arrays with more than two dimensions.
- *
- * Revision 1.16.18.2  2000/04/01 00:11:30  jimg
- * Massive fixes for rm2cm and vice versa. Lots of changes in support of
- * n-dimensional code, but that is not complete yet.
- *
- * Revision 1.16.18.1  2000/02/19 00:36:14  jimg
- * Switched from the ML 4 to 5 API.
- *
- * Revision 1.16 1998/11/30 05:37:36 jimg Added the -T option to control
- * truncation of names longer than 19 characters
- *
- * Revision 1.15  1998/11/25 01:15:23  jimg
- * Identifiers limited to 19 chars. This is a temp fix; will update to
- * include ML 5 later 
- *
- * Revision 1.14 1998/11/11 18:49:53 jimg Changed the allocation of variables
- * in add_new_variable() from 5 to 500. Dan found that the loaddods/matlab
- * crash we see on Linux is caused by corruption of this data structure when
- * the data structure was initialized to 5 elements. Currently, Mathworks is
- * looking into the problem since it may be inside their code.
- *
- * Revision 1.13  1998/11/10 03:18:14  jimg
- * Added test stuff. This is fairly hokey...
- *
- * Revision 1.12  1998/07/13 20:31:10  jimg
- * Fixes from the final test of the new build process
- *
- * Revision 1.11  1998/06/09 03:59:32  jimg
- * Removed ugly debugging code.
- *
- * Revision 1.10.4.1  1998/05/15 17:43:52  jimg
- * Removed DODS_DEBUG define
- *
- * Revision 1.10  1998/03/23 22:54:39  jimg
- * Fixed extern_strings(...) so that it now works.
- *
- * Revision 1.9  1998/03/21 00:29:39  jimg
- * Added dummy function for extend_strings(). It prints an error message and
- * returns false.
- *
- * Revision 1.8  1998/03/21 00:19:51  jimg
- * Added some documentation.
- * Added intern_strings().
- *
- * Revision 1.7  1997/10/09 22:20:04  jimg
- * Resolved conflicts in merge of 2.14c to trunk.
- *
- * Revision 1.6  1997/10/04 00:33:47  jimg
- * Release 2.14c fixes
- *
- * Revision 1.4.6.1  1997/09/19 19:11:21  jimg
- * Moved config_writeval.h so that -V4_COMPAT flag works.
- *
- * Revision 1.5  1997/09/10 22:47:58  jimg
- * Added config_writeval.h to includes.
- *
- * Revision 1.4  1997/05/01 22:42:14  jimg
- * Added changes for the `return arguments' feature. See loaddods.c
- *
- * Revision 1.3  1997/03/27 22:55:30  jimg
- * Made rm2cm amd cm2rm globally visible.
- *
- * Revision 1.2  1997/03/07 04:54:09  jimg
- * Fixed comments.
- *
- * Revision 1.1  1997/03/07 04:50:26  jimg
- * Added. 
- */
