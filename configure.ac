@@ -42,7 +42,7 @@ AC_CHECK_FUNCS([putenv strcspn strerror strpbrk strrchr strstr])
 
 dnl Checks for specific libraries
 
-AC_CHECK_LIBDAP([3.5.0],
+AC_CHECK_LIBDAP([3.7.10],
  [
   LIBS="$LIBS $DAP_CLIENT_LIBS"
   CPPFLAGS="$CPPFLAGS $DAP_CFLAGS"
