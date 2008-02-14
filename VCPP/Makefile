@@ -44,7 +44,7 @@ EMDLLIBS		= libdapclientMD.lib libdapMD.lib libxml2.lib libcurl.lib zlib.lib lib
 
 # Setup compiler flags
 INCS			= /I . /I $(INCLUDEDIR) /I $(INCLUDEDIR)\GNU /I $(INCLUDEDIR)\gl /I ..
-DEFS			= /D HAVE_CONFIG_H /D WIN32 /D WIN32_LEAN_AND_MEAN /D V5_COMPAT
+DEFS			= /D HAVE_CONFIG_H /D WIN32 /D WIN32_LEAN_AND_MEAN
 MDCFLAGS		= /MD /D HAVE_PTHREAD_H
 CFLAGS			= $(DEFS) $(INCS) /nologo /W0 /GR /EHsc /c
 
