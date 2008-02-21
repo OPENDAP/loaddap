@@ -48,7 +48,11 @@ static char rcsid[] not_used = {"$Id$"};
 #include <string>
 #include <typeinfo>
 
+#ifndef _MSC_VER
 #include <GetOpt.h>
+#else
+#include <GNU/GetOpt.h>
+#endif
 
 #include <BaseType.h>
 #include <Connect.h>
