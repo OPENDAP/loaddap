@@ -61,7 +61,7 @@ all:	modelMD
 modelMD:
 	@-md $(OBJDIR)\MD
 	@echo "Building MD model Matlab cmd-line client"
-	@nmake /NOLOGO loaddap.mexw32
+        @nmake /NOLOGO OBJDIR="$(OBJDIR)\MD" loaddap.mexw32
 	@nmake /NOLOGO CFLAGS="$(CFLAGS) $(MDCFLAGS)" LFLAGS="$(EMDLFLAGS)" LIBS="$(EMDLLIBS)" OBJDIR=$(OBJDIR)\MD writedap
 	@echo "MD model Matlab cmd-line client is complete"
 
@@ -110,7 +110,7 @@ CLIENTOBJS	= $(OBJDIR)\ClientByte.obj \
 			$(OBJDIR)\ClientUInt16.obj \
 			$(OBJDIR)\ClientFloat32.obj
 
-# As long as loaddap.dll exists, it appears nothing went wrong despite
+# As long as loaddap.mexw32 exists, it appears nothing went wrong despite
 # any message to the contrary.
 $(OBJDIR)\loaddap.mexw32: $(MESXRCS)
 	@-md $(OBJDIR)
@@ -120,22 +120,24 @@ $(OBJDIR)\writedap.exe: $(WD_OBJS) $(CLIENTOBJS)
 	$(LINK) $(LFLAGS) /OUT:$@ $(WD_OBJS) $(CLIENTOBJS) $(LIBS)
 
 install: all mkinstdirs
-	copy $(OBJDIR)\MD\loaddap.dll* $(INSTALLDLLDIR)
-	mt -nologo -manifest $(INSTALLDLLDIR)\loaddap.dll.manifest -outputresource:$(INSTALLDLLDIR)\loaddap.dll;2
-	del $(INSTALLDLLDIR)\loaddap.dll.manifest
+        copy $(OBJDIR)\MD\loaddap.mex* $(INSTALLDLLDIR)
 
 	copy $(OBJDIR)\MD\writedap.exe* $(INSTALLBINDIR)
 	mt -nologo -manifest $(INSTALLBINDIR)\writedap.exe.manifest -outputresource:$(INSTALLBINDIR)\writedap.exe;1
 	del $(INSTALLBINDIR)\writedap.exe.manifest
 
+# mt -nologo -manifest $(INSTALLDLLDIR)\loaddap.mexw32.manifest -outputresource:$(INSTALLDLLDIR)\loaddap.mexw32;2
+# del $(INSTALLDLLDIR)\loaddap.mexw32.manifest
+
 package: all mkpkgdirs document
-	copy $(OBJDIR)\MD\loaddap.dll* $(PKGDLLDIR)
-	mt -nologo -manifest $(PKGDLLDIR)\loaddap.dll.manifest -outputresource:$(PKGDLLDIR)\loaddap.dll;2
-	del $(PKGDLLDIR)\loaddap.dll.manifest
+        copy $(OBJDIR)\MD\loaddap.mex* $(PKGDLLDIR)
 
 	copy $(OBJDIR)\MD\writedap.exe* $(PKGBINDIR)
 	mt -nologo -manifest $(PKGBINDIR)\writedap.exe.manifest -outputresource:$(PKGBINDIR)\writedap.exe;1
 	del $(PKGBINDIR)\writedap.exe.manifest
+
+#        mt -nologo -manifest $(PKGDLLDIR)\loaddap.mexw32.manifest -outputresource:$(PKGDLLDIR)\loaddap.mexw32;2
+#        del $(PKGDLLDIR)\loaddap.mexw32.manifest
 
 mkinstdirs:
 	@-md $(INSTALLBINDIR)
