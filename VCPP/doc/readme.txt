@@ -1,4 +1,11 @@
 
+Note: This code was built on WIndows XP using libdap 3.7.10 in Feb 2008 with
+only minor modifications to the VCPP/Makefile. 
+
+James Gallagher
+22 Feb 2008
+--------------------------
+
 There are the instructions for installing OPeNDAP's 'Matlab
 Structs Tool' version 3.5.2 for Microsoft Windows XP.
 
