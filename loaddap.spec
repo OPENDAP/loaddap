@@ -1,16 +1,16 @@
 
 Name: loaddap
 Summary: The OPeNDAP Matlab Command Line Interface Client
-Version: 3.5.2
+Version: 3.6.0
 Release: 1
 
-Source0: http://www.opendap.org/pub/3.5/source/%{name}-%{version}.tar.gz
+Source0: http://www.opendap.org/pub/source/%{name}-%{version}.tar.gz
 URL: http://www.opendap.org/
 
 Group: Development/Libraries
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 License: LGPL/W3C
-Requires: libdap >= 3.6.0
+Requires: libdap >= 3.7.11
 # Mandrake
 #BuildRequires: libcurl3-devel >= 7.10.6 libxml2-devel >= 2.5.7
 # fedora
@@ -45,8 +45,10 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_bindir}/loaddap.mex*
 %{_bindir}/writedap
-%{_datadir}/loaddap/loaddap.m
-%{_datadir}/loaddap/whodap.m
+%{_bindir}/loaddap.m
+%{_bindir}/whodap.m
+#%{_datadir}/loaddap/loaddap.m
+#%{_datadir}/loaddap/whodap.m
 %doc README NEWS COPYING COPYRIGHT_URI
 
 %changelog

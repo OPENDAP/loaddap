@@ -85,7 +85,7 @@ check-local:
 DEJATOOL = writedap
 RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite
 
-EXTRA_DIST = win32 testsuite $(LD_SRCS) $(LD_HDRS) loaddap.m whodap.m \
+EXTRA_DIST = VCPP testsuite $(LD_SRCS) $(LD_HDRS) loaddap.m whodap.m \
 	README INSTALL NEWS loaddap.spec COPYING COPYRIGHT_URI
 
 CLEANFILES = *~ *.log *.sum
