@@ -13,7 +13,9 @@ ACLOCAL_AMFLAGS = -I conf
 # Automake doesn't know about the mex script; we have to jury-rig some
 # things. 9/29/05 jhrg
 #
-MEXFLAGS = $(AM_CPPFLAGS) -V5 -DNO_MX_FREE -DHAVE_CONFIG_H
+# Added -I. so the distcheck target will build. 3/1/08 jhrg
+
+MEXFLAGS = $(AM_CPPFLAGS) -I. -V5 -DNO_MX_FREE -DHAVE_CONFIG_H
 
 # These are not used by automake but are often useful for certain types of
 # debugging.
@@ -38,8 +40,10 @@ WV_SRCS = write_dap.cc name_map.cc MetadataProcessing.cc		\
 	LoaddodsProcessing.cc LoaddodsProcessing.h			\
 	MetadataProcessing.h config_writedap.h nan_hack.h name_map.h
 
-LD_SRCS = loaddap.c variable.c extend.c error.c MLVars.c	\
-	process_values.c 
+# Added $(top_srcdir) so distcheck will build. 3/1/08 jhrg
+LD_SRCS = $(top_srcdir)/loaddap.c $(top_srcdir)/variable.c \
+	  $(top_srcdir)/extend.c $(top_srcdir)/error.c \
+	  $(top_srcdir)/MLVars.c $(top_srcdir)/process_values.c 
 
 LD_HDRS = MLVars.h defines.h dods_memory.h error.h extend.h queue.h	\
 	variable.h queue.c

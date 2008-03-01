@@ -1,7 +1,18 @@
 
  $Id$
- 
-Be sure to add /usr/local/bin to your matlabpath! For example, you could add
+
+** Linux RPM USERS
+
+If you're reading this after installing using theLinux RPM, loaddap installs
+into /usr/bin from the RPM and that's the only directory you need to add to
+your matlabpath (because the help files go there as well; we install them in
+a bin directory because automake wants to put the scripts there and because
+it makes for a simpler configuration in Matlab).
+
+** End Linux RPM Users
+
+Be sure to add loaddap's directory to your matlabpath! For example, you could
+add
 
      addpath /usr/local/bin
 
