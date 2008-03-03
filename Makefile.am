@@ -1,4 +1,5 @@
 
+
 # Automake file for asciival
 #
 # 5/17/2005 jhrg
@@ -70,7 +71,7 @@ writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
 all-local: loaddap-stamp
 
 loaddap-stamp: $(LD_SRCS) $(LD_HDRS)
-	mex $(CPPFLAGS) $(MEXFLAGS) -output loaddap $(LD_SRCS) \
+	mex $(CPPFLAGS) $(MEXFLAGS) -output loaddap $(LD_SRCS) -ldl \
 		&& touch loaddap-stamp
 
 clean-local:
