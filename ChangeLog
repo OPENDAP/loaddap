@@ -1,3 +1,279 @@
+2008-03-13  James Gallagher <jgallagher@opendap.org>
+
+	Added the 'verbose' flag to the build of loaddap
+
+	M    Makefile.am
+
+2008-03-03  James Gallagher <jgallagher@opendap.org>
+
+	Added -ldl to loaddap link since it's needed on FC 8 32-bit (but
+	not 64??).
+
+	M    Makefile.am
+
+2008-03-01  James Gallagher <jgallagher@opendap.org>
+
+	Fixed the distcheck target. It and RPM now build correctly.
+
+	M    config_writedap.h
+	M    README
+	M    Makefile.am
+
+2008-02-29  James Gallagher <jgallagher@opendap.org>
+
+	Hacks for a package build - on the quick - of loaddap. To be used
+	for the ml toolbox distribution. To get the RPM to install you need
+	to use --nodeps, at least on a 64-bit machine.
+
+	M    loaddap.spec
+	M    configure.ac
+	M    Makefile.am
+
+2008-02-22  James Gallagher <jgallagher@opendap.org>
+
+	Updated
+
+2008-02-21  James Gallagher <jgallagher@opendap.org>
+
+	Makefile updated so that the loaddap mex program is
+	installed/packaged. In addition a manifest is not made for the mex
+	program (it doesn't work)
+
+2008-02-21  James Gallagher <jgallagher@opendap.org>
+
+	Applied patches from Anna Nokolov (win32 port)
+
+	M    write_dap.cc
+
+2008-02-16  James Gallagher <jgallagher@opendap.org>
+
+	Auto reset of Subversion properties
+
+2008-02-15  James Gallagher <jgallagher@opendap.org>
+
+	Added. Fixes bug 1040.
+
+	A    conf/pkg.m4
+
+2008-02-14  Patrick West <pwest@ucar.edu>
+
+	Updated configure to use latest and greatest libdap config macro
+	and m4 file.
+
+	M    configure.ac
+	M    conf/libdap.m4
+
+2008-02-14  James Gallagher <jgallagher@opendap.org>
+
+	Removed the bogus config_write* headers from the VCPP directory
+
+2008-02-14  James Gallagher <jgallagher@opendap.org>
+
+	Changed all the i/o to use the routines in error.c, which correctly
+	handle writing messages to the console/text window of matlab. The
+	message written to stderr by writedap are lost, as has been the
+	case since ML 6 or 7.
+
+	M    error.c
+	M    variable.c
+	M    process_values.c
+	M    loaddap.c
+	M    extend.c
+
+2008-02-13  James Gallagher <jgallagher@opendap.org>
+
+	Changed the Makefile in VCPP so that Matlab's mex tool is used
+	directly to build the mex program. This ends support for ML 7.0
+	and earlier versions. Also fixed a minor problem with the -V
+	option
+
+2008-02-02  Patrick West <pwest@ucar.edu>
+
+	Added using namespace libdap where needed
+	M    ClientInt16.h
+	M    ClientStr.h
+	M    ClientUInt16.h
+	M    LoaddodsProcessing.h
+	M    ClientFloat32.h
+	M    ClientArray.h
+	M    ClientInt32.h
+	M    ClientStructure.h
+	M    ClientUrl.h
+	M    ClientByte.h
+	M    MetadataProcessing.h
+	M    ClientFloat64.h
+	M    ClientUInt32.h
+	M    AttributeInterface.h
+	M    ClientSequence.h
+	M    ClientTypeFactory.h
+	M    name_map.cc
+	M    ClientGrid.h
+
+2008-01-29  James Gallagher <jgallagher@opendap.org>
+
+	more pkg updates...
+
+	M    OSX_Resources/InstallationCheck
+
+2008-01-29  James Gallagher <jgallagher@opendap.org>
+
+	Updates for pkg target.
+
+	M    OSX_Resources/InstallationCheck
+	M    OSX_Resources/Info.plist
+	M    OSX_Resources/InstallationCheck.strings
+	M    OSX_Resources/Description.plist
+	M    Makefile.am
+
+2008-01-16  James Gallagher <jgallagher@opendap.org>
+
+	Removed the major and minor version numbers.
+
+	M    OSX_Resources/update_mac_package_contents.pl
+	M    OSX_Resources/Info.plist
+
+2008-01-12  James Gallagher <jgallagher@opendap.org>
+
+	Auto reset of Subversion properties
+
+2008-01-11  James Gallagher <jgallagher@opendap.org>
+
+	Updated for libdap 3.7.x
+
+	M    OSX_Resources/InstallationCheck
+	M    OSX_Resources/InstallationCheck.strings
+
+2008-01-11  James Gallagher <jgallagher@opendap.org>
+
+	Updates for the new OSX build.
+
+	D    mac_osx
+	D    loaddap.pmproj
+	M    README
+	M    Makefile.am
+
+2008-01-11  James Gallagher <jgallagher@opendap.org>
+
+	Added/updated for the new build.
+
+	M    OSX_Resources/License.txt
+	AM   OSX_Resources/macify_license_file.pl
+	AM   OSX_Resources/update_mac_package_contents.pl
+	A    OSX_Resources/Info.plist
+	M    OSX_Resources/ReadMe.txt
+	A    OSX_Resources/Description.plist
+	M    OSX_Resources/Welcome.html
+
+2007-09-17  James Gallagher <jgallagher@opendap.org>
+
+	configure.ac: Corrected the tech mailing list address.
+
+2007-01-08  James Gallagher <jgallagher@opendap.org>
+
+	Auto reset of Subversion properties
+
+2007-01-07  Rob Morris <Robert.O.Morris@jpl.nasa.gov>
+
+	Last Makefile tweeks to automate pkging for win32
+
+2007-01-07  Rob Morris <Robert.O.Morris@jpl.nasa.gov>
+
+	Add doc's that accompany win32 ml-structs releases to the repository
+
+2007-01-06  Rob Morris <Robert.O.Morris@jpl.nasa.gov>
+
+	Synchronize Matlab cmd-line win32 Makefile to build/pkg as other
+	win32 Makefiles do
+
+2006-10-11  James Gallagher <jgallagher@opendap.org>
+
+	Fixed InstallationCheck.
+
+2006-06-28  James Gallagher <jgallagher@opendap.org>
+
+	loaddap.c: Moved 'int status;' on line 688 (or thereabouts) to the
+	top of the function. Fixes a problem with C versus C++
+	declarations.
+
+2006-06-20  James Gallagher <jgallagher@opendap.org>
+
+	Auto reset of Subversion properties
+
+2006-06-19  James Gallagher <jgallagher@opendap.org>
+
+	configure.ac: Switched to DAP_CLIENT_LIBS so that Connect will be
+	included.
+
+2006-05-01  Rob Morris <Robert.O.Morris@jpl.nasa.gov>
+
+	Update win32 ml-structs Makefile
+
+2006-04-24  Dan Holloway <dholloway@opendap.org>
+
+	Updated required libdap revision number to 3.6.0
+
+2006-04-24  Dan Holloway <dholloway@opendap.org>
+
+	Updated version to 3.5.2
+
+2006-04-23  Rob Morris <Robert.O.Morris@jpl.nasa.gov>
+
+	Partial porting efforts re ml-structs
+
+2006-04-23  Rob Morris <Robert.O.Morris@jpl.nasa.gov>
+
+	Partial porting efforts re ml-structs
+
+2006-04-16  Rob Morris <Robert.O.Morris@jpl.nasa.gov>
+
+	Rename, add dirs and prune as appropriate for VC++ port
+
+2006-04-11  Dan Holloway <dholloway@opendap.org>
+
+	Replaced use of Error::error_message(), which is now deprecated
+	with Error::get_error_message().
+
+2006-04-11  Dan Holloway <dholloway@opendap.org>
+
+	Fixed read_string_value bug, replaced constant MAX_STR(256) with
+	BIG_STR(8192) to support handling large string attributes.
+
+2006-02-15  Dan Holloway <dholloway@opendap.org>
+
+	Fixed print_val(), fprintf in if(print_decl_p) condition requires
+	a EOL character after writing _buf.
+
+	Fixed print_val(), fprintf in if(print_decl_p) condition printing
+	type_name requires that .c_str() type as an argument.
+
+2006-02-15  Dan Holloway <dholloway@opendap.org>
+
+	Fixed print_val(), fwrite call was previously passed sizeof(float32) in if(translate)
+	condition, modified to pass sizeof(float64) when translate == true.
+
+2006-02-10  James Gallagher <jgallagher@opendap.org>
+
+	Changes needed for libdap 3.6
+
+2006-01-24  James Gallagher <jgallagher@opendap.org>
+
+	Modified many files so that they no longer use the iostreams
+	methods from libdap.
+
+2005-12-27  James Gallagher <jgallagher@opendap.org>
+
+	Added info to README about bug 280 (binary problem with default
+	gcc on recent linux distros) and also to NEWS. Bumped up version
+	info.
+
+2005-12-22  James Gallagher <jgallagher@opendap.org>
+
+	Patch for loaddap on 64-bit FC4. On that platform pclose() is
+	always returning -1 and errno is ECHILD. I put in a simple test to
+	ignore that combination. The real fix is to drop the two program
+	arch. Also added dependencies to the loaddap-stamp target in
+	Makefile.am.
+
 2005-12-22  James Gallagher <jgallagher@opendap.org>
 
 	Removed log file from loaddap.c
@@ -20,9 +296,9 @@
 
 2005-12-21  James Gallagher <jgallagher@opendap.org>
 
-	Fixes to the testsuite. the URLs were corrected to use the server at
-	test.opendap.org and other misc fixes put in place. Now we need to get the
-	DSP server running.
+	Fixes to the testsuite. the URLs were corrected to use the server
+	at test.opendap.org and other misc fixes put in place. Now we need
+	to get the DSP server running.
 
 2005-12-21  James Gallagher <jgallagher@opendap.org>
 

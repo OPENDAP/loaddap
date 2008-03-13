@@ -10,11 +10,8 @@ URL: http://www.opendap.org/
 Group: Development/Libraries
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 License: LGPL/W3C
-Requires: libdap >= 3.7.11
-# Mandrake
-#BuildRequires: libcurl3-devel >= 7.10.6 libxml2-devel >= 2.5.7
-# fedora
-#BuildRequires: libdap-devel >= 3.5.2
+Requires: libdap >= 3.8.0
+BuildRequires: libdap-devel >= 3.8.0
 
 # This package could be relocatable. In that case uncomment the following
 # line
@@ -23,7 +20,7 @@ Prefix: %{_prefix}
 %description
 This package contains the OPeNDAP Matlab command line interface client. 
 This client can be used to read data from DAP2-compilant servers directly
-into Matlab. This version of the client has been tested witrh Matlab 7,
+into Matlab. This version of the client has been tested witrh Matlab 7.5,
 although previous versions are goin gback to version 5 are likely to work.
 
 %prep

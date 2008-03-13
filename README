@@ -1,6 +1,8 @@
 
  $Id$
 
+Updated for version 3.6.0
+
 ** Linux RPM USERS
 
 If you're reading this after installing using theLinux RPM, loaddap installs

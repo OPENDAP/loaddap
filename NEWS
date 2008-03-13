@@ -1,4 +1,11 @@
 
+News for 3.6.0, 13 March 2008
+
+Many changes, see the ChangeLog. Summary:WinXP build now works again;
+Text/message output from loaddap now works (after Matlab 6 you had to use the
+-nojvm option with Matlab to see the output); Issues with teh modern version
+of writedap fixed.
+
 News for 3.5.2
 
 04/19/05
