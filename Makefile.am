@@ -16,7 +16,7 @@ ACLOCAL_AMFLAGS = -I conf
 #
 # Added -I. so the distcheck target will build. 3/1/08 jhrg
 
-MEXFLAGS = $(AM_CPPFLAGS) -I. -V5 -DNO_MX_FREE -DHAVE_CONFIG_H
+MEXFLAGS = $(AM_CPPFLAGS) -I. -V5 -DNO_MX_FREE -DHAVE_CONFIG_H -v
 
 # These are not used by automake but are often useful for certain types of
 # debugging.
