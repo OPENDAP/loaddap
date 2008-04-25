@@ -119,9 +119,12 @@ $(OBJDIR)\loaddap.mexw32: $(MESXRCS)
 $(OBJDIR)\writedap.exe: $(WD_OBJS) $(CLIENTOBJS)
 	$(LINK) $(LFLAGS) /OUT:$@ $(WD_OBJS) $(CLIENTOBJS) $(LIBS)
 
+# I'm not sure why Rob M installed the mex file in a DDL directory, but it doesn't seem to
+# hurt anything. jhrg
 install: all mkinstdirs
-        copy $(OBJDIR)\MD\loaddap.mex* $(INSTALLDLLDIR)
-
+    copy $(OBJDIR)\MD\loaddap.mex* $(INSTALLDLLDIR)
+    copy $(SRCDIR)\loaddap.m $(INSTALLBINDIR)
+    copy $(SRCDIR)\whodap.m $(INSTALLBINDIR)
 	copy $(OBJDIR)\MD\writedap.exe* $(INSTALLBINDIR)
 	mt -nologo -manifest $(INSTALLBINDIR)\writedap.exe.manifest -outputresource:$(INSTALLBINDIR)\writedap.exe;1
 	del $(INSTALLBINDIR)\writedap.exe.manifest
@@ -130,8 +133,9 @@ install: all mkinstdirs
 # del $(INSTALLDLLDIR)\loaddap.mexw32.manifest
 
 package: all mkpkgdirs document
-        copy $(OBJDIR)\MD\loaddap.mex* $(PKGDLLDIR)
-
+    copy $(OBJDIR)\MD\loaddap.mex* $(PKGDLLDIR)
+    copy $(SRCDIR)\loaddap.m $(PKGBINDIR)
+    copy $(SRCDIR)\whodap.m $(PKGBINDIR)
 	copy $(OBJDIR)\MD\writedap.exe* $(PKGBINDIR)
 	mt -nologo -manifest $(PKGBINDIR)\writedap.exe.manifest -outputresource:$(PKGBINDIR)\writedap.exe;1
 	del $(PKGBINDIR)\writedap.exe.manifest

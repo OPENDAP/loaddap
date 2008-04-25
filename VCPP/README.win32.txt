@@ -1,0 +1,1 @@
+See the svn/trunk/VCPP project for information on building this code on Windows XP.

@@ -1,0 +1,3 @@
+In addition to installing loaddap 3.6.0, this will also install libdap 3.8.0 and the other run-time libraries it needs. You do not need to get the libdap package since it is included here. 
+
+For more information about our Windows XP distributions contact us at support at opendap.org.
