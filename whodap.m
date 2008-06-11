@@ -26,12 +26,12 @@ function text = whodap(url)
 %  A DAP2-accessible Dataset descriptor structure, as text.
 %
 % EXAMPLE:
-%  whodap('http://test.opendap.org/opendap/nph-dods/data/coads.nc')
+%  whodap('http://test.opendap.org/opendap/data/nc/coads.nc')
 %	-> Returns structured text describing the names and types
 %	   of variables in the dataset `coads.nc' in directory 'data'
 %	   on `dods.gso.uri.edu'.
 %
-%  whodap('http://test.opendap.org/opendap/nph-dods/data/fnoc1.nc')
+%  whodap('http://test.opendap.org/opendap/data/nc/fnoc1.nc')
 %       -> Returns:
 %	Dataset {
 %	    Int32 u[time_a = 16][lat = 17][lon = 21];
@@ -50,6 +50,6 @@ function text = whodap(url)
 % AUTHOR: James Gallagher, OPeNDAP
 %---------------------------------------------------------------------
 
-eval(['!./writedap -D -- ', url])
+eval(['!writedap -D -- ', url])
 
 

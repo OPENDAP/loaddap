@@ -7,10 +7,10 @@ function values = loaddap([switches,] URL [, URL])
 %
 % DESCRIPTION:
 %  
-%  loaddap is an interface to DAP2-compliant data servers such for Matlab 
-%  5, 6 and 7. loaddap should be called with a
+%  loaddap is an interface to DAP2-compliant data servers for Matlab 
+%  loaddap should be called with a
 %  DAP URL which references data, in which case the command will access the
-%  dataset and create scalars, vectors and/or matrices in Matlab to hold
+%  dataset and create scalars, vectors and/or matrices in Matlab that hold
 %  those data. 
 %  
 %  loaddap used to be limited to scalar, vector and matrix (2D) data.
@@ -25,7 +25,7 @@ function values = loaddap([switches,] URL [, URL])
 %  -F: Force all string variables to be translated to float.
 %  -A: Access the dataset's DAS object.
 %  -k: Concatenate like-named variables. Only tested for N=1,2.
-%  -n: Use the full name of a variable. (An old option; this is the default.)
+%  -n: Use the full name of a variable.
 %  -s: Return a vector of variable names along with the variables themselves.
 %
 % PER URL OPTIONS:
@@ -102,27 +102,27 @@ function values = loaddap([switches,] URL [, URL])
 %  One or more Matlab variables.
 %
 % EXAMPLES:
-%  x = loaddap('-A', 'http://dods.gso.uri.edu/cgi-bin/nph-nc/data/coads.nc')
+%  x = loaddap('-A', 'http://test.opendap.org/opendap/data/nc/coads_climatology.nc')
 %       -> Returns a Matlab Structure to x that contains the attributes
 %          for the named dataset.
 %
-%  loaddap('http://dods.gso.uri.edu/cgi-bin/nph-nc/data/coads.nc?SST[0:0][0:89][0:179]')
+%  loaddap('http://test.opendap.org/opendap/data/nc/coads_climatology.nc?SST[0:0][0:89][0:179]')
 %	-> Returns Sea Surface Temperature data from the COADS
 %	   climatology data set at URI. Note that the values will be bound to
 %          a variable named `SST' in the current Matlab workspace.
 %
-%  temps = loaddap('http://dods.gso.uri.edu/cgi-bin/nph-nc/data/coads.nc?SST[0:0][0:89][0:179]')
+%  temps = loaddap('http://test.opendap.org/opendap/data/nc/coads_climatology.nc?SST[0:0][0:89][0:179]')
 %	-> Returns Sea Surface Temperature data from the COADS
 %	   climatology data set at URI *and stores it in the variable
 %          `temps"*. Explicitly assigning the values accessed by loaddap to
 %          a variable is one way to control which names are interned in the
 %          Matlab workspace. See the following example for a second method.
 %
-%  loaddap('http://dods.gso.uri.edu/cgi-bin/nph-nc/data/fnoc1.nc?u[0:0][0:16][0:20] -r u:wind_speed_u_comp')
+%  loaddap('http://test.opendap.org/opendap/data/nc/fnoc1.nc?u[0:0][0:16][0:20] -r u:wind_speed_u_comp')
 %       -> Returns the variable `u' from the fnoc1.nc dataset and interns it 
 %          in Matlab as `wind_speed_u_comp'.
 %  
-%  loaddap('-A', 'http://dods.gso.uri.edu/cgi-bin/nph-nc/data/fnoc1.nc -c NC_GLOBAL')
+%  loaddap('-A', 'http://test.opendap.org/opendap/data/nc/fnoc1.nc -c NC_GLOBAL')
 %       -> Returns the attributes in the NC_GLOBAL container of the fnoc1
 %          dataset. 
 %
