@@ -14,12 +14,12 @@ disp 'Test grid/array --> scalar constraint: ';
 
 load testsuite/matlab/grid2scalar_data.mat;
 
-base_url = 'http://test.opendap.org/opendap/nph-dods';
+base_url = 'http://test.opendap.org/opendap';
 
 coads = [base_url '/data/nc/coads_climatology.nc?SST[0][0][0]'];
 loaddap(coads);
 
-if all(SST == SST_d) & all(TIME == TIME_d) & all(COADSX == COADSX_d) & all(COADSY == COADSY_d)
+if isequal(SST, SST_d)
    disp 'PASS';
 else
    disp 'FAIL';

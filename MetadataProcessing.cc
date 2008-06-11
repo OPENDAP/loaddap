@@ -1,4 +1,3 @@
-
 // -*- mode: c++; c-basic-offset:4 -*-
 
 // This file is part of loaddap.
@@ -57,148 +56,128 @@
 extern name_map names;
 extern bool translate;
 
-void
-MetadataProcessing::transfer_attr(DAS &das, BaseType &bt)
-{
-    // The nesting of the try/catch blocks below separates the possible error
-    // of casting to AttrTable from the later casts to Structure, etc.
-    try {
-	// We know that this is one of the Client* specializations of
-	// BaseType and we know that those also inherit from AttrTable. Cast
-	// laterally to AttrTable.
-	DBG(cerr << " About to cast a " << bt.type_name() << endl);
-
-	AttributeInterface &ai = dynamic_cast<AttributeInterface &>(bt);
-#if 0
-        // Unused
-	AttrTable &at = ai.getAttrTable();
-#endif
-
+void MetadataProcessing::transfer_attr(DAS &das, BaseType &bt) {
+	// The nesting of the try/catch blocks below separates the possible error
+	// of casting to AttrTable from the later casts to Structure, etc.
 	try {
-	    // Use the variable's name to find the correct attribtue table in
-	    // the DAS object.
-	    string name = bt.name();
-	    AttrTable *das_attrs = das.get_table(name);
+		// We know that this is one of the Client* specializations of
+		// BaseType and we know that those also inherit from AttrTable. Cast
+		// laterally to AttrTable.
+		DBG(cerr << " About to cast a " << bt.type_name() << endl);
 
-	    // Copy attributes from the DAS to the AttrTable that's part of
-	    // the variable in the DDS.
-	    if (das_attrs)
-		ai.setAttrTable(*das_attrs);
+		AttributeInterface &ai = dynamic_cast<AttributeInterface &>(bt);
 
-	    // If this is a ctor type, call for each child.
-	    switch (bt.type()) {
-	      case dods_structure_c: {
-		  Structure &s = dynamic_cast<Structure &>(bt);
-		  Constructor::Vars_iter p;
-		  for (p = s.var_begin(); p != s.var_end(); ++p)
-		      transfer_attr(das, **p);
-		  break;
-	      }
-	      case dods_sequence_c: {
-		  Sequence &s = dynamic_cast<Sequence &>(bt);
-		  Constructor::Vars_iter p;
-		  for (p = s.var_begin(); p != s.var_end(); ++p)
-		      transfer_attr(das, **p);
-		  break;
-	      }
-	      case dods_grid_c: {
-		  Grid &g = dynamic_cast<Grid &>(bt);
-		  transfer_attr(das, *g.array_var());
-		  Grid::Map_iter p;
-		  for (p = g.map_begin(); p != g.map_end(); ++p)
-		      transfer_attr(das, **p);
-		  break;
-	      }	  
-	      default:
-		break;
-	    }
+		try {
+			// Use the variable's name to find the correct attribtue table in
+			// the DAS object.
+			string name = bt.name();
+			AttrTable *das_attrs = das.get_table(name);
+
+			// Copy attributes from the DAS to the AttrTable that's part of
+			// the variable in the DDS.
+			if (das_attrs)
+			ai.setAttrTable(*das_attrs);
+
+			// If this is a ctor type, call for each child.
+			switch (bt.type()) {
+				case dods_structure_c: {
+					Structure &s = dynamic_cast<Structure &>(bt);
+					Constructor::Vars_iter p;
+					for (p = s.var_begin(); p != s.var_end(); ++p)
+					transfer_attr(das, **p);
+					break;
+				}
+				case dods_sequence_c: {
+					Sequence &s = dynamic_cast<Sequence &>(bt);
+					Constructor::Vars_iter p;
+					for (p = s.var_begin(); p != s.var_end(); ++p)
+					transfer_attr(das, **p);
+					break;
+				}
+				case dods_grid_c: {
+					Grid &g = dynamic_cast<Grid &>(bt);
+					transfer_attr(das, *g.array_var());
+					Grid::Map_iter p;
+					for (p = g.map_begin(); p != g.map_end(); ++p)
+					transfer_attr(das, **p);
+					break;
+				}
+				default:
+				break;
+			}
+		}
+		catch (bad_cast &bc) {
+			throw InternalErr(__FILE__, __LINE__,
+					"A BaseType object could not be downcast.\n");
+		}
 	}
 	catch (bad_cast &bc) {
-	    throw InternalErr(__FILE__, __LINE__,
-			      "A BaseType object could not be downcast.\n");
+		throw InternalErr(__FILE__, __LINE__,
+				"Object in cast was not an AttributeInterface.");
 	}
-    }
-    catch (bad_cast &bc) {
-	throw InternalErr(__FILE__, __LINE__,
-			  "Object in cast was not an AttributeInterface.");
-    }
 
-    // What's up?
-    // DBG2(btp->print_decl(cerr));
-    // DBG2(atp->print(cerr));
+	// What's up?
+	// DBG2(btp->print_decl(cerr));
+	// DBG2(atp->print(cerr));
 }
 
 // An attribute is global if it's name does not match any of the top-level
 // variables. 
-bool
-MetadataProcessing::is_global_attr(string name)
-{
-    DDS::Vars_iter p;
-    for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p)
-	if ((*p)->name() == name)
-	    return false;
+bool MetadataProcessing::is_global_attr(string name) {
+	DDS::Vars_iter p;
+	for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p)
+		if ((*p)->name() == name)
+			return false;
 
-    return true;
+	return true;
 }
 
 // This code could use a real `kill-file' some day - about the same time that
 // the rest of the server gets a `rc' file... For the present just see if a
 // small collection of regexs match the name.
-static bool
-is_in_kill_file(const string &name)
-{
-    static Regex dim(".*_dim_[0-9]*", 1); // HDF `dimension' attributes.
+static bool is_in_kill_file(const string &name) {
+	static Regex dim(".*_dim_[0-9]*", 1); // HDF `dimension' attributes.
 
-    return dim.match(name.c_str(), name.length()) != -1;
+	return dim.match(name.c_str(), name.length()) != -1;
 }
 
 // For each global attribute container, add a variable with the same name as
 // the container to the new structure. Then add the global container to that
 // new structure element.
-void
-MetadataProcessing::add_global_attributes(DAS &das, string global_cont_name)
-{
-    ClientStructure *cs = new ClientStructure(global_cont_name);
+void MetadataProcessing::add_global_attributes(DAS &das, string global_cont_name) {
+	ClientStructure *cs = new ClientStructure(global_cont_name);
 
-    AttrTable::Attr_iter p;
-    for (p = das.attr_begin(); p != das.attr_end(); ++p) {
-	string name = das.get_name(p);
+	AttrTable::Attr_iter p;
+	for (p = das.attr_begin(); p != das.attr_end(); ++p) {
+		string name = das.get_name(p);
 
-	if (!is_in_kill_file(name) && is_global_attr(name)) {
-	    AttrTable *attr = das.get_table(p);
-	    // Why ClientStructure? Why not? Any type will do since it never
-	    // gets a value. We just need something in the DDS to hold the
-	    // global attributes so they can be output using the same code as
-	    // for the real variables. 6/2/2000 jhrg
-	    ClientStructure *cb = new ClientStructure(name);
-	    cb->setAttrTable(*attr);
-	    cs->add_var(cb);
+		if (!is_in_kill_file(name) && is_global_attr(name)) {
+			AttrTable *attr = das.get_table(p);
+			// Why ClientStructure? Why not? Any type will do since it never
+			// gets a value. We just need something in the DDS to hold the
+			// global attributes so they can be output using the same code as
+			// for the real variables. 6/2/2000 jhrg
+			ClientStructure *cb = new ClientStructure(name);
+			cb->setAttrTable(*attr);
+			cs->add_var(cb);
+		}
 	}
-    }
-    meta_dds.add_var(cs);
+	meta_dds.add_var(cs);
 }
 
-#if 0
-MetadataProcessing::MetadataProcessing()
-{
-}
-#endif
-
-MetadataProcessing::MetadataProcessing(DDS &dds): meta_dds(dds)
-{
+MetadataProcessing::MetadataProcessing(DDS &dds) :
+	meta_dds(dds) {
 }
 
-void 
-MetadataProcessing::transfer_attributes(DAS &das)
-{
-    DDS::Vars_iter p;
+void MetadataProcessing::transfer_attributes(DAS &das) {
+	DDS::Vars_iter p;
 
-    for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
-	BaseType *btp = (*p);
-	transfer_attr(das, *btp);
-    }
+	for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
+		BaseType *btp = (*p);
+		transfer_attr(das, *btp);
+	}
 
-    add_global_attributes(das, "Global_Attributes");
+	add_global_attributes(das, "Global_Attributes");
 }
 
 // $Log: MetadataProcessing.cc,v $

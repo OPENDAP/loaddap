@@ -1,4 +1,3 @@
-
 // -*- mode: c++; c-basic-offset:4 -*-
 
 // This file is part of loaddap.
@@ -55,92 +54,69 @@ extern bool translate;
 
 extern void smart_newline(ostream &os, Type type);
 
-Array *
-NewArray(const string &n, BaseType *v)
-{
-    return new ClientArray(n, v);
+Array * NewArray(const string &n, BaseType *v) {
+	return new ClientArray(n, v);
 }
 
-BaseType *
-ClientArray::ptr_duplicate()
-{
-    return new ClientArray(*this);
+BaseType * ClientArray::ptr_duplicate() {
+	return new ClientArray(*this);
 }
 
-ClientArray::ClientArray(const string &n, BaseType *v) : Array(n, v)
-{
-    set_matlab_name(n);
+ClientArray::ClientArray(const string &n, BaseType *v) :
+	Array(n, v) {
+	set_matlab_name(n);
 }
 
-ClientArray::~ClientArray()
-{
-    DBG(cerr << "Entering ~ClientArray (" << this << ")" << endl);
-    DBG(cerr << "Exiting ~ClientArray" << endl);
+ClientArray::~ClientArray() {
+	DBG(cerr << "Entering ~ClientArray (" << this << ")" << endl);
+	DBG(cerr << "Exiting ~ClientArray" << endl);
 }
 
-bool
-ClientArray::read(const string &)
-{
-  throw InternalErr(__FILE__, __LINE__, "Called unimplemented read method");
+bool ClientArray::read(const string &) {
+	throw InternalErr(__FILE__, __LINE__, "Called unimplemented read method");
 }
 
-void
-ClientArray::print_val(FILE *os, string, bool print_decl_p)
-{
-    ostringstream ss;
-    if (print_decl_p) {
-	ss << type_name() << endl << var()->type_name() << " " 
-	   << get_matlab_name() << " " << dimensions(true)
-	   << endl;
+void ClientArray::print_val(FILE *os, string, bool print_decl_p) {
+	ostringstream ss;
+	if (print_decl_p) {
+		ss << type_name() << endl << var()->type_name() << " " << get_matlab_name() << " "
+				<< dimensions(true) << endl;
 
-	// Write the actual dimension sizes on a spearate line.
-        Dim_iter i = dim_begin();
-        while (i != dim_end()) {
-            ss << dimension_size(i, true) << " ";
-            ++i;
-        }
-#if 0            
-	for (Pix p = first_dim(); p; next_dim(p))
-	    ss << dimension_size(p, true) << " ";
-#endif
-	ss << endl;
-    }
+		// Write the actual dimension sizes on a spearate line.
+		Dim_iter i = dim_begin();
+		while (i != dim_end()) {
+			ss << dimension_size(i, true) << " ";
+			++i;
+		}
 
-    fprintf(os, "%s", ss.str().c_str());
-    
-    for (int i = 0; i < length(); ++i)
-	var(i)->print_val(os, "", false);
-}    
+		ss << endl;
+	}
 
-AttrTable &
-ClientArray::getAttrTable()
-{
-    return _attr;
+	fprintf(os, "%s", ss.str().c_str());
+
+	for (int i = 0; i < length(); ++i)
+		var(i)->print_val(os, "", false);
 }
 
-void 
-ClientArray::setAttrTable(AttrTable &attr)
-{
-    _attr = attr;
+AttrTable & ClientArray::getAttrTable() {
+	return _attr;
 }
 
-void
-ClientArray::set_name(const string &n)
-{
-    BaseType::set_name(n);
-    set_matlab_name(n);
+void ClientArray::setAttrTable(AttrTable &attr) {
+	_attr = attr;
 }
 
-string 
-ClientArray::get_matlab_name() const
-{
-    return _matlabName;
+void ClientArray::set_name(const string &n) {
+	BaseType::set_name(n);
+	set_matlab_name(n);
 }
 
-void 
-ClientArray::set_matlab_name(const string &name)
-{ 
-    _matlabName = names.lookup(name, translate);
+string ClientArray::get_matlab_name() const {
+	return _matlabName;
+}
+
+void ClientArray::set_matlab_name(const string &name) {
+	_matlabName = names.lookup(name, translate);
 }
 
 // $Log: ClientArray.cc,v $

@@ -83,9 +83,6 @@ FILE *openpipe(char *command, unsigned short redirect_stderr)
 /*  kill it if it didn't terminate on its' own.      */
 int pclose(FILE *stream)
 {
-#if 0
-        HANDLE phandle = (HANDLE)(_get_osfhandle(stream));
-#endif
 	/*  To make sure we don't zip through this function prematurely     */
 	/*  (before process startup) we might have to wait for a bit.       */
 	WaitForSingleObject(subprocess,INFINITE);
@@ -97,9 +94,7 @@ int pclose(FILE *stream)
 	CloseHandle(hPipeInputWrite);
 
 	fclose(stream);
-#if 0
-	CloseHandle(phandle);
-#endif
+
 	//  Success, always
 	return(0);
 }

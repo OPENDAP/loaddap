@@ -1,7 +1,7 @@
 
 	$Id$
 
-Updated for version 3.6.0
+Updated for version 3.6.1
 
 Installing the OPeNDAP Matlab client
 
@@ -38,7 +38,7 @@ BUILDING THE SOFTWARE
      the word `PASS' for each of them.  If a test does not pass, contact the
      OPeNDAP support center:
 
-       support@unidata.ucar.edu
+       support at opendap.org
 
   3. Type `make install' to install the client binary and it's helper 
      programs. By default the software installs in /usr/local/bin and 

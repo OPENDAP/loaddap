@@ -12,8 +12,7 @@ disp 'Test memory usage: ';
 test_limit = 10000;
 
 % Use a local URL for this test. Caching will pay off here. 4/19/2000 jhrg
-% base_url = 'http://dods.gso.uri.edu/cgi-bin/nph-';
-base_url = 'http://test.opendap.org/opendap/nph-dods';
+base_url = 'http://test.opendap.org/opendap';
 
 fnoc1 = [base_url '/data/nc/fnoc1.nc?u'];
 

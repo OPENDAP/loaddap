@@ -8,7 +8,7 @@ disp 'Test loading multiple arrays: ';
 
 load testsuite/matlab/multiple_arrays_data.mat;
 
-base_url = 'http://test.opendap.org/opendap/nph-dods';
+base_url = 'http://test.opendap.org/opendap';
 
 fnoc1 = [base_url '/data/nc/fnoc1.nc?lat,lon,time,u,v'];
 loaddap(fnoc1);

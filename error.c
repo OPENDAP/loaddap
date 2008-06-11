@@ -144,7 +144,7 @@ _intern_dods_err(int _err_state)
     array_ptr = mxCreateDoubleMatrix(1, 1, mxREAL);
     if (!array_ptr)
 	mexErrMsgTxt("Internal Error in the reporting system (1)\n\
-Please report this error to support@opendap.org");
+Please report this error to support at opendap.org");
     mxSetName(array_ptr, "dods_err");
     mxSetPr(array_ptr, dde);
     mexPutArray(array_ptr, "caller");   
@@ -161,7 +161,7 @@ _intern_msg(char *_msg)
     error = mexPutArray(pm, "caller");
     if (error)
 	mexErrMsgTxt("Internal Error in the reporting system (1)\n\
-Please report this error to support@opendap.org");
+Please report this error to support at opendap.org");
 }
 
 /** Initialize the error reporting subsystem of loaddods. 

@@ -8,7 +8,7 @@ disp 'Test 2d int16 array: ';
 
 load testsuite/matlab/twoD_int16_array_data.mat;
 
-base_url = 'http://test.opendap.org/opendap/nph-dods';
+base_url = 'http://test.opendap.org/opendap';
 
 fnoc1 = [base_url '/data/nc/fnoc1.nc?u[0:15][0:16][0]'];
 loaddap(fnoc1);

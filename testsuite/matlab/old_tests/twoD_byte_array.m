@@ -8,7 +8,7 @@ disp 'Test 2d byte array: ';
 
 load testsuite/matlab/twoD_byte_array_data.mat;
 
-base_url = 'http://test.opendap.org/opendap/nph-dods';
+base_url = 'http://test.opendap.org/opendap';
 
 dsp_1 = [base_url '/data/dsp/east.coast?dsp_band_1[100:105][100:101]'];
 loaddap(dsp_1);

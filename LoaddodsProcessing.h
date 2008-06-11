@@ -1,4 +1,3 @@
-
 // -*- mode: c++; c-basic-offset:4 -*-
 
 // This file is part of loaddap.
@@ -34,65 +33,60 @@
 #include "InternalErr.h"
 #include "MetadataProcessing.h"
 
-using namespace libdap ;
+using namespace libdap;
 
 /** Print out text and binary values which the loaddods ML command extension
-    can read and use to build a representation of this dataset. The dataset
-    is represented as a ML structure where each field is a variable. For each
-    variable, the field's value is a structure which contains all of that
-    variable's attribute information. Additionally, if the variable is a
-    constructor variable, it will have entries for each of its child
-    variables. 
+ can read and use to build a representation of this dataset. The dataset
+ is represented as a ML structure where each field is a variable. For each
+ variable, the field's value is a structure which contains all of that
+ variable's attribute information. Additionally, if the variable is a
+ constructor variable, it will have entries for each of its child
+ variables. 
 
-    @author jhrg 
-    @see DAS
-    @see DDS
-    @see MetadataProcessing
-    @see writeval */
+ @author jhrg 
+ @see DAS
+ @see DDS
+ @see MetadataProcessing
+ @see writeval */
 
-class LoaddodsProcessing: public MetadataProcessing {
+class LoaddodsProcessing : public MetadataProcessing {
 protected:
-    /** Print out the attributes of the variable #bt# as a Structure.
-	Matlab/loaddods will intern the attribtues in a ML structure. */
-    void print_attributes(BaseType &bt, ostream &os);
+	/** Print out the attributes of the variable #bt# as a Structure.
+	 Matlab/loaddods will intern the attribtues in a ML structure. */
+	void print_attributes(BaseType &bt, ostream &os);
 
-    /** Print an attribute table. DODS Strings and URLs are externalized as
-	strings, all numeric types are externalized as Float64s. */
-    void print_attr_table(AttrTable &at, ostream &os);
-
-#if 0    
-    /** Only let children create empty instances */
-    LoaddodsProcessing();
-#endif
+	/** Print an attribute table. DODS Strings and URLs are externalized as
+	 strings, all numeric types are externalized as Float64s. */
+	void print_attr_table(AttrTable &at, ostream &os);
 
 public:
-    /** Create an empty MetadataProcessing object. */
-    LoaddodsProcessing(DDS &dds);
+	/** Create an empty MetadataProcessing object. */
+	LoaddodsProcessing(DDS &dds);
 
-    /** Remove duplicate variables that are added to the DDS by some servers.
-	This method uses ad hoc rules to figure out which variables are
-	duplicates. */
-    void prune_duplicates();
+	/** Remove duplicate variables that are added to the DDS by some servers.
+	 This method uses ad hoc rules to figure out which variables are
+	 duplicates. */
+	void prune_duplicates();
 
-    /** Add the DODS\_ML\_Size attribute. This is added for Array and Grid
-	variables. */
-    void add_size_attributes();
+	/** Add the DODS\_ML\_Size attribute. This is added for Array and Grid
+	 variables. */
+	void add_size_attributes();
 
-    /** Tear through the beast and add a DODS\_Real\_Name attribute for each
-	variable iff the flag #translate# is true. This provides the caller
-	of loaddods with a string that can be used to build URLs which
-	contain variable names that will work over on the server. The
-	Translate flag folds various escape sequences (e.g., %20) to
-	underscores. This is necessary because Matlab uses the `%' character
-	to start comments and thus `%20' in a variable name really confuses
-	it! */
-    void add_realname_attributes();
+	/** Tear through the beast and add a DODS\_Real\_Name attribute for each
+	 variable iff the flag #translate# is true. This provides the caller
+	 of loaddods with a string that can be used to build URLs which
+	 contain variable names that will work over on the server. The
+	 Translate flag folds various escape sequences (e.g., %20) to
+	 underscores. This is necessary because Matlab uses the `%' character
+	 to start comments and thus `%20' in a variable name really confuses
+	 it! */
+	void add_realname_attributes();
 
-    /** Write the hierarchically structured attribute information.
-	@param os An output stream object for the DAS/DDS inforamtion. */
-    void print_for_matlab(ostream &os);
+	/** Write the hierarchically structured attribute information.
+	 @param os An output stream object for the DAS/DDS inforamtion. */
+	void print_for_matlab(ostream &os);
 };
-    
+
 // $Log: LoaddodsProcessing.h,v $
 // Revision 1.2  2003/12/08 17:59:49  edavis
 // Merge release-3-4 into trunk

@@ -1,4 +1,11 @@
 
+News for 3.6,1, 11 June 2008
+
+Documentation fixes (the online docs)
+
+Known issue: Some sequences do not load correctly, but return an error 
+instead. If a sequence does not return an error then the values are good.
+
 News for 3.6.0, 13 March 2008
 
 Many changes, see the ChangeLog. Summary:WinXP build now works again;

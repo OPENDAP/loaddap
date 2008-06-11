@@ -65,12 +65,6 @@ private:
 	    from = t.substr(0,colon);
 	    to = t.substr(colon+1, t.size());
 	}
-#if 0
-	name_equiv() {
-	}
-	~name_equiv() {
-	}
-#endif
     };
 
     vector<name_equiv> _names;

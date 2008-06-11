@@ -6,9 +6,9 @@
 
 disp 'Test attributes from fnoc1: ';
 
-load testsuite/matlab/attributes1.mat
+load testsuite/matlab/attributes1.mat;
 
-base_url = 'http://test.opendap.org/opendap/nph-dods';
+base_url = 'http://test.opendap.org/opendap';
 
 fnoc1_attr = [base_url '/data/nc/fnoc1.nc'];
 attr=loaddap('-A', fnoc1_attr);

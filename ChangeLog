@@ -1,3 +1,21 @@
+2008-06-11  James Gallagher <jgallagher@opendap.org>
+
+	Fixed ticket 1135.
+
+2008-04-25  James Gallagher <jgallagher@opendap.org>
+
+	No longer installing the build tools
+
+2008-03-13  James Gallagher <jgallagher@opendap.org>
+
+	Updated for 3.6.0
+
+	M    loaddap.spec
+	M    NEWS
+	M    ChangeLog
+	M    INSTALL
+	M    README
+
 2008-03-13  James Gallagher <jgallagher@opendap.org>
 
 	Added the 'verbose' flag to the build of loaddap

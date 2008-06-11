@@ -14,9 +14,8 @@ disp 'Test sequence load: ';
 
 load testsuite/matlab/sequence_data.mat;
 
-base_url = 'http://test.opendap.org/opendap/nph-dods';
-
-hdf1 = [base_url '/data/hdf/quikscat.hdf?wvc_row_time__0'];
+base_url = 'http://test.opendap.org/opendap';
+hdf1 = [base_url '/data/hdf/S2000415.HDF?Low_Wind_Speed_Flag__0,High_Wind_Speed_Flag__0'];
 loaddap(hdf1);
 
 if all(wvc_row_time__0 == wvc_row_time__0_data)

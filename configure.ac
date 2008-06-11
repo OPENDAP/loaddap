@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([loaddap], [3.6.0], [opendap-tech@opendap.org])
+AC_INIT([loaddap], [3.6.1], [opendap-tech@opendap.org])
 AC_CONFIG_AUX_DIR([conf])
 
 AM_INIT_AUTOMAKE
@@ -42,7 +42,7 @@ AC_CHECK_FUNCS([putenv strcspn strerror strpbrk strrchr strstr])
 
 dnl Checks for specific libraries
 
-AC_CHECK_LIBDAP([3.7.10],
+AC_CHECK_LIBDAP([3.8.0],
  [
   LIBS="$LIBS $DAP_CLIENT_LIBS"
   CPPFLAGS="$CPPFLAGS $DAP_CFLAGS"

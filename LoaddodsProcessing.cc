@@ -1,4 +1,3 @@
-
 // -*- mode: c++; c-basic-offset:4 -*-
 
 // This file is part of loaddap.
@@ -64,64 +63,58 @@ using namespace std;
 extern name_map names;
 extern bool translate;
 
-void
-LoaddodsProcessing::print_attr_table(AttrTable &at, ostream &os)
-{
-    AttrTable::Attr_iter p = at.attr_begin();
-    while (p != at.attr_end()) {
-#if 0
-    for (Pix p = at.first_attr(); p; at.next_attr(p)) {
-#endif
-	int attr_num = at.get_attr_num(p);
-	switch (at.get_attr_type(p)) {
-	  case Attr_container: {
-	      AttrTable *cont_atp = at.get_attr_table(p);
-	      os << "Structure" << endl << names.lookup(at.get_name(p), translate)
-		 << " " << cont_atp->get_size() << endl;
-	      print_attr_table(*cont_atp, os);
-	      break;
-	  }
-	  case Attr_string:
-	  case Attr_url:
-	    if (attr_num == 1) {
-		os << "String" << endl << names.lookup(at.get_name(p), translate) << endl
-		   << at.get_attr(p) << endl;
-	    }
-	    else {
-		os << "Array" << endl << "String " << names.lookup(at.get_name(p), translate)
-		   << " 1" << endl << attr_num << endl;
-
-		for (int i = 0; i < attr_num; ++i)
-		  os << at.get_attr(p, i) << endl;
-#if 0
-		  os << at.get_name(p) << endl << at.get_attr(p, i) << endl;
-#endif
-		
-		// Send a trailing newline character
-		os << endl;
-	    }
-	    break;
-	  default:
-	    if (attr_num == 1) {
-		os << "Float64" << endl << names.lookup(at.get_name(p), translate) << endl;
-		dods_float64 df = atof(at.get_attr(p).c_str());
-		os.write((char *)&df, sizeof(dods_float64));
-		os << endl;
-	    }
-	    else {
-		os << "Array" << endl << "Float64 " << names.lookup(at.get_name(p), translate) 
-		   << " 1" << endl << attr_num << endl;
-		for (int i = 0; i < attr_num; ++i) {
-		    dods_float64 df = atof(at.get_attr(p, i).c_str());
-		    os.write((char *)&df, sizeof(dods_float64));
+void LoaddodsProcessing::print_attr_table(AttrTable &at, ostream &os) {
+	AttrTable::Attr_iter p = at.attr_begin();
+	while (p != at.attr_end()) {
+		int attr_num = at.get_attr_num(p);
+		switch (at.get_attr_type(p)) {
+		case Attr_container: {
+			AttrTable *cont_atp = at.get_attr_table(p);
+			os << "Structure" << endl
+					<< names.lookup(at.get_name(p), translate) << " "
+					<< cont_atp->get_size() << endl;
+			print_attr_table(*cont_atp, os);
+			break;
 		}
-		os << endl;
-	    }
-	    break;
-	}
-        
-        ++p;                    // Next attribute
-    }                           // This is the end of the loop
+		case Attr_string:
+		case Attr_url:
+			if (attr_num == 1) {
+				os << "String" << endl << names.lookup(at.get_name(p),
+						translate) << endl << at.get_attr(p) << endl;
+			} else {
+				os << "Array" << endl << "String " << names.lookup(
+						at.get_name(p), translate) << " 1" << endl << attr_num
+						<< endl;
+
+				for (int i = 0; i < attr_num; ++i)
+					os << at.get_attr(p, i) << endl;
+
+				// Send a trailing newline character
+				os << endl;
+			}
+			break;
+		default:
+			if (attr_num == 1) {
+				os << "Float64" << endl << names.lookup(at.get_name(p),
+						translate) << endl;
+				dods_float64 df = atof(at.get_attr(p).c_str());
+				os.write((char *)&df, sizeof(dods_float64));
+				os << endl;
+			} else {
+				os << "Array" << endl << "Float64 " << names.lookup(
+						at.get_name(p), translate) << " 1" << endl << attr_num
+						<< endl;
+				for (int i = 0; i < attr_num; ++i) {
+					dods_float64 df = atof(at.get_attr(p, i).c_str());
+					os.write((char *)&df, sizeof(dods_float64));
+				}
+				os << endl;
+			}
+			break;
+		}
+
+		++p; // Next attribute
+	} // This is the end of the loop
 }
 
 // The number of attributes is, from the Matlab view, the number of entries
@@ -132,272 +125,237 @@ LoaddodsProcessing::print_attr_table(AttrTable &at, ostream &os)
 // themselves elements of the structure used to represent the Grid to Matlab.
 // If the structure used to represent the Grid does not have entries for the
 // array and maps then Matlab won't know about them.
-static int
-number_of_attributes(BaseType &bt)
-{
-    AttributeInterface &ai = dynamic_cast<AttributeInterface &>(bt);
-    AttrTable &at = ai.getAttrTable();
-    int i = at.get_size();
-
-    switch (bt.type()) {
-      case dods_structure_c:
-      case dods_sequence_c:
-      case dods_grid_c:
-	  i += bt.element_count();
-	  break;
-      default:
-	break;
-    }
-
-    return i;
-}
-
-void
-LoaddodsProcessing::print_attributes(BaseType &bt, ostream &os)
-{
-    // Each variable is sent to matlab as a structure so that loaddods will
-    // know to make a ML structure to hold the size and attributes.
-
-    os << "Structure" << endl;
-
-    try {
-	// Count the number of attributes; write out the variable name and the
-	// number of attributes.
-
-	os << names.lookup(bt.name(), translate) << " " 
-	   << number_of_attributes(bt) << endl;
-
-	// Write out this variable's attribute table.
+static int number_of_attributes(BaseType &bt) {
 	AttributeInterface &ai = dynamic_cast<AttributeInterface &>(bt);
 	AttrTable &at = ai.getAttrTable();
-	print_attr_table(at, os);
+	int i = at.get_size();
 
-	// For each variable contained by this variable, write out its
-	// attribute table.
 	switch (bt.type()) {
-	  case dods_structure_c:  {
-	      Structure &s = dynamic_cast<Structure &>(bt);
-	      Constructor::Vars_iter p;
-	      for (p = s.var_begin(); p != s.var_end(); ++p)
-		  print_attributes(*(*p), os);
-	      break;
-	  }
-	  case dods_sequence_c:  {
-	      Sequence &s = dynamic_cast<Sequence &>(bt);
-	      Constructor::Vars_iter p;
-	      for (p = s.var_begin(); p != s.var_end(); ++p)
-		  print_attributes(*(*p), os);
-	      break;
-	  }
-	  case dods_grid_c: {
-	      Grid &g = dynamic_cast<Grid &>(bt);
-	      print_attributes(*g.array_var(), os);
-	      Grid::Map_iter p;
-	      for (p = g.map_begin(); p != g.map_end(); ++p)
-		  print_attributes(*(*p), os);
-	      break;
-	  }
-	  default:
-	    break;
+	case dods_structure_c:
+	case dods_sequence_c:
+	case dods_grid_c:
+		i += bt.element_count();
+		break;
+	default:
+		break;
 	}
-	
-    }
-    catch (bad_cast &bc) {
-	throw InternalErr(__FILE__, __LINE__,
-"Object in cast was either not an AttrTable or was not a BaseType object could not be downcast.");
-    }
+
+	return i;
 }
 
-#if 0
-LoaddodsProcessing::LoaddodsProcessing()
-{
-}
-#endif
+void LoaddodsProcessing::print_attributes(BaseType &bt, ostream &os) {
+	// Each variable is sent to matlab as a structure so that loaddods will
+	// know to make a ML structure to hold the size and attributes.
 
-LoaddodsProcessing::LoaddodsProcessing(DDS &dds) : MetadataProcessing(dds)
-{
+	os << "Structure" << endl;
+
+	try {
+		// Count the number of attributes; write out the variable name and the
+		// number of attributes.
+
+		os << names.lookup(bt.name(), translate) << " "
+		<< number_of_attributes(bt) << endl;
+
+		// Write out this variable's attribute table.
+		AttributeInterface &ai = dynamic_cast<AttributeInterface &>(bt);
+		AttrTable &at = ai.getAttrTable();
+		print_attr_table(at, os);
+
+		// For each variable contained by this variable, write out its
+		// attribute table.
+		switch (bt.type()) {
+			case dods_structure_c: {
+				Structure &s = dynamic_cast<Structure &>(bt);
+				Constructor::Vars_iter p;
+				for (p = s.var_begin(); p != s.var_end(); ++p)
+				print_attributes(*(*p), os);
+				break;
+			}
+			case dods_sequence_c: {
+				Sequence &s = dynamic_cast<Sequence &>(bt);
+				Constructor::Vars_iter p;
+				for (p = s.var_begin(); p != s.var_end(); ++p)
+				print_attributes(*(*p), os);
+				break;
+			}
+			case dods_grid_c: {
+				Grid &g = dynamic_cast<Grid &>(bt);
+				print_attributes(*g.array_var(), os);
+				Grid::Map_iter p;
+				for (p = g.map_begin(); p != g.map_end(); ++p)
+				print_attributes(*(*p), os);
+				break;
+			}
+			default:
+			break;
+		}
+
+	}
+	catch (bad_cast &bc) {
+		throw InternalErr(__FILE__, __LINE__,
+				"Object in cast was either not an AttrTable or was not a BaseType object could not be downcast.");
+	}
+}
+
+LoaddodsProcessing::LoaddodsProcessing(DDS &dds) :
+	MetadataProcessing(dds) {
 }
 
 // Only handles variable's attributes; need to handle global attributes.
-void 
-LoaddodsProcessing::print_for_matlab(ostream &os)
-{
-    // Write the `Attribute' keyword and number of top level variables.
-    os << "Attributes" << endl 
-       << meta_dds.get_dataset_name() << " "
-       << meta_dds.num_var() << endl;
+void LoaddodsProcessing::print_for_matlab(ostream &os) {
+	// Write the `Attribute' keyword and number of top level variables.
+	os << "Attributes" << endl << meta_dds.get_dataset_name() << " "
+			<< meta_dds.num_var() << endl;
 
-    // Write information about each top level varaible. This prints all the
-    // variables, so if some are to be excluded, they must be removed from
-    // the DDS before this is run.
-    DDS::Vars_iter p;
-    for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
-	BaseType *btp = (*p);
-	print_attributes(*btp, os);
-    }
+	// Write information about each top level varaible. This prints all the
+	// variables, so if some are to be excluded, they must be removed from
+	// the DDS before this is run.
+	DDS::Vars_iter p;
+	for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
+		BaseType *btp = (*p);
+		print_attributes(*btp, os);
+	}
 }
 
 // For every Grid, compare the names of all the map vectors. Any match
 // causes this function to return true.
-static bool
-is_replicate_map_vector(BaseType &bt, DDS &dds)
-{
-    DDS::Vars_iter p;
-    for (p = dds.var_begin(); p != dds.var_end(); ++p) {
-	BaseType &var = **p;
-	if (var.type() == dods_grid_c) {
-	    Grid &g = dynamic_cast<Grid &>(var);
-	    Grid::Map_iter q;
-	    for (q = g.map_begin(); q != g.map_end(); ++q)
-		if ((*q)->name() == bt.name())
-		    return true;
+static bool is_replicate_map_vector(BaseType &bt, DDS &dds) {
+	DDS::Vars_iter p;
+	for (p = dds.var_begin(); p != dds.var_end(); ++p) {
+		BaseType &var = **p;
+		if (var.type() == dods_grid_c) {
+			Grid &g = dynamic_cast<Grid &>(var);
+			Grid::Map_iter q;
+			for (q = g.map_begin(); q != g.map_end(); ++q)
+				if ((*q)->name() == bt.name())
+					return true;
+		}
 	}
-    }
 
-    return false;
+	return false;
 }
 
 // Scan the dataset and look for toplevel Array valriables that are also
 // map vectors of a Grid. Remove the toplevel Array variables. Note that the
 // Grids must themselves be at the toplevel, so their map vectors are one
 // level down from the top.
-void 
-LoaddodsProcessing::prune_duplicates()
-{
-    BaseType *bt;
-    DDS::Vars_iter p;
-    for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
-	bt = *p;
-	DBG(cerr << "Looking at: " << bt->name() << " (" << bt << ")" << endl);
-	if (bt->type() == dods_array_c 
-	    && is_replicate_map_vector(*bt, meta_dds)) {
-	    DBG(cerr << "Deleting: " << bt->name() << " (" << bt << ")" << endl);
-	    meta_dds.del_var(bt->name()); // only deletes at the top level!
-	}
-	DBG(cerr << "Looking past: " << endl);
-    }
-}
-
-static void
-add_size_attr(BaseType &bt)
-{
-    try {
-	switch (bt.type()) {
-	  case dods_array_c:  {
-	      ClientArray &a = dynamic_cast<ClientArray &>(bt);
-	      AttrTable &at = a.getAttrTable();
-	      Array::Dim_iter p;
-	      for (p = a.dim_begin(); p != a.dim_end(); ++p) {
-		  ostringstream oss;
-		  oss << a.dimension_size(p);
-		  at.append_attr("DODS_ML_Size", "Float64", oss.str());
-	      }
-	      break;
-	  }
-	  case dods_grid_c: {
-	      ClientGrid &g = dynamic_cast<ClientGrid &>(bt);
-	      add_size_attr(*g.array_var());
-	      Grid::Map_iter p;
-	      for (p = g.map_begin(); p != g.map_end(); ++p)
-		  add_size_attr(**p);
-	      break;
-	  }
-	  case dods_structure_c:  {
-	      ClientStructure &s = dynamic_cast<ClientStructure &>(bt);
-	      Constructor::Vars_iter p;
-	      for (p = s.var_begin(); p != s.var_end(); ++p)
-		  add_size_attr(**p);
-	      break;
-	  }
-	  case dods_sequence_c:  {
-	      ClientSequence &s = dynamic_cast<ClientSequence &>(bt);
-	      Constructor::Vars_iter p;
-	      for (p = s.var_begin(); p != s.var_end(); ++p)
-		  add_size_attr(**p);
-	      break;
-	  }
-	  default:
-	    break;
-	}
-    }
-    catch (bad_cast &bc) {
-	throw InternalErr(__FILE__, __LINE__,
-			  "Either a BaseType object could not be downcast or could not be cast to AttributeInterface.");
-    }
-}
-
-void 
-LoaddodsProcessing::add_size_attributes()
-{
-    DDS::Vars_iter p = meta_dds.var_begin();
-    while (p != meta_dds.var_end()) {
-        add_size_attr(*(*p));
-        ++p;
-    }
-#if 0
-    for (Pix p = meta_dds.first_var(); p; meta_dds.next_var(p)) {
-	BaseType &bt = *meta_dds.var(p);
-	add_size_attr(bt);
-    }
-#endif
-}
-
-static void
-add_realname_attr(BaseType &bt)
-{
-    AttrTable &at = dynamic_cast<AttributeInterface &>(bt).getAttrTable();
-    at.append_attr("DODS_ML_Real_Name", "String", bt.name());
-
-    try {
-	switch (bt.type()) {
-	  case dods_grid_c: {
-	      ClientGrid &g = dynamic_cast<ClientGrid &>(bt);
-	      add_realname_attr(*g.array_var());
-              Grid::Map_iter p = g.map_begin();
-              while (p != g.map_end()) {
-                  add_realname_attr(*(*p));
-                  ++p;
-              }
-#if 0
-	      for (Pix p = g.first_map_var(); p; g.next_map_var(p))
-		  add_realname_attr(*g.map_var(p));
-#endif
-	      break;
-	  }
-	  case dods_structure_c:  {
-	      ClientStructure &s = dynamic_cast<ClientStructure &>(bt);
-	      Constructor::Vars_iter p;
-	      for (p = s.var_begin(); p != s.var_end(); ++p)
-		  add_realname_attr(**p);
-	      break;
-	  }
-	  case dods_sequence_c:  {
-	      ClientSequence &s = dynamic_cast<ClientSequence &>(bt);
-	      Constructor::Vars_iter p;
-	      for (p = s.var_begin(); p != s.var_end(); ++p)
-		  add_realname_attr(**p);
-	      break;
-	  }
-	  default:
-	    break;
-	}
-    }
-    catch (bad_cast &bc) {
-	throw InternalErr(__FILE__, __LINE__,
-			  "Either a BaseType object could not be downcast or could not be cast to AttributeInterface.");
-    }
-}
-
-void 
-LoaddodsProcessing::add_realname_attributes()
-{
-    if (translate) {
+void LoaddodsProcessing::prune_duplicates() {
+	BaseType *bt;
 	DDS::Vars_iter p;
 	for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
-	    BaseType &bt = **p;
-	    add_realname_attr(bt);
+		bt = *p;
+		DBG(cerr << "Looking at: " << bt->name() << " (" << bt << ")" << endl);
+		if (bt->type() == dods_array_c
+				&& is_replicate_map_vector(*bt, meta_dds)) {
+			DBG(cerr << "Deleting: " << bt->name() << " (" << bt << ")" << endl);
+			meta_dds.del_var(bt->name()); // only deletes at the top level!
+		}
+		DBG(cerr << "Looking past: " << endl);
 	}
-    }
+}
+
+static void add_size_attr(BaseType &bt) {
+	try {
+		switch (bt.type()) {
+			case dods_array_c: {
+				ClientArray &a = dynamic_cast<ClientArray &>(bt);
+				AttrTable &at = a.getAttrTable();
+				Array::Dim_iter p;
+				for (p = a.dim_begin(); p != a.dim_end(); ++p) {
+					ostringstream oss;
+					oss << a.dimension_size(p);
+					at.append_attr("DODS_ML_Size", "Float64", oss.str());
+				}
+				break;
+			}
+			case dods_grid_c: {
+				ClientGrid &g = dynamic_cast<ClientGrid &>(bt);
+				add_size_attr(*g.array_var());
+				Grid::Map_iter p;
+				for (p = g.map_begin(); p != g.map_end(); ++p)
+				add_size_attr(**p);
+				break;
+			}
+			case dods_structure_c: {
+				ClientStructure &s = dynamic_cast<ClientStructure &>(bt);
+				Constructor::Vars_iter p;
+				for (p = s.var_begin(); p != s.var_end(); ++p)
+				add_size_attr(**p);
+				break;
+			}
+			case dods_sequence_c: {
+				ClientSequence &s = dynamic_cast<ClientSequence &>(bt);
+				Constructor::Vars_iter p;
+				for (p = s.var_begin(); p != s.var_end(); ++p)
+				add_size_attr(**p);
+				break;
+			}
+			default:
+			break;
+		}
+	}
+	catch (bad_cast &bc) {
+		throw InternalErr(__FILE__, __LINE__,
+				"Either a BaseType object could not be downcast or could not be cast to AttributeInterface.");
+	}
+}
+
+void LoaddodsProcessing::add_size_attributes() {
+	DDS::Vars_iter p = meta_dds.var_begin();
+	while (p != meta_dds.var_end()) {
+		add_size_attr(*(*p));
+		++p;
+	}
+}
+
+static void add_realname_attr(BaseType &bt) {
+	AttrTable &at = dynamic_cast<AttributeInterface &>(bt).getAttrTable();
+	at.append_attr("DODS_ML_Real_Name", "String", bt.name());
+
+	try {
+		switch (bt.type()) {
+			case dods_grid_c: {
+				ClientGrid &g = dynamic_cast<ClientGrid &>(bt);
+				add_realname_attr(*g.array_var());
+				Grid::Map_iter p = g.map_begin();
+				while (p != g.map_end()) {
+					add_realname_attr(*(*p));
+					++p;
+				}
+				break;
+			}
+			case dods_structure_c: {
+				ClientStructure &s = dynamic_cast<ClientStructure &>(bt);
+				Constructor::Vars_iter p;
+				for (p = s.var_begin(); p != s.var_end(); ++p)
+				add_realname_attr(**p);
+				break;
+			}
+			case dods_sequence_c: {
+				ClientSequence &s = dynamic_cast<ClientSequence &>(bt);
+				Constructor::Vars_iter p;
+				for (p = s.var_begin(); p != s.var_end(); ++p)
+				add_realname_attr(**p);
+				break;
+			}
+			default:
+			break;
+		}
+	}
+	catch (bad_cast &bc) {
+		throw InternalErr(__FILE__, __LINE__,
+				"Either a BaseType object could not be downcast or could not be cast to AttributeInterface.");
+	}
+}
+
+void LoaddodsProcessing::add_realname_attributes() {
+	if (translate) {
+		DDS::Vars_iter p;
+		for (p = meta_dds.var_begin(); p != meta_dds.var_end(); ++p) {
+			BaseType &bt = **p;
+			add_realname_attr(bt);
+		}
+	}
 }
 
 // $Log: LoaddodsProcessing.cc,v $

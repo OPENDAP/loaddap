@@ -1,4 +1,3 @@
-
 // -*- mode: c++; c-basic-offset:4 -*-
 
 // This file is part of loaddap.
@@ -45,80 +44,54 @@
 extern name_map names;
 extern bool translate;
 
-Grid *
-NewGrid(const string &n)
-{
-    return new ClientGrid(n);
+Grid * NewGrid(const string &n) {
+	return new ClientGrid(n);
 }
 
-BaseType *
-ClientGrid::ptr_duplicate()
-{
-    return new ClientGrid(*this);
+BaseType * ClientGrid::ptr_duplicate() {
+	return new ClientGrid(*this);
 }
 
-ClientGrid::ClientGrid(const string &n) : Grid(n)
-{
+ClientGrid::ClientGrid(const string &n) :
+	Grid(n) {
 }
 
-ClientGrid::~ClientGrid()
-{
+ClientGrid::~ClientGrid() {
 }
 
-bool
-ClientGrid::read(const string &)
-{
-  throw InternalErr(__FILE__, __LINE__, "Called unimplemented read method");
+bool ClientGrid::read(const string &) {
+	throw InternalErr(__FILE__, __LINE__, "Called unimplemented read method");
 }
 
-void
-ClientGrid::print_val(FILE *os, string space, bool print_decl_p)
-{
-    if (print_decl_p) {
-	fprintf(os, "%s\n%s\n", type_name().c_str(),
-                names.lookup(name(), translate).c_str());
+void ClientGrid::print_val(FILE *os, string space, bool print_decl_p) {
+	if (print_decl_p) {
+		fprintf(os, "%s\n%s\n", type_name().c_str(), names.lookup(name(), translate).c_str());
 
-	// We can only store one array in a grid right now.
-	fprintf(os, "array 1\n");
-    }
+		// We can only store one array in a grid right now.
+		fprintf(os, "array 1\n");
+	}
 
-    array_var()->print_val(os, space, print_decl_p);
-    fprintf(os, "\n");
-
-    if (print_decl_p) {
-	fprintf(os, "maps %d\n", static_cast<int>(map_end() - map_begin()));
-#if 0
-	int i = 0;
-	for (Pix p = first_map_var(); p; next_map_var(p))
-	    ++i;
-	fprintf(os, "%d\n", i);
-#endif
-    }
-
-    Map_iter p = map_begin();
-    while (p != map_end()) {
-        (*p)->print_val(os, space, print_decl_p);
-        fprintf(os, "\n");
-        ++p;
-    }
-#if 0
-    for (Pix p = first_map_var(); p; next_map_var(p)) {
-	map_var(p)->print_val(os, space, print_decl_p);
+	array_var()->print_val(os, space, print_decl_p);
 	fprintf(os, "\n");
-    }
-#endif
+
+	if (print_decl_p) {
+		fprintf(os, "maps %d\n", static_cast<int>(map_end() - map_begin()));
+	}
+
+	Map_iter p = map_begin();
+	while (p != map_end()) {
+		(*p)->print_val(os, space, print_decl_p);
+		fprintf(os, "\n");
+		++p;
+	}
 }
 
-AttrTable &
-ClientGrid::getAttrTable()
-{
-    return _attr;
+AttrTable & ClientGrid::getAttrTable() {
+	return _attr;
 }
 
-void 
-ClientGrid::setAttrTable(AttrTable &attr)
-{
-    _attr = attr;
+void ClientGrid::setAttrTable(AttrTable &attr) {
+	_attr = attr;
 }
 
 // $Log: ClientGrid.cc,v $

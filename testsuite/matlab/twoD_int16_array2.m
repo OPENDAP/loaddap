@@ -8,7 +8,7 @@ disp 'Test 2d int16 array (with index shuffling): ';
 
 load testsuite/matlab/twoD_int16_array2_data.mat;
 
-base_url = 'http://test.opendap.org/opendap/nph-dods';
+base_url = 'http://test.opendap.org/opendap';
 
 fnoc1 = [base_url '/data/nc/fnoc1.nc?u[0:15][0][0:20]'];
 loaddap(fnoc1);
