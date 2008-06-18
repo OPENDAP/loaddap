@@ -1,0 +1,14 @@
+
+How to use this project to build an OSX meta-package which contains
+the loaddap and libdap packages:
+
+1. Place the libdap and loaddap packages in Contents/packages.
+
+2. Set the toolbox name and version number in the Makefile.
+
+3. Run 'make pkg'
+
+4. Test the resulting DMG
+
+5. Add the CPU type (INTEL or PPC) to the file name. This is typically
+done right before the '.dmg' part of the file name (e.g., ....PPC.dmg).

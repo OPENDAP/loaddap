@@ -1,0 +1,17 @@
+Title OPeNDAP loaddap Package
+Version 
+Description The loaddap command extension for Matlab 7.1+ (i.e., mex file). This requires the libdap package. The command must be accessible to Matlab by adding its directory to matlabpath.
+DefaultLocation /usr/local/bin
+DeleteWarning 
+
+### Package Flags
+
+NeedsAuthorization YES
+Required NO
+Relocatable YES
+RequiresReboot NO
+UseUserMask NO
+OverwritePermissions NO
+InstallFat NO
+RootVolumeOnly NO
+OnlyUpdateInstalledLanguages NO

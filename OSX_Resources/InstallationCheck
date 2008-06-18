@@ -2,7 +2,7 @@
 #
 # Check CPU type
 
-architecture="ppc.*" 
+architecture="i386" 
 
 if arch | grep -v "$architecture"
 then
