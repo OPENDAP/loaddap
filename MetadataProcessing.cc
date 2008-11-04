@@ -148,7 +148,7 @@ void MetadataProcessing::add_global_attributes(DAS &das, string global_cont_name
 	ClientStructure *cs = new ClientStructure(global_cont_name);
 
 	AttrTable::Attr_iter p;
-	for (p = das.attr_begin(); p != das.attr_end(); ++p) {
+	for (p = das.var_begin(); p != das.var_end(); ++p) {
 		string name = das.get_name(p);
 
 		if (!is_in_kill_file(name) && is_global_attr(name)) {
