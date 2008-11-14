@@ -11,12 +11,12 @@
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
-// 
+//
 // This software is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -62,7 +62,7 @@ extern bool ascii;
 // names changes, that will break.
 //
 // The declarations for these fuctions (in util.h) should *not* need
-// changing. 
+// changing.
 
 Byte *
 NewByte(const string &n)
@@ -98,14 +98,14 @@ ClientByte::print_val(FILE *os, string, bool print_decl_p)
         if (ascii)
             fprintf(os, "%lf ", df);
         else
-            fwrite((void *)&df, sizeof(dods_float64), 1, os);
+            (void)fwrite((void *)&df, sizeof(dods_float64), 1, os);
     }
     else {
         if (ascii)
             fprintf(os, "%d ", (unsigned int)_buf);
         else
-            fwrite((void *)&_buf, sizeof(dods_byte), 1, os);
-    }	
+            (void)fwrite((void *)&_buf, sizeof(dods_byte), 1, os);
+    }
 }
 
 AttrTable &
@@ -114,7 +114,7 @@ ClientByte::getAttrTable()
     return _attr;
 }
 
-void 
+void
 ClientByte::setAttrTable(AttrTable &attr)
 {
     _attr = attr;
@@ -127,15 +127,15 @@ ClientByte::set_name(const string &n)
     set_matlab_name(n);
 }
 
-string 
+string
 ClientByte::get_matlab_name() const
 {
-    return _matlabName; 
+    return _matlabName;
 }
 
-void 
+void
 ClientByte::set_matlab_name(const string &name)
-{ 
+{
     _matlabName = names.lookup(name, translate);
 }
 

@@ -11,12 +11,12 @@
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
-// 
+//
 // This software is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -81,14 +81,14 @@ ClientInt32::print_val(FILE *os, string, bool print_decl_p)
         if (ascii)
             fprintf(os, "%lf ", df);
         else
-            fwrite((void *)&df, sizeof(dods_float64), 1, os);
+            (void)fwrite((void *)&df, sizeof(dods_float64), 1, os);
     }
     else {
         if (ascii)
             fprintf(os, "%d ", (unsigned int)_buf);
         else
-            fwrite((void *)&_buf, sizeof(dods_int32), 1, os);
-    }   
+            (void)fwrite((void *)&_buf, sizeof(dods_int32), 1, os);
+    }
 }
 
 AttrTable &
@@ -97,7 +97,7 @@ ClientInt32::getAttrTable()
     return _attr;
 }
 
-void 
+void
 ClientInt32::setAttrTable(AttrTable &attr)
 {
     _attr = attr;
@@ -110,15 +110,15 @@ ClientInt32::set_name(const string &n)
     set_matlab_name(n);
 }
 
-string 
+string
 ClientInt32::get_matlab_name() const
 {
-    return _matlabName; 
+    return _matlabName;
 }
 
-void 
+void
 ClientInt32::set_matlab_name(const string &name)
-{ 
+{
     _matlabName = names.lookup(name, translate);
 }
 
@@ -233,7 +233,7 @@ ClientInt32::set_matlab_name(const string &name)
 //
 // Revision 1.5  1997/01/10 06:49:32  jimg
 // Changed call to name_map::lookup() so that non-alphanumerics are mapped to
-// underscore. 
+// underscore.
 //
 // Revision 1.4  1996/11/23 05:12:09  jimg
 // Added support for variable renaming via the name_map object.
