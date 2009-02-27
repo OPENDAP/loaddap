@@ -2,7 +2,11 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([loaddap], [3.6.1], [opendap-tech@opendap.org])
+# I set this version number to 3.6.2 but the only change is for win32
+# so this probably will not be released on linux or OS/X and so I
+# will not go through the whole updating ChangeLog until I get the 
+# code back on Linux and have uploaded the Win32 dist.
+AC_INIT([loaddap], [3.6.2], [opendap-tech@opendap.org])
 AC_CONFIG_AUX_DIR([conf])
 
 AM_INIT_AUTOMAKE

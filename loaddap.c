@@ -587,7 +587,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		goto exit;
 	}
 
-#ifndef WIN32
+/* #ifndef WIN32 */
 	/*  If we got to this point via an error while procesing the output of
 	 *  writedap, we stopped consuming the input.  As a result, writedap
 	 *  may be sitting stuck in memory waiting for its stdout to be
@@ -614,7 +614,7 @@ error message, please report this to support at opendap.org.\n");
 
 	fflush(stderr);
 	fflush(stdout);
-#endif
+/* #endif */
 
 	exit:
 	/* Note: I'm freeing all this memory because the Matlab API guide
