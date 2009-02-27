@@ -1,4 +1,4 @@
-In addition to installing loaddap 3.6.1, this will also install libdap 3.8.1 and the other run-time libraries it needs. You do not need to get the libdap package since it is included here. 
+In addition to installing loaddap 3.6.2, this will also install libdap 3.8.2 and the other run-time libraries it needs. You do not need to get the libdap package since it is included here. 
 
 To use the loaddap Matlab client you will need Matlab version 2007a or newer.
 
