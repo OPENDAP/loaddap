@@ -75,6 +75,8 @@
 
 #include <mex.h>
 
+#include "config.h"
+
 #if DMALLOC
 // #include "dods_memory.h"
 #include "dmalloc.h"
@@ -145,9 +147,18 @@ _intern_dods_err(int _err_state)
     if (!array_ptr)
 	mexErrMsgTxt("Internal Error in the reporting system (1)\n\
 Please report this error to support at opendap.org");
-    mxSetName(array_ptr, "dods_err");
-    mxSetPr(array_ptr, dde);
-    mexPutArray(array_ptr, "caller");   
+
+#ifndef MATLAB_R2009
+       mxSetName(array_ptr, "dods_err");
+#endif
+
+       mxSetPr(array_ptr, dde);
+
+#ifdef MATLAB_R2009
+       mexPutVariable("caller", "dods_err", array_ptr);
+#else
+       mexPutArray(array_ptr, "caller");   
+#endif
 }
 
 /** Take the value of _msg and dump it into dods_err_msg. */
@@ -157,8 +168,13 @@ _intern_msg(char *_msg)
     int error = 0;
     mxArray *pm = mxCreateString(_msg);
 
+#ifdef MATLAB_R2009
+    error = mexPutVariable("caller", "dods_err_msg", pm);
+#else
     mxSetName(pm, "dods_err_msg");
     error = mexPutArray(pm, "caller");
+#endif
+
     if (error)
 	mexErrMsgTxt("Internal Error in the reporting system (1)\n\
 Please report this error to support at opendap.org");

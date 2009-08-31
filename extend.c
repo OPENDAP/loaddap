@@ -60,6 +60,7 @@ static char id[]= { "$Id$" };
 #define mxRealloc(x, y) dods_realloc((x), (y))
 #endif
 
+#include "config.h"
 #include "defines.h"
 #include "MLVars.h"
 #include "error.h"
@@ -314,7 +315,10 @@ static int extend_array(const char *name, const int ndims, const int dims[],
 	double *pr1, *pr;
 	int s1, s2;
 	int r, c;
-	const mxArray *m1 = mexGetArrayPtr(name, "caller");
+	/* Deprecated
+	   const mxArray *m1 = mexGetArrayPtr(name, "caller");
+	*/
+	const mxArray *m1 = mexGetVariable("caller",name);
 	mxArray *m2;
 
 	if (!m1) {
@@ -478,11 +482,14 @@ static int extend_array(const char *name, const int ndims, const int dims[],
 	/* set name and data of new matrix */
 	mxSetPr(m2, pr);
 	mxSetPi(m2, 0);
-	mxSetName(m2, name);
 
+#ifdef MATLAB_R2009
+	mexPutVariable("caller", name, m2);
+#else
+	mxSetName(m2, name);
 	/* Intern */
 	mexPutArray(m2, "caller");
-
+#endif
 	return TRUE;
 }
 
@@ -491,7 +498,11 @@ static int extend_array(const char *name, const int ndims, const int dims[],
  TRUE. */
 
 static int extend_strings(const char *name, int m, char **s) {
+#ifdef MATLAB_R2009
+        const mxArray *mp = mexGetVariable("caller", name);
+#else
 	const mxArray *mp = mexGetArrayPtr(name, "caller");
+#endif
 	mxArray *array_ptr;
 	int rows = mxGetM(mp);
 	int max_len = mxGetN(mp);
@@ -517,10 +528,13 @@ static int extend_strings(const char *name, int m, char **s) {
 
 	array_ptr = mxCreateCharMatrixFromStrings(rows + m,
 			(const char **)new_strings);
-	mxSetName(array_ptr, name)
-	;
+	
+#ifdef MATLAB_R2009
+	status = (mexPutVariable("caller", name, array_ptr) == 0);
+#else
+	mxSetName(array_ptr, name);
 	status = (mexPutArray(array_ptr, "caller") == 0);
-
+#endif
 	return status;
 }
 
@@ -651,8 +665,11 @@ mxArray * build_var(const char *name, const int ndims, const int dims[],
 	}
 
 	rm2cm(mxGetPr(array_ptr), yp, ndims, dims);
-	mxSetName(array_ptr, name)
-;
+
+#ifndef MATLAB_R2009
+	   mxSetName(array_ptr, name);
+#endif
+
 	return array_ptr;
 }
 
@@ -712,7 +729,10 @@ int intern(const char *name, int ndims, int dims[], double *yp, int extend) {
 
 	array_ptr = build_var(name, ndims, dims, yp);
 
-	status = (mexPutArray(array_ptr, "caller") == 0);
+	/* Deprecated ver.R2009a
+	   status = (mexPutArray(array_ptr, "caller") == 0);
+	*/
+	status = (mexPutVariable("caller", name, array_ptr) == 0);
 	if (!status)
 	err_msg("Internal Error: Could not intern array %s.\n", name);
 	return status;
@@ -783,17 +803,26 @@ mxArray * build_ml_vars(const char *name, MLVars *vars) {
 
 		int i = 0;
 		mxArray *v = first_ml_var(vars);
-		while (v) {
-			names[i++] = mxGetName(v);
-			DBG2(msg("build_ml_vars: name[%d]: %s\n",i-1,mxGetName(v)));
+		while (v) 
+		{
+#ifdef MATLAB_R2009
+		        names[i++] = get_mxarray_name( get_current_ml_vars(vars) );
+		        DBG2(msg("build_ml_vars: name[%d]: %s\n",i-1,names[i-1]));
+#else
+		        names[i++] = mxGetName(v);
+		        DBG2(msg("build_ml_vars: name[%d]: %s\n",i-1,mxGetName(v)));
+#endif
 			v = next_ml_var(vars);
 		}
 	}
 
 	DBG2(msg("build_ml_vars: %d\n",vars));
 	ret_array = mxCreateStructMatrix(1, 1, num_vars, names);
-	mxSetName(ret_array, name)
-;
+
+#ifndef MATLAB_R2009
+	mxSetName(ret_array, name);
+#endif
+
 	/*iterate over the vars list adding each mxArray */
 	{
 		int i = 0;
@@ -817,16 +846,20 @@ MLVars * transfer_variables(const char *lName, MLVars *vars) {
 	mxArray *ret_array;
 	mxArray *v;
 
-	_MLVar *varPtr;
-
 	int num_vars = num_ml_var(vars);
 
 	const char **names = mxMalloc(num_vars * sizeof(char *));
 	const char *structName;
 
 	v = first_ml_var(vars);
-	while (v) {
-		name = mxGetName(v);
+	while (v) 
+	{
+#ifdef MATLAB_R2009
+	        name = get_mxarray_name( get_current_ml_vars(vars) );
+		DBG2(msg("transfer_vars: name: %s\n",name));
+#else
+	        name = mxGetName(v);
+#endif
 		v = next_ml_var(vars);
 	}
 
@@ -834,16 +867,25 @@ MLVars * transfer_variables(const char *lName, MLVars *vars) {
 
 	v = first_ml_var(vars);
 	while (v) {
-		name = mxGetName(v);
-
+#ifdef MATLAB_R2009
+	        name = get_mxarray_name( get_current_ml_vars(vars) );
+		DBG2(msg("transfer_vars: name: %s\n",name));
+#else
+	        name = mxGetName(v);
+#endif
 		for (i=0; i<count; i++) {
 			if (strcmp(names[i], name)==0) {
 				Found = true;
 			}
 		}
-		if ( !Found )
-		names[count++] = mxGetName(v);
-
+		if ( !Found ) {
+#ifdef MATLAB_R2009
+	                names[count++] = get_mxarray_name( get_current_ml_vars(vars) );
+		        DBG2(msg("transfer_vars: name: %s\n",names[count-1]));
+#else
+	                names[count++] = mxGetName(v);
+#endif
+		}
 		v = next_ml_var(vars);
 	}
 
@@ -855,8 +897,9 @@ MLVars * transfer_variables(const char *lName, MLVars *vars) {
 	structArray = init_ml_vars();
 
 	ret_array = mxCreateStructMatrix(numUniqueVariables, 1, count, &names[0]);
-	mxSetName(ret_array, structName)
-;
+#ifndef MATLAB_R2009
+	   mxSetName(ret_array, structName);
+#endif
 	/* Add exception handling for ret_array == NULL. */
 
 	for(i=0; i<count; i++) {
@@ -882,7 +925,7 @@ MLVars * transfer_variables(const char *lName, MLVars *vars) {
 			}
 		}
 	}
-	add_ml_var(structArray,ret_array);
+	add_ml_var(structArray,ret_array, structName);
 
 	return structArray;
 
@@ -896,10 +939,14 @@ mxArray * build_string_var(const char *name, int m, char **s) {
 		err_msg("Internal Error: Could not build string variable (%s:%d)", 
 		__FILE__, __LINE__);
 		return FALSE;
-}		mxSetName(array_ptr, name);
+	}		
 
-		return array_ptr;
-	}
+#ifndef MATLAB_R2009
+	mxSetName(array_ptr, name);
+#endif
+
+	return array_ptr;
+}
 
 	/**
 	 Add into the Matlab workspace an array of strings named #name#.
@@ -925,24 +972,27 @@ int intern_strings(char *name, int m, char **s, int extend, mxArray **array_ptr)
 					"Internal Error: Could not create variable for `%s' (%s:%d)\n",
 					name, __FILE__, __LINE__);
 					return FALSE;
-				}
-				else
-				return TRUE;
-			}
+		}
+		else
+		        return TRUE;
+	}
 
-			*array_ptr = build_string_var(name, m, (char **)s);
+	*array_ptr = build_string_var(name, m, (char **)s);
 
-			/* *array_ptr = mxCreateCharMatrixFromStrings(m, (const char **)s);    */
-			if (!*array_ptr) {
-				err_msg(
-						"Internal Error: Could not intern strings (%s:%d)",__FILE__, __LINE__);
-	return FALSE;
-    }
-    /*
-    mxSetName(array_ptr, name);
-    status = (mexPutArray(array_ptr, "caller") == 0);
-    */
-    return TRUE;
+	/* *array_ptr = mxCreateCharMatrixFromStrings(m, (const char **)s);    */
+	if (!*array_ptr) {
+	        err_msg(
+			"Internal Error: Could not intern strings (%s:%d)",__FILE__, __LINE__);
+		return FALSE;
+	}
+  
+#ifdef MATLAB_R2009 
+	status = (mexPutVariable("caller", name, *array_ptr) == 0);
+#else
+	mxSetName(array_ptr, name);
+	status = (mexPutArray(array_ptr, "caller") == 0);
+#endif
+	return TRUE;
 }
 
 #ifdef TEST

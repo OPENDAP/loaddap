@@ -1,3 +1,16 @@
+2009-08-26  Dan Holloway <d.holloway@gso.uri.edu>
+
+	Updated for 3.7.0
+
+	M    loaddap
+	M    process_values
+	M    extend
+	M    error
+	M    MLVars
+	M    configure.ac
+	M    ChangeLog
+	M    NEWS
+	
 2008-06-11  James Gallagher <jgallagher@opendap.org>
 
 	Fixed ticket 1135.

@@ -483,7 +483,10 @@ static int do_float(FILE *fin, variable **vectors, char *prefix, int outermost,
 		}
 
 		variable = build_var(name, 0, 0, &y);
-		add_ml_var(vars, variable);
+
+		add_ml_var(vars, variable, name);
+		DBG(msg("do_float: vars: %d,name: %s, variable: %d\n",vars,name,variable));
+
 	} else {
 		/* Check to see if this vector already exists. If not, create it,
 		 reassign the global list of vectors and set the local pointer VAR
@@ -602,7 +605,10 @@ static int do_string(FILE *fin, variable **vectors, char *prefix,
 		mxArray *variable;
 		value = read_string_value(fin);
 		variable = build_string_var(name, 1, (char **)&value);
-		add_ml_var(vars, variable);
+
+		add_ml_var(vars, variable, name);
+		DBG(msg("do_string: vars: %d,name: %s, variable: %d\n",vars,name,variable));
+
 		mxFree(value);
 	} else {
 		/* Check to see if this vector already exists. If not, create it,
@@ -689,7 +695,10 @@ static int do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
 			DBG(msg("do_array: name: %s, variable: %d\n",name,variable));
 			if (!variable)
 				return FALSE;
-			add_ml_var(vars, variable);
+
+			add_ml_var(vars, variable, name);
+			DBG(msg("do_array:numeric vars: %d,name: %s, variable: %d\n",vars,name,variable));
+
 		} else {
 			DBG(msg("do_array: name: %s\n",name));
 			if (!intern(name, ndims, dims, yp, extend_existing_variables))
@@ -709,7 +718,9 @@ static int do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
 				value[i] = read_string_value(fin);
 
 			variable = build_string_var(name, num_elems, value);
-			add_ml_var(vars, variable);
+			add_ml_var(vars, variable, name);
+
+			DBG(msg("do_array:string vars: %d,name: %s, variable: %d\n",vars,name,variable));
 
 			for (i = 0; i < num_elems; ++i)
 				mxFree(value[i]);
@@ -743,27 +754,27 @@ static int do_array(FILE *fin, variable **vectors, char *prefix, int outermost,
 			return FALSE;
 		}
 
-DBG2			(msg("do_array: Processing: %s\n", element_type));
+		DBG2(msg("do_array: Processing: %s\n", element_type));
 
-			for (i = 0; i < num_elems; ++i)
+		for (i = 0; i < num_elems; ++i)
 			{
 				status = (*exectype)(fin, vectors, name, outermost, vars, cName, NULL);
 				if (!status)
 				return FALSE;
 			}
-		}
-
-		if (!read_trailing_newline(fin))
-		return FALSE;
-
-		return TRUE;
 	}
 
-	/*
-	 Read the List variable into a single column vector.
+	if (!read_trailing_newline(fin))
+		return FALSE;
 
-	 Untested.
-	 */
+	return TRUE;
+}
+
+/*
+  Read the List variable into a single column vector.
+
+  Untested.
+*/
 
 static int do_list(FILE *fin, variable **vectors, char *prefix, int outermost,
 		MLVars *vars, char *child, char *parent) {
@@ -807,7 +818,10 @@ internal to loaddods or it may be caused by an earlier error.\n");
 			mxArray *variable = build_var(name, 1, dims, yp);
 			if (!variable)
 				return FALSE;
-			add_ml_var(vars, variable);
+
+			add_ml_var(vars, variable, name);
+			DBG(msg("do_list: vars: %d,name: %s, variable: %d\n",vars,name,variable));
+
 		} else {
 			if (!intern(name, 1, dims, yp, extend_existing_variables))
 				return FALSE;
@@ -837,7 +851,7 @@ internal to loaddods or it may be caused by an earlier error.\n");
 	}
 
 	if (!read_trailing_newline(fin))
-	return FALSE;
+	        return FALSE;
 
 	return TRUE;
 }
@@ -911,14 +925,20 @@ static int do_structure(FILE *fin, variable **vectors, char *prefix,
 				my_seq = build_ml_vars(cName, seq_vars);
 
 				if ( struct_vars ) {
-					add_ml_var( struct_vars, my_seq );
+				        add_ml_var( struct_vars, my_seq, cName );
+				        DBG(msg("do_structure: vars: %d,name: %s, variable: %d\n",struct_vars,cName,my_seq));
 				}
 				else {
 					if ( vars ) {
-						add_ml_var( vars, my_seq );
+					        DBG(msg("do_structure-2: vars: %d,name: %s, variable: %d\n",vars,cName,my_seq));
+					        add_ml_var( vars, my_seq, cName );
 					}
 					else
-					status = (mexPutArray(my_seq, "caller") == 0);
+#ifdef MATLAB_R2009
+					        status = (mexPutVariable("caller", cName, my_seq) == 0);
+#else
+					        status = (mexPutArray(my_seq, "caller") == 0);
+#endif
 				}
 
 				use_structures = tmp_use_structures;
@@ -942,7 +962,8 @@ static int do_structure(FILE *fin, variable **vectors, char *prefix,
 
 		status = 1;
 		if ( use_structures && vars ) {
-			add_ml_var(vars, my_struct);
+		        add_ml_var(vars, my_struct, name);
+		        DBG(msg("do_structure: vars: %d,name: %s, variable: %d\n",vars,name,my_struct));
 		}
 
 		if (!status)
@@ -1070,7 +1091,9 @@ if				( is_structure(element_type) ) {
 
 					my_seq = first_ml_var(seq_vars);
 					while (my_seq) {
-						add_ml_var(seqVars[count], my_seq);
+					        add_ml_var(seqVars[count], my_seq, cName);
+					        DBG(msg("do_sequence: vars: %d,name: %s, variable: %d\n",seqVars[count],cName,my_seq));
+
 						my_seq = next_ml_var(seqVars[numNested-1]);
 					}
 
@@ -1101,7 +1124,9 @@ if				( is_structure(element_type) ) {
 
 					my_seq = first_ml_var(seq_vars);
 					while (my_seq) {
-						add_ml_var(seqVars[count], my_seq);
+					        add_ml_var(seqVars[count], my_seq, cName);
+					        DBG(msg("do_sequence-2: vars: %d,name: %s, variable: %d\n",seqVars[count],cName,my_seq));
+
 						my_seq = next_ml_var(seq_vars);
 					}
 					use_structures = tmp_use_structs;
@@ -1133,7 +1158,9 @@ if				( is_structure(element_type) ) {
 
 					my_seq = first_ml_var(seq_vars);
 					while (my_seq) {
-						add_ml_var(seqVars[count], my_seq);
+					        add_ml_var(seqVars[count], my_seq, cName);
+					        DBG(msg("do_sequence-3: vars: %d,name: %s, variable: %d\n",seqVars[count],cName,my_seq));
+
 						my_seq = next_ml_var(seq_vars);
 					}
 					use_structures = tmp_use_structs;
@@ -1162,9 +1189,15 @@ if				( is_structure(element_type) ) {
 
 				my_seq = first_ml_var(seq_vars);
 				while (my_seq) {
-					const char *tName = mxGetName(my_seq);
-					DBG(msg("do_seq: name: %s\n",tName));
-					add_ml_var(vars, my_seq);
+#ifdef MATLAB_R2009
+				        const char *tName = get_mxarray_name( get_current_ml_vars(seq_vars) );
+#else
+				        const char *tName = mxGetName(my_seq);
+#endif
+
+					DBG(msg("do_sequence-4: vars: %d,name: %s, variable: %d\n",vars,tName,my_seq));
+					add_ml_var(vars, my_seq, tName);
+
 					my_seq = next_ml_var(seq_vars);
 				}
 			}
@@ -1238,11 +1271,17 @@ static int do_grid(FILE *fin, variable **vectors, char *prefix, int outermost,
 	 the workspace. */
 
 	my_grid = build_ml_vars(name, grid_vars);
-	if (vars)
-	add_ml_var(vars, my_grid);
-	else
-	status = (mexPutArray(my_grid, "caller") == 0);
+	if (vars) {
+	      add_ml_var(vars, my_grid, name);
+	      DBG(msg("do_grid: vars: %d,name: %s, variable: %d\n",vars,name,my_grid));
 
+	}
+	else
+#ifdef MATLAB_R2009
+	     status = (mexPutVariable("caller", name, my_grid) == 0);
+#else
+	     status = (mexPutArray(my_grid, "caller") == 0);
+#endif
 	use_structures = tmp_use_structs;
 
 	return TRUE;
@@ -1397,11 +1436,15 @@ if			(is_sequence(datatype)) {
 				use_structures = tmp_use_structs;
 
 				if (use_structures) {
-					add_ml_var(my_vars, my_struct);
+				     DBG(msg("process_values:sequence vars: %d,name: %s, variable: %d\n",my_vars,cName,my_struct));
+				     add_ml_var(my_vars, my_struct, cName);
 				}
 				else
-				status = (mexPutArray(my_struct, "caller") == 0);
-
+#ifdef MATLAB_R2009
+				     status = (mexPutVariable("caller", cName, my_struct) == 0);
+#else
+				     status = (mexPutArray(my_struct, "caller") == 0);
+#endif
 			}
 			else if (is_structure(datatype)) {
 				struct_vars = init_ml_vars();
@@ -1411,7 +1454,7 @@ if			(is_sequence(datatype)) {
 
 				status = (*exectype)(fin, &vectors, "", TRUE, struct_vars, cName, NULL);
 				if (!status)
-				return FALSE;
+				        return FALSE;
 				else {
 					if ( struct_vars )
 					my_struct = first_ml_var(struct_vars);
@@ -1426,10 +1469,16 @@ if			(is_sequence(datatype)) {
 				use_structures = tmp_use_structs;
 
 				if (use_structures) {
-					add_ml_var(my_vars, my_struct);
+				     add_ml_var(my_vars, my_struct, cName);
+				     DBG(msg("process_values:structure vars: %d,name: %s, variable: %d\n",my_vars,cName,my_struct));
+
 				}
 				else
-				status = (mexPutArray(my_struct, "caller") == 0);
+#ifdef MATLAB_R2009
+				     status = (mexPutVariable("caller", cName, my_struct) == 0);
+#else
+				     status = (mexPutArray(my_struct, "caller") == 0);
+#endif
 			}
 			else {
 
@@ -1548,7 +1597,9 @@ int transfer_arrays(variable *var, MLVars *ml_struct) {
 						var->length);
 
 			if (ml_struct) {
-				add_ml_var(ml_struct, vector_ptr);
+			        add_ml_var(ml_struct, vector_ptr, var->name);
+			        DBG(msg("transfer_arrays: vars: %d,name: %s, variable: %d\n",ml_struct,var->name,vector_ptr));
+
 			} else {
 				err_msg("Internal Error: Could not add vector %s. (%s:%d)\n",
 						var->name, __FILE__, __LINE__);
@@ -1561,11 +1612,13 @@ int transfer_arrays(variable *var, MLVars *ml_struct) {
 					status = intern_strings(var->name, var->length, var->sdata,
 							extend_existing_variables, &vector_ptr);
 					if (status && verbose && !num_return_args)
-					msg("Creating string vector `%s' with %d elements.\n",
+					       msg("Creating string vector `%s' with %d elements.\n",
 							var->name, var->length);
 
 					if ( ml_struct ) {
-						add_ml_var(ml_struct, vector_ptr);
+					        add_ml_var(ml_struct, vector_ptr, var->name);
+					        DBG(msg("transfer_arrays:string vars: %d,name: %s, variable: %d\n",ml_struct,var->name,vector_ptr));
+
 					}
 					else {
 						err_msg("Internal Error: Could not add vector %s. (%s:%d)\n",

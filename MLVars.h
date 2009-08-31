@@ -40,6 +40,8 @@ typedef struct _MLVar _MLVar;
 struct _MLVar {
     /** The Matlab array variable */
     mxArray *_array;
+  /** The Matlab array variable name */
+    char *_vname;
     /** Pointer to the next variable */
     _MLVar *_next;
 };
@@ -58,10 +60,13 @@ typedef struct MLVars {
 
 extern MLVars *init_ml_vars(void);
 extern void clear_ml_vars(MLVars *ml_vars);
-extern void add_ml_var(MLVars *ml_vars, mxArray *array);
+extern void add_ml_var(MLVars *ml_vars, mxArray *array, const char *vname);
 extern int num_ml_var(MLVars *ml_vars);
 extern mxArray *first_ml_var(MLVars *ml_vars);
 extern mxArray *next_ml_var(MLVars *ml_vars);
 extern mxArray *current_ml_var(MLVars *ml_vars);
+
+extern _MLVar *get_current_ml_vars(MLVars *ml_vars);
+extern char *get_mxarray_name(_MLVar *ml_vars);
 
 #endif /* _mlvars_h */

@@ -402,8 +402,9 @@ static char * init(int nlhs, mxArray *plhs[], const int nrhs,
 				strcat(ver, "loaddap: ");
 				strcat(ver, dods_version);
 				plhs[0] = mxCreateString(ver);
-				mxSetName(plhs[0], "dods_version"
-)					;
+#ifndef MATLAB_R2009
+				mxSetName(plhs[0], "dods_version");
+#endif
 				}
 			}
 			else {

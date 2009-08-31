@@ -41,7 +41,9 @@
 */
 
 #include <mex.h>
+#include <string.h>
 
+#include "config_writedap.h"
 #include "MLVars.h"
 
 #if DMALLOC
@@ -84,14 +86,21 @@ clear_ml_vars(MLVars *ml_vars)
 }
 
 void
-add_ml_var(MLVars *ml_vars, mxArray *array)
+add_ml_var(MLVars *ml_vars, mxArray *array, const char *vname)
 {
     _MLVar *node = mxMalloc(sizeof(_MLVar));
     mxAssert(ml_vars, "NULL ML Variable list");
 
+    char *varName = mxMalloc(sizeof(char) * (strlen(vname)+1));
+
+    strcpy(varName, vname);
+
     /* Make the new node */
     node->_array = array;
+    node->_vname = varName;
     node->_next = NULL;
+
+    DBG2(msg("add_new_ml_var: %s, node: %d\n",varName,node));
 
     /* If the list is empty, this is the `base' */
     if (ml_vars->_base == NULL)
@@ -137,4 +146,20 @@ current_ml_var(MLVars *ml_vars)
 {
     mxAssert(ml_vars, "NULL ML Variable list");
     return (ml_vars->_current) ? ml_vars->_current->_array : NULL;
+}
+
+_MLVar *
+get_current_ml_vars(MLVars *ml_vars)
+{
+     mxAssert(ml_vars, "NULL ML Variable list");
+     return (ml_vars->_current);
+}
+
+char *
+get_mxarray_name(_MLVar *ml_vars)
+{
+    mxAssert(ml_vars, "NULL ML Variable list");
+
+    if (ml_vars != NULL)
+        return ml_vars->_vname;
 }
