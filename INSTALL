@@ -40,11 +40,10 @@ BUILDING THE SOFTWARE
 
        support at opendap.org
 
-  3. Type `make install' to install the client binary and it's helper 
-     programs. By default the software installs in /usr/local/bin and 
-     /usr/local/share/loaddap. Make sure that both of these directories
-     are on you matlabpath. To change the root directory from /usr/local
-     to something else, use the --prefix option of configure.
+  3. Type `make install' to install the client binary and it's helper
+     programs. By default the software installs in /usr/local/bin. To
+     change the root directory from /usr/local to something else, use
+     the --prefix option of configure.
 
   SGI Note:
      If you are building on an SGI machine, it is possible that your build
@@ -56,10 +55,10 @@ BUILDING THE SOFTWARE
 
 Building from Our SVN Repository
 
-  If you are building from a SVN checkout, run 'autoreconf --verbose' before
+  If you are building from a SVN checkout, run 'autoreconf --install' before
   './configure; make'. If you try to run autoconf, et c., by hand and wind up
-  with build files that don't work, use 'autoreconf --force --verbose' and
-  then './configure;make'.
+  with build files that don't work, use 'autoreconf --force --install' and
+  then './configure; make; make instal'.
 
 REQUIREMENTS
 

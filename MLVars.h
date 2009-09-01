@@ -40,7 +40,7 @@ typedef struct _MLVar _MLVar;
 struct _MLVar {
     /** The Matlab array variable */
     mxArray *_array;
-  /** The Matlab array variable name */
+    /** The Matlab array variable name */
     char *_vname;
     /** Pointer to the next variable */
     _MLVar *_next;

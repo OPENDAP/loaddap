@@ -11,21 +11,30 @@ AUTOMAKE_OPTIONS = foreign dejagnu
 AM_CPPFLAGS = -I$(top_srcdir)
 ACLOCAL_AMFLAGS = -I conf
 
-# Automake doesn't know about the mex script; we have to jury-rig some
-# things. 9/29/05 jhrg
-#
-# Added -I. so the distcheck target will build. 3/1/08 jhrg
+bin_PROGRAMS = writedap loaddap.$(MEXEXT)
+bin_SCRIPTS = whodap.m loaddap.m
 
-MEXFLAGS = $(AM_CPPFLAGS) -I. -V5 -DNO_MX_FREE -DHAVE_CONFIG_H -v
+SUFFIXES = .$(MEXEXT)
+
+# This would work for a one-file mex program
+# .c.$(MEXEXT):
+#	$(MEX) $(MEXOPTS) $(MEXFLAGS) $< $(MEXLDADD)
+
+# A better way to handle building the mex file is to separate the mex file's
+# source code and build so it's in its own directory. Then use the automake
+# variables COMPILE and LINK to force the use of 'mex' when building. Then it
+# should be possible to use loaddap_SOURCES, et c., and get the full power of
+# automake. jhrg 9/29/05
+
+loaddap.$(MEXEXT): $(LD_SRCS) $(LD_HDRS)
+	$(MEX) $(MEXOPTS) $(MEXFLAGS) -DNO_MX_FREE -output $@ \
+		$(LD_SRCS) $(MEXLDADD)
 
 # These are not used by automake but are often useful for certain types of
 # debugging.
 #
 CXXFLAGS_DEBUG = -g3 -O0 -Wall -fno-defer-pop
 TEST_COV_FLAGS = -ftest-coverage -fprofile-arcs
-
-bin_PROGRAMS = writedap
-bin_SCRIPTS = whodap.m loaddap.m
 
 CLIENTSRCS = ClientByte.cc ClientInt32.cc ClientFloat64.cc ClientStr.cc	\
 	ClientUrl.cc ClientArray.cc ClientStructure.cc			\
@@ -46,46 +55,12 @@ LD_SRCS = $(top_srcdir)/loaddap.c $(top_srcdir)/variable.c \
 	  $(top_srcdir)/extend.c $(top_srcdir)/error.c \
 	  $(top_srcdir)/MLVars.c $(top_srcdir)/process_values.c 
 
-LD_HDRS = MLVars.h defines.h dods_memory.h error.h extend.h queue.h	\
-	variable.h queue.c
+LD_HDRS = MLVars.h defines.h dods_memory.h error.h extend.h variable.h 
+
+# Needed? jhrg 9/1/09
+# queue.h queue.c
 
 writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
-
-# It's possible, according to some web info, to build mex files without
-# using the Mathworks 'mex' script, but I think that it's just too much 
-# extra maintenance work. I'm leaving these here, but I build using mex.
-# jhrg 9/29/05
-#
-# loaddap_SOURCES = $(LD_SRCS)
-# loaddap_CFLAGS  = $(MATLAB_FLAGS) -DNO_MX_FREE -DV5_COMPAT
-# loaddap_LDFLAGS = $(WRAPS) $(MATLAB_LINK)
-# loaddap_LDADD   = $(MATLAB_LIB)
-# loaddap_EXEEXT  = $(MEXEXT)
-
-# A better way to handle building the mex file is to separate the mex file's
-# source code and build so it's in its own directory. Then use the automake
-# variables COMPILE and LINK to force the use of 'mex' when building. Then it
-# should be possible to use loaddap_SOURCES, et c., and get the full power of
-# automake. jhrg 9/29/05
-
-all-local: loaddap-stamp
-
-loaddap-stamp: $(LD_SRCS) $(LD_HDRS)
-	mex $(CPPFLAGS) $(MEXFLAGS) -output loaddap $(LD_SRCS) -ldl \
-		&& touch loaddap-stamp
-
-clean-local:
-	-rm -f loaddap.mex*
-	-rm loaddap-stamp
-
-install-exec-local:
-	$(INSTALL_PROGRAM) loaddap.mex* $(DESTDIR)$(bindir)
-
-uninstall-local:
-	rm -f $(DESTDIR)$(bindir)/loaddap.mex*       
-
-check-local:
-	@echo "If there's some way to run the test_loaddap.m file, do that here"
 
 DEJATOOL = writedap
 RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite
@@ -94,6 +69,9 @@ EXTRA_DIST = VCPP testsuite $(LD_SRCS) $(LD_HDRS) loaddap.m whodap.m \
 	README INSTALL NEWS loaddap.spec COPYING COPYRIGHT_URI
 
 CLEANFILES = *~ *.log *.sum
+
+mostlyclean-local:
+	test -z '$(MEXEXT)' || rm -f *.$(MEXEXT)
 
 ###########################################################################
 

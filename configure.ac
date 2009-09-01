@@ -4,13 +4,25 @@
 AC_PREREQ(2.59)
 # I set this version number to 3.7.0 to reflect changes to add support
 # for MATLAB version R2009a
-AC_INIT([loaddap], [3.7.0], [opendap-tech@opendap.org])
+AC_INIT([loaddap], [3.7.0], [support@opendap.org])
 AC_CONFIG_AUX_DIR([conf])
 
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_SRCDIR([AttributeInterface.h])
 AC_CONFIG_HEADER([config.h])
+
+AX_REQUIRE_MATLAB
+AX_MATLAB_VERSION
+
+if test $MATLAB_MAJOR  -eq 7 -a $MATLAB_MINOR -lt 8
+then
+    MEXFLAGS="$MEXFLAGS -V5"
+    AC_SUBST([MEXFLAGS])
+else
+    AC_DEFINE([MATLAB_R2009], [1], [Define this if using Matlab 7.8 or newer])
+    AC_SUBST([MATLAB_R2009])
+fi
 
 # Checks for programs.
 AC_PROG_CXX
@@ -21,13 +33,14 @@ AC_PROG_LEX
 AC_PROG_RANLIB
 AC_PROG_YACC
 
-# Checks for libraries.
-# FIXME: Replace `main' with a function in `-lcppunit':
-# AC_CHECK_LIB([cppunit], [main])
-# FIXME: Replace `main' with a function in `-lmx':
-# AC_CHECK_LIB([mx], [main])
+AX_PATH_MEX
 
-# Checks for header files.
+dnl Extra checks.
+AX_MEXEXT
+
+MEX="$MEX CC='\$(COMPILE)'"
+AC_SUBST([MEX])
+
 AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h stddef.h stdlib.h string.h unistd.h])
 
@@ -53,43 +66,6 @@ AC_CHECK_LIBDAP([3.8.0],
 ])
 
 OPENDAP_DEBUG_OPTION
-
-dnl MEX_INIT([MEX],[1],[1],[2])
-
-dnl echo "Build OS: $build_os"
-
-dnl linux="no"
-dnl winnt="no"
-dnl macos="no"
-dnl case $build_os in
-dnl *linux*)
-dnl     linux="yes";;
-dnl dnl    EXEEXT=.mexglx;;
-dnl *mingw*)
-dnl     winnt="yes";;
-dnl dnl    EXEEXT=.dll;;
-dnl *cygwin*)
-dnl     winnt="yes";;
-dnl dnl    EXEEXT=.dll;;
-dnl *darwin*)
-dnl     macos="yes";
-dnl dnl    EXEEXT=.mexmac;;
-dnl esac
-
-dnl AM_CONDITIONAL(LINUX, test "$linux" = "yes")
-dnl AM_CONDITIONAL(WINNT, test "$winnt" = "yes")
-dnl AM_CONDITIONAL(MACOS, test "$macos" = "yes")
-
-dnl dnl
-dnl dnl Matlab Library
-dnl dnl
-
-dnl CHECK_MATLAB
-
-dnl if test "$have_matlab" = "no"
-dnl then
-dnl     AC_MSG_ERROR([Must specify matlab directory using --with-matlab])
-dnl fi
 
 dnl autoheader macros; tack some text at the top and bottom of config.h.in
 AH_TOP([#ifndef _config_h

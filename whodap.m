@@ -50,6 +50,20 @@ function text = whodap(url)
 % AUTHOR: James Gallagher, OPeNDAP
 %---------------------------------------------------------------------
 
-eval(['!writedap -D -- ', url])
+% eval(['!writedap -D -- ', url])
+% 
+% This improved version of whodap is from Derek Goring
+% <d.goring@mulgor.co.nz>
+%
+pth='c:\opendap\loaddap\';
+comm=[pth 'writedap -D -- ' url];
+[s,text]=dos(comm);
+if s
+   error(text)
+else
+   if nargout == 0
+       disp(text)
+   end
+end
 
 
