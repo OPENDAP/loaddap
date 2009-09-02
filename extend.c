@@ -989,8 +989,8 @@ int intern_strings(char *name, int m, char **s, int extend, mxArray **array_ptr)
 #ifdef MATLAB_R2009 
 	status = (mexPutVariable("caller", name, *array_ptr) == 0);
 #else
-	mxSetName(array_ptr, name);
-	status = (mexPutArray(array_ptr, "caller") == 0);
+	mxSetName(*array_ptr, name);
+	status = (mexPutArray(*array_ptr, "caller") == 0);
 #endif
 	return TRUE;
 }
