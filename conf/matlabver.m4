@@ -40,26 +40,36 @@ else
     ax_cv_matlab_version=
     # Loop over all known architectures.  The final dot covers
     # Matlab R11 and Matlab V4 for Windows.
-    for ax_arch in glnx86 maci mac win32 hp700 hpux ibm_rs sgi sol2 alpha . ; do
-	ax_matlab_exec=$MATLAB/bin/$ax_arch/matlab$EXEEXT
-	if test -f $ax_matlab_exec ; then
-	    # For Matlab R12, the version number is stored in a
-	    # shared library.
-	    ax_matlab_exec_2=`find $MATLAB/bin/$ax_arch -type f -name libmwservices\* -print 2> /dev/null`
-	    if test -n "$ax_matlab_exec_2" ; then
-		ax_cv_matlab_version=`strings $ax_matlab_exec_2 2> /dev/null | egrep '^\|build_version_\|@<:@0-9@:>@+\.@<:@0-9@:>@+\.@<:@0-9@:>@+\.@<:@0-9@:>@+' | head -1 | sed 's/^|build_version_|\(@<:@0-9@:>@*\.@<:@0-9@:>@*\).*/\1/'`
-		if test -n "$ax_cv_matlab_version" ; then
+    for ax_arch in glnx86 glnxa64 maci mac win32 hp700 hpux ibm_rs sgi sol2 alpha; do
+        
+	for matlab in matlab MATLAB; do
+
+	    ax_matlab_exec=$MATLAB/bin/$ax_arch/$matlab$EXEEXT
+
+	    if test -f $ax_matlab_exec ; then
+	        # For Matlab R12, the version number is stored in a
+	        # shared library.
+	        ax_matlab_exec_2=`find $MATLAB/bin/$ax_arch -type f -name libmwservices\* -print 2> /dev/null`
+	        if test -n "$ax_matlab_exec_2" ; then
+		    ax_cv_matlab_version=`strings $ax_matlab_exec_2 2> /dev/null | egrep '^\|build_version_\|@<:@0-9@:>@+\.@<:@0-9@:>@+\.@<:@0-9@:>@+\.@<:@0-9@:>@+' | head -1 | sed 's/^|build_version_|\(@<:@0-9@:>@*\.@<:@0-9@:>@*\).*/\1/'`
+		    if test -n "$ax_cv_matlab_version" ; then
+		        break
+		    fi
+	        fi
+	        # For Matlab R11 and Matlab V4, the version number
+	        # is stored in the executable program.
+	        ax_cv_matlab_version=`strings $ax_matlab_exec 2> /dev/null | egrep '^@<:@0-9@:>@+\.@<:@0-9@:>@+\.@<:@0-9@:>@+\.@<:@0-9@:>@+' | head -1 | sed 's/^\(@<:@0-9@:>@*\.@<:@0-9@:>@*\).*/\1/'`
+	        if test -n "$ax_cv_matlab_version" ; then
 		    break
-		fi
+	        fi
 	    fi
-	    # For Matlab R11 and Matlab V4, the version number
-	    # is stored in the executable program.
-	    ax_cv_matlab_version=`strings $ax_matlab_exec 2> /dev/null | egrep '^@<:@0-9@:>@+\.@<:@0-9@:>@+\.@<:@0-9@:>@+\.@<:@0-9@:>@+' | head -1 | sed 's/^\(@<:@0-9@:>@*\.@<:@0-9@:>@*\).*/\1/'`
-	    if test -n "$ax_cv_matlab_version" ; then
-		break
-	    fi
+	done # matlab exec name
+	# Test twice because 'break' only breaks out of a single level
+	if test -n "$ax_cv_matlab_version" ; then
+	    break
 	fi
-    done
+    done # know architectures
+
     if test -z "$ax_cv_matlab_version" ; then
 	ax_cv_matlab_version="not found"
     fi
