@@ -82,7 +82,7 @@ case $ax_cv_matlab_version in
     ;;
   *)
     if test x$ax_enable_matlab = xyes ; then
-	AC_MSG_ERROR([can not determine Matlab version number])
+	AC_MSG_ERROR([cannot determine Matlab version number])
     fi
     MATLAB_VERSION=
     MATLAB_MAJOR=
@@ -106,7 +106,7 @@ AC_DEFUN([AX_REQUIRE_MATLAB_VERSION],
 AC_PREREQ([2.50])
 AC_REQUIRE([AX_MATLAB_VERSION])
 if test x$MATLAB_VERSION = x ; then
-    AC_MSG_ERROR([can not determine Matlab version number])
+    AC_MSG_ERROR([cannot determine Matlab version number])
 fi
 m4_if([$1], [], [],
 [AC_MSG_CHECKING([if Matlab version is sufficient])

@@ -106,7 +106,7 @@ AC_DEFUN([AX_REQUIRE_MATLAB],
 AC_PREREQ([2.50])
 AC_REQUIRE([AX_MATLAB])
 if test x$ax_enable_matlab = xno ; then
-    AC_MSG_ERROR([can not enable Matlab support])
+    AC_MSG_ERROR([cannot enable Matlab support])
 fi
 ])
 

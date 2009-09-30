@@ -28,10 +28,10 @@
 // Authors:
 //	jhrg,jimg	James Gallagher (jgallagher@gso.uri.edu)
 
-// writeval is a simple program that reads DODS datasets and writes the
+// write_dap is a simple program that reads DODS datasets and writes the
 // binary data to stdout using a simple scheme. The program expects one or
 // more URLs will be given as arguments. Each URL will be dereferenced in the
-// order given on the command line. Data is writen to stdout prefixed by data
+// order given on the command line. Data is written to stdout prefixed by data
 // type and size information.
 
 #ifdef WIN32
@@ -42,10 +42,12 @@
 
 static char rcsid[] not_used = {"$Id$"};
 
-#include <stdio.h>
-
+#include <iostream>
+#include <fstream>
+#include <iomanip>
 #include <string>
 #include <typeinfo>
+#include <cstdio>
 
 #ifndef _MSC_VER
 #include <GetOpt.h>
@@ -78,8 +80,6 @@ static char rcsid[] not_used = {"$Id$"};
 #include "debug.h"
 
 #ifdef WIN32
-#include <iostream>
-#include <fstream>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <io.h>
@@ -99,9 +99,8 @@ bool warning = false;
 const char *VERSION = "unknown";
 #endif /* VERSION */
 
-const char
-		*usage_msg =
-				"\n\
+const char *usage_msg =
+"\n\
 Usage:\n\
 Read from a URL: writedap [VvwfFgADat] -- [<url> [-c <expr>] [[-r <var>:<newvar>] ...] ...]\n\
 Read from stdin: writedap [VvwfFga] -- - [-r <var>:<newvar>]\n\
@@ -172,6 +171,33 @@ void smart_newline(FILE *os, Type type) {
 	fflush(os);
 }
 
+void smart_newline(ostream &os, Type type) {
+	switch (type) {
+	case dods_byte_c:
+	case dods_int16_c:
+	case dods_uint16_c:
+	case dods_int32_c:
+	case dods_uint32_c:
+	case dods_float32_c:
+	case dods_float64_c:
+	case dods_array_c:
+		os.write("\n", 1);
+		break;
+
+		// strings are lumped in with the ctors because strings end in a
+		// new line character and therefore don't need one appended.
+	case dods_str_c:
+	case dods_url_c:
+	case dods_sequence_c:
+	case dods_structure_c:
+	case dods_grid_c:
+	default:
+		break;
+	}
+
+	os << flush;
+}
+
 static void process_data(Connect &url, DDS *dds) {
 	if (verbose)
 		cerr << "Server version: " << url.get_version() << endl;
@@ -180,8 +206,18 @@ static void process_data(Connect &url, DDS *dds) {
 
 	DDS::Vars_iter q;
 	for (q = dds->var_begin(); q != dds->var_end(); ++q) {
-		(*q)->print_val(stdout);
-		smart_newline(stdout, (*q)->type());
+#if 1
+	    // The calls using stdout can be replaced with ones that use cout
+	    // if the ClientArray::print_val(), ..., methods are overloaded
+	    // with versions that take ostream & objects. NB: This is the
+	    // last code that uses the FILE* methods, so removing this could
+	    // be important for a libdap refactor
+	    (*q)->print_val(stdout);
+	    smart_newline(stdout, (*q)->type());
+#else
+	    (*q)->print_val(cout);
+	    smart_newline(cout, (*q)->type());
+#endif
 	}
 }
 
@@ -216,7 +252,7 @@ static void process_per_url_options(int &i, int /* argc*/, char *argv[]) {
 }
 
 /** Write out the given error object. If the Error object #e# is empty, don't
- write anything out (since that will confuse loaddods).
+ write anything out (since that will confuse loaddap).
 
  @author jhrg */
 static void output_error_object(Error &e) {
@@ -247,7 +283,7 @@ main(int argc, char * argv[]) {
 
 	while ((option_char = getopt()) != EOF)
 		switch (option_char) {
-		// Genreal options
+		// General options
 		case 'V': {
 			cerr << "writedap: " << VERSION << endl;
 			exit(0);
@@ -291,7 +327,7 @@ main(int argc, char * argv[]) {
 	// If after processing all the command line options there is nothing left
 	// (no URL or file) assume that we should read from stdin. This test
 	// allows `-r' options to be used when reading from a pipe or
-	// redirection. It is assumed that all command options will be rmoved by
+	// redirection. It is assumed that all command options will be removed by
 	// the time execution gets here. Thus, if an option appears here we must
 	// be reading from stdin.
 	if (getopt.optind == argc || argv[getopt.optind][0] == '-') {
@@ -358,7 +394,7 @@ main(int argc, char * argv[]) {
 				ClientTypeFactory factory;
 				DDS dds(&factory);
 				url->request_dds(dds);
-				dds.print(stdout);
+				dds.print(cout);
 			}
 			catch (Error &e) {
 				output_error_object(e);
@@ -380,7 +416,7 @@ main(int argc, char * argv[]) {
 				//lp.prune_duplicates();
 				lp.add_size_attributes();
 				lp.add_realname_attributes();
-				lp.print_for_matlab(stdout);
+				lp.print_for_matlab(cout);
 			}
 			catch (Error &e) {
 				output_error_object(e);

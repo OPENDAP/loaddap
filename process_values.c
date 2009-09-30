@@ -11,12 +11,12 @@
  // modify it under the terms of the GNU Lesser General Public
  // License as published by the Free Software Foundation; either
  // version 2.1 of the License, or (at your option) any later version.
- // 
+ //
  // This software is distributed in the hope that it will be useful,
  // but WITHOUT ANY WARRANTY; without even the implied warranty of
  // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  // Lesser General Public License for more details.
- // 
+ //
  // You should have received a copy of the GNU Lesser General Public
  // License along with this library; if not, write to the Free Software
  // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -24,7 +24,7 @@
  // You can contact OPeNDAP, Inc. at PO Box 112, Saunderstown, RI. 02874-0112.
  */
 
-/* 
+/*
  (c) COPYRIGHT URI/MIT 2000
  Please read the full copyright statement in the file COPYRIGHT.
 
@@ -85,20 +85,20 @@ extern int output_variable_names;
 /** If NUM_RETURN_ARGS is false, use the default mechanism where variables are
  directly interned in Matlab. If true, return values via plhs[]. If true
  the value of NUM_RETURN_ARGS is the number of values to return. After
- reading this many variables, discard any remaining ones. 
+ reading this many variables, discard any remaining ones.
  @see loaddods.c */
 extern int num_return_args;
 
-/** Global array of arrays used to hold NUM_RETURN_ARGS. 
+/** Global array of arrays used to hold NUM_RETURN_ARGS.
  @see loaddods.c */
 extern mxArray **return_args;
 
 /** When using the return arguments feature of loaddods, this holds the
  current argument number. This is re-initialized by loaddods.cc:init()
- every time the loaddods command is run. 
+ every time the loaddods command is run.
 
  @see num_return_args
- @see return_args 
+ @see return_args
  @see loaddods.c */
 extern int current_arg;
 
@@ -122,7 +122,7 @@ extern int fullnames;
 /** This flag indicates whether loaddods should use ML's structure variables
  when interning values. A true values mean to use Structures, false means
  to dump variables into the workspace (this was previously the only
- option). The default value is false. 
+ option). The default value is false.
 
  Initially this will only be true when we're handling the -A option for
  attributes. */
@@ -216,7 +216,7 @@ static reader_type get_reader(char *typename) {
 }
 
 /**
- Given a type name, return TRUE if it matches Sequence. 
+ Given a type name, return TRUE if it matches Sequence.
  */
 bool is_sequence(char *typename) {
 	if (strcmp(typename, "Sequence") == 0)
@@ -226,7 +226,7 @@ bool is_sequence(char *typename) {
 }
 
 /**
- Given a type name, return TRUE if it matches Structure. 
+ Given a type name, return TRUE if it matches Structure.
  */
 bool is_structure(char *typename) {
 	if (strcmp(typename, "Structure") == 0)
@@ -236,7 +236,7 @@ bool is_structure(char *typename) {
 }
 
 /**
- Given a type name, return TRUE if it matches Structure. 
+ Given a type name, return TRUE if it matches Structure.
  */
 bool is_arrayType(char *typename) {
 	if ((strcmp(typename, "Grid") == 0) || (strcmp(typename, "Array") == 0))
@@ -247,7 +247,7 @@ bool is_arrayType(char *typename) {
 
 /**
  Read a line from writeval which should have only one word on it. Store the
- word in NAME. 
+ word in NAME.
 
  NB: if this function is called to read in the name of a component in an
  aggregate type *and* we are prefixing names using the aggregate names then
@@ -290,7 +290,7 @@ internal to loaddods or it may be caused by an earlier error.\n");
 		return TRUE;
 }
 
-/* 
+/*
  Note: when reading an array description, `length' is the number of
  dimensions in the array.
 
@@ -408,7 +408,7 @@ internal to loaddods or it may be caused by an earlier error.\n");
 
 /*
  Read a line and discard it. This function is intended to be used to read
- the newline that follows a block of data. 
+ the newline that follows a block of data.
 
  NB: I used fseek() for this but that caused failures on SunOS (and maybe
  Solaris?) for transfers that were an integral power of 2 (e.g., 32^2,
@@ -537,11 +537,11 @@ static int do_float(FILE *fin, variable **vectors, char *prefix, int outermost,
 /** Read a string value from the #fin# stream. If the string starts with a
  double quote, ignore newlines until the matching end quote is found. If
  the string does not start with a double quote, then read to the end of the
- line. In either case, discard the last newline character. 
+ line. In either case, discard the last newline character.
 
  NB: If the string is quoted the end quote will appear two chars back
  from the last char read. This is because writeval always appends a newline
- to every string. 
+ to every string.
 
  @return The string in newly allocated storage. The caller must free this
  memory. */
@@ -1267,7 +1267,7 @@ static int do_grid(FILE *fin, variable **vectors, char *prefix, int outermost,
 	}
 
 	/* Create container variable to be interned into existing
-	 container 'vars' if non-NULL, or else directly onto 
+	 container 'vars' if non-NULL, or else directly onto
 	 the workspace. */
 
 	my_grid = build_ml_vars(name, grid_vars);
@@ -1295,7 +1295,7 @@ static int do_grid(FILE *fin, variable **vectors, char *prefix, int outermost,
  @param vectors Ignored.
  @param prefix Ignored.
  @param outermost Ignored.
- @param vars Ignored. 
+ @param vars Ignored.
  */
 static int do_attributes(FILE *fin, variable **vectors, char *prefix,
 		int outermost, MLVars *vars, char *child, char *parent) {
@@ -1420,7 +1420,7 @@ int process_values(FILE *fin) {
 					return FALSE;
 				}
 
-if			(is_sequence(datatype)) {
+		if (is_sequence(datatype)) {
 				seq_vars = init_ml_vars();
 				tmp_use_structs = use_structures;
 				use_structures = 1;
