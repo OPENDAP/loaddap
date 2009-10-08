@@ -40,7 +40,7 @@ else
     ax_cv_matlab_version=
     # Loop over all known architectures.  The final dot covers
     # Matlab R11 and Matlab V4 for Windows.
-    for ax_arch in glnx86 glnxa64 maci mac win32 hp700 hpux ibm_rs sgi sol2 alpha; do
+    for ax_arch in glnx86 glnxa64 maci maci64 mac win32 hp700 hpux ibm_rs sgi sol2 alpha; do
         
 	for matlab in matlab MATLAB; do
 
