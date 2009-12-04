@@ -5,7 +5,6 @@
 
 readme_libdap=`find Contents/packages/libdap-* -name ReadMe.txt`
 readme_loaddap=`find Contents/packages/loaddap-* -name ReadMe.txt`
-readme_toolbox=`find Contents/packages/OCEAN_TOOLBOX-* -name ReadMe.txt`
 
 cat <<EOF
 

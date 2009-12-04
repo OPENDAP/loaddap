@@ -5,7 +5,7 @@ This package contains the OPeNDAP Matlab command loaddap and the software librar
 
 
 
- $Id: README 18875 2008-06-11 22:27:04Z jimg $
+ $Id: README 18874 2008-06-11 22:24:59Z jimg $
 
 Updated for 3.6.1
 
@@ -166,7 +166,21 @@ Note: The vector type's data is sent using the print_val() method ofthe vector's
 
 
 
-$Id: README 18870 2008-06-10 23:45:06Z jimg $
+$Id: README 20889 2009-05-12 22:07:17Z jimg $
+
+Updated for version 3.9.3
+
+Now libdap supports DAP 3.2. You can read about the evolving DAP 3.x protocolat http://docs.opendap.org/index.php/DAP3/4. If your client sends theXDAP-Accept header witha value of 3.2 the DDX is different (it includesprotocol information and also an xmlbase element).
+
+Behavior change for the DAS: In the past the format handlers added doublequotes to the values of string attributes when they added those values to theAttrTable object. This meant that the value of the attribute in the C++object was actually not correct since it contained quotes not found in theoriginal attribute value. I modified libdap so that if an attribute value inthe C++ AttrTable object does not have quotes then those quotes are addedwhen the value is output in a DAS response (but not a DDX since there's noneed to quote the value in that response). This ensures that the text in theDAS wire representation will parse whether a handler has added quotes or not(paving the way for fixed handlers). At the same time I fixed all of ourhandlers so that they no longer add the erroneous quotes. This fixes aproblem with the DDX where the quotes were showing up as part of theattribute value. The change to libdap is such that a broken handler will notbe any more broken but a fixed handler will work for both DAS and DDXgeneration.
+
+If you have a handler and it's not adding quotes to the String attribute values - good, don't change that! If your handler does add quotes, pleasemodify it so the DDX will be correct.  
+
+Our handler's old, broken, behavior can be resurrected by removing the ATTR_STRING_QUOTE FIX define in the appropriate files.
+
+Updated for version 3.8.2 (23 June 2008)
+
+HTTP Cache and win32 installer fixes (the latter are actually in the 3.8.1installer for winXP). API change: The functions used to merge ancillary datahave been moved to their own class (Ancillary).
 
 Updated for version 3.8.1 (10 June 2008)
 
