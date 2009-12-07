@@ -5,14 +5,14 @@
 
 [Setup]
 AppName=Matlab OPeNDAP loaddap
-AppVerName=Matlab OPeNDAP loaddap 3.6.2
+AppVerName=Matlab OPeNDAP loaddap 3.7.0
 AppPublisher=OPeNDAP
 DefaultDirName={sd}\opendap
 DefaultGroupName=Matlab OPeNDAP loaddap
 AllowNoIcons=yes
 InfoBeforeFile=BeforeInstall.txt
 InfoAfterFile=AfterInstall.txt
-OutputBaseFilename=loaddap_3.6.2
+OutputBaseFilename=loaddap_3.7.0
 Compression=lzma/ultra
 SolidCompression=yes
 LicenseFile=License.txt

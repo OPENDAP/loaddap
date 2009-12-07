@@ -50,7 +50,8 @@ CFLAGS			= $(DEFS) $(INCS) /nologo /W0 /GR /EHsc /c
 
 # Setup cmex flags
 CMEX			= mex
-CMEXFLAGS		= -I. -I.. -DHAVE_CONFIG_H -DWIN32 -V5
+CMEXFLAGS		= -I. -I.. -DHAVE_CONFIG_H -DWIN32 -DNO_MX_FREE -DMATLAB_R2009
+CMEXLIBS		= libmx.lib libmat.lib
 # MEXLLIBS		= libcurl.lib zlib.lib libdapMD.lib libxdr.lib user32.lib
 
 default:
@@ -89,7 +90,7 @@ MEXSRCS		= $(SRCDIR)\loaddap.c \
 			$(SRCDIR)\MLVars.c \
 			$(SRCDIR)\process_values.c \
 			conpipe.c
-			
+
 WD_OBJS		= $(OBJDIR)\write_dap.obj \
 			$(OBJDIR)\name_map.obj \
 			$(OBJDIR)\MetadataProcessing.obj \
@@ -114,7 +115,7 @@ CLIENTOBJS	= $(OBJDIR)\ClientByte.obj \
 # any message to the contrary.
 $(OBJDIR)\loaddap.mexw32: $(MESXRCS)
 	@-md $(OBJDIR)
-	$(CMEX) $(CMEXFLAGS) -outdir $(OBJDIR) $(MEXSRCS)
+	$(CMEX) $(CMEXFLAGS) -outdir $(OBJDIR) $(MEXSRCS) $(CMEXLIBS)
 
 $(OBJDIR)\writedap.exe: $(WD_OBJS) $(CLIENTOBJS)
 	$(LINK) $(LFLAGS) /OUT:$@ $(WD_OBJS) $(CLIENTOBJS) $(LIBS)
