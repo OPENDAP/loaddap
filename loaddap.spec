@@ -1,7 +1,7 @@
 
 Name: loaddap
 Summary: The OPeNDAP Matlab Command Line Interface Client
-Version: 3.6.1
+Version: 3.7.0
 Release: 1
 
 Source0: http://www.opendap.org/pub/source/%{name}-%{version}.tar.gz
@@ -27,7 +27,7 @@ although previous versions are goin gback to version 5 are likely to work.
 %setup -q
 
 %build
-%configure
+%configure # --with-matlab=/usr/local/matlab/R2009a/
 make %{?_smp_mflags}
 
 %install

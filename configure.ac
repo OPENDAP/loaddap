@@ -56,6 +56,8 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([putenv strcspn strerror strpbrk strrchr strstr])
 
 dnl Checks for specific libraries
+AC_CHECK_LIB([dl], [dlopen], [MEXLDADD="$MEXLDADD -ldl"])
+AC_SUBST([MEXLDADD])
 
 AC_CHECK_LIBDAP([3.8.0],
  [
