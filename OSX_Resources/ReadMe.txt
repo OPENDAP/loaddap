@@ -2,6 +2,10 @@
 
  $Id$
 
+Updated for loaddap 3.7.0
+
+I corrected the URLs usind in the examples and added a note regarding whodap because that command only works on the PC.
+
 Updated for 3.6.1
 
 Fixes for the URLs in the online documentation.
@@ -9,6 +13,8 @@ Fixes for the URLs in the online documentation.
 Updated for version 3.6.0
 
 ** Linux RPM USERS
+
+You will need to add the RPMs using the --nodeps switch (rpm -Uvh --nodeps *.rpm) because the Matlab libraries that are dependencies are not in theRPM database.
 
 If you're reading this after installing using theLinux RPM, loaddap installsinto /usr/bin from the RPM and that's the only directory you need to add toyour matlabpath (because the help files go there as well; we install them ina bin directory because automake wants to put the scripts there and becauseit makes for a simpler configuration in Matlab).
 
@@ -31,8 +37,6 @@ to startup.m. The order of the paths' in the matlabpath variable isimportant! Ho
 	.
 
 
-Although the documentation says that you must use the -nojvm optionwhen starting Matlab, that is not really true based on the latesttesting. The loaddap command correctly reads and interns values whenyou start Matlab either with or without the -nojvm option. However,the verbose output from loaddap is lost when you do not start Matlabusing -nojvm.
-
 Note: For some of the binary builds you may see a message like:
 
   Unable to load mex file:
@@ -48,17 +52,28 @@ You may also get this error if you compile loaddap yourself. In that caseyou hav
 
 -------------------------------------------------------------------------------
 
-For installation information, see the file INSTALL.
+For compilation and installation information, see the file INSTALL.
 
 CONTENTS OF THIS DIRECTORY
 
-The two main programs in this directory are loaddap and whodap.  Theseare Matlab command line clients from OPeNDAP which provide a way toread data from DAP-enabled servers directly into Matlab. The loaddapfunction reads data from an OPeNDAP server and interns it in theMatlab workspace.  The whodap function provides a listing of thevariables in a dataset. Both commands accept DAP URLs as arguments.
+The two main programs in this directory are loaddap and whodap (PConly). These are Matlab command line clients from OPeNDAP whichprovide a way to read data from DAP-enabled servers directly intoMatlab. The loaddap function reads data from an OPeNDAP server andinterns it in the Matlab workspace. The whodap function, which islimited to the Windows versions of loaddap, provides a listing of thevariables in a dataset. Both commands accept DAP URLs as arguments. 
+
+loaddap(<dataset URL>?<variables>)
+
+Example:
+
+    >> loaddap('http://test.opendap.org/dap/data/nc/fnoc1.nc?u,v')
+    Creating matrix u (16 x 17 x 21) with 5712 elements.
+    Creating matrix v (16 x 17 x 21) with 5712 elements.
+
+
+Note that you need the quotes around the argument to loaddap becauseMatlab recognizes commas as special characters.
 
 whodap <dataset URL>
 
 Example
 
-    >> whodap http://www.opendap.org/opendap/nph-dods/data/fnoc1.nc
+    >> whodap http://test.opendap.org/dap/data/nc/fnoc1.nc
     Dataset {
 	Int16 u[time_a = 16][lat = 17][lon = 21];
 	Int16 v[time_a = 16][lat = 17][lon = 21];
@@ -67,28 +82,10 @@ Example
 	Float32 time[time = 16];
     } fnoc1;
 
-    loaddap <dataset URL>?<variables>
 
+Both whodap (PC only) and loaddap have online help (type `helploaddap' at the Matlab prompt). Loaddap has many options, alldescribed in the on-line help. It can accept multiple URLs, renamevariables, be used to read dataset attribute information and be usedin assignment statements. Here's an example of loaddap called with anoption and returning values using an assignment statement. The -eoption tells loaddap to use the new error reporting scheme (see helpfor details). The values of u and v are stored in a and b.
 
-Example:
-
-    >> loaddap 'http://www.opendap.org/opendap/nph-dods/data/fnoc1.nc?u,v'
-
-    Reading: http://www.opendap.org/opendap/nph-dods/data/fnoc1.nc
-      Constraint: u,v
-    Server version: nc/3.4.8
-    Creating matrix u (16 x 17 x 21) with 5712 elements.
-    Creating matrix v (16 x 17 x 21) with 5712 elements.
-
-
-Note that you need the quotes around the argument to loaddap becauseMatlab recognizes commas as special characters.
-
-Both whodap and loaddap have online help (type `help loaddap' at theMatlab prompt). Loaddap has many options, all described in the on-linehelp. It can accept multiple URLs, rename variables, be used to readdataset attribute information and be used in assignmentstatements. Here's an example of loaddap called with an option andreturning values using an assignment statement. The -e option tellsloaddap to use the new error reporting scheme (see help fordetails). The values of u and v are stored in a and b.
-
-    >> [a, b] = loaddap('-e', 'http://www.opendap.org/opendap/nph-dods/data/fnoc1.nc?u,v');   
-    Reading: http://www.opendap.org/opendap/nph-dods/data/fnoc1.nc
-      Constraint: u,v
-    Server version: nc/3.1.0
+    >> [a, b] = loaddap('-e', 'http://test.opendap.org/dap/data/nc/fnoc1.nc?u,v');   
     >> 
 
 

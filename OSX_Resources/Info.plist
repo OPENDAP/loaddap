@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleGetInfoString</key>
-	<string>3.6.1, loaddap</string>
+	<string>3.7.0, loaddap</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.opendap.loaddap</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.6.1</string>
+	<string>3.7.0</string>
 	<key>IFPkgFlagAllowBackRev</key>
 	<true/>
 	<key>IFPkgFlagAuthorizationAction</key>
@@ -23,7 +23,7 @@
 	<key>IFPkgFlagInstallFat</key>
 	<false/>
 	<key>IFPkgFlagInstalledSize</key>
-	<integer>3612</integer>
+	<integer>260</integer>
 	<key>IFPkgFlagIsRequired</key>
 	<false/>
 	<key>IFPkgFlagOverwritePermissions</key>
