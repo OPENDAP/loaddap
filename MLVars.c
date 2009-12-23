@@ -89,9 +89,9 @@ void
 add_ml_var(MLVars *ml_vars, mxArray *array, const char *vname)
 {
     _MLVar *node = mxMalloc(sizeof(_MLVar));
-    mxAssert(ml_vars, "NULL ML Variable list");
 
     char *varName = mxMalloc(sizeof(char) * (strlen(vname)+1));
+	mxAssert(ml_vars, "NULL ML Variable list");
 
     strcpy(varName, vname);
 
