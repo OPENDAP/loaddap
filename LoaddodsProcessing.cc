@@ -34,6 +34,7 @@
 #include <typeinfo>
 #include <iostream>
 #include <sstream>
+#include <stdlib.h>
 
 #include "debug.h"
 
@@ -63,6 +64,21 @@ using namespace std;
 extern name_map names;
 extern bool translate;
 
+string LoaddodsProcessing::cleanse_attr(string attr){
+	string cleanAttr = attr;
+	string whitespaces ("\n");
+	size_t found;
+
+	found = cleanAttr.find(whitespaces);
+
+	while ( found != string::npos) {
+		cleanAttr.replace(found,1," ");
+		found = cleanAttr.find(whitespaces,found+1);
+	}
+
+	return cleanAttr;
+}
+
 void LoaddodsProcessing::print_attr_table(AttrTable &at, ostream &os) {
 	AttrTable::Attr_iter p = at.attr_begin();
 	while (p != at.attr_end()) {
@@ -80,14 +96,14 @@ void LoaddodsProcessing::print_attr_table(AttrTable &at, ostream &os) {
 		case Attr_url:
 			if (attr_num == 1) {
 				os << "String" << endl << names.lookup(at.get_name(p),
-						translate) << endl << at.get_attr(p) << endl;
+						translate) << endl << cleanse_attr(at.get_attr(p)) << endl;
 			} else {
 				os << "Array" << endl << "String " << names.lookup(
 						at.get_name(p), translate) << " 1" << endl << attr_num
 						<< endl;
 
 				for (int i = 0; i < attr_num; ++i)
-					os << at.get_attr(p, i) << endl;
+					os << cleanse_attr(at.get_attr(p, i)) << endl;
 
 				// Send a trailing newline character
 				os << endl;
