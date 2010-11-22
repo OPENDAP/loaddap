@@ -85,4 +85,9 @@ public:
 	/** Write the hierarchically structured attribute information.
 	 @param os An output stream object for the DAS/DDS information. */
 	void print_for_matlab(ostream &os);
+
+	/** Clean whitespace characters from string attributes.
+	 @param attr A string containing the attribute value. */
+	string cleanse_attr(string attr);
+
 };
