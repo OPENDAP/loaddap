@@ -9,6 +9,9 @@ AC_CONFIG_AUX_DIR([conf])
 
 AM_INIT_AUTOMAKE
 
+LT_INIT
+AM_PROG_LIBTOOL
+
 AC_CONFIG_SRCDIR([AttributeInterface.h])
 AC_CONFIG_HEADER([config.h])
 
