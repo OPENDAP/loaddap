@@ -1,6 +1,6 @@
-function values = loaddap([switches,] URL [, URL])
+function values = loaddap(varargin)
 %--------------------------------------------------------------------
-%     Copyright 1997,1998,1999,2001 (C) URI/MIT, 2005 OPeNDAP
+%     Copyright 1997,1998,1999,2001 (C) URI/MIT, 2005,2012 OPeNDAP
 %     $Revision$
 %
 %  function values = loaddap([switches,] URL [options] [, URL [options]])
@@ -132,3 +132,10 @@ function values = loaddap([switches,] URL [, URL])
 % AUTHORS: Glenn Flierl, MIT
 %	   James Gallagher, OPeNDAP
 %---------------------------------------------------------------------
+
+disp('If you are sseing this message, the copy of loaddap that matlab')
+disp('tried to run was not compatible with your computer.')
+disp('Please visit <a href="http://www.opendap.org/download">opendap.org</a> to get the correct version or')
+disp('email support@opendap.org for help.')
+
+error('Incompatible compiled matlab program installed.')
