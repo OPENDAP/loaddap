@@ -55,7 +55,13 @@ function text = whodap(url)
 % This improved version of whodap is from Derek Goring
 % <d.goring@mulgor.co.nz>
 %
-pth='c:\opendap\loaddap\';
+% pth='c:\opendap\loaddap\';
+% 
+% I changed pth to default to the null string since writedap should
+% be on the user's matlabpath in any of the newer versions of loaddap.
+% jhrg
+%
+pth='';
 comm=[pth 'writedap -D -- ' url];
 [s,text]=dos(comm);
 if s

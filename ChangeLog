@@ -1,3 +1,123 @@
+2011-08-02  James Gallagher <jgallagher@opendap.org>
+
+	Added LT_INIT so that configure supports --disable-shared.
+
+2010-11-22  Dan Holloway <dholloway@opendap.org>
+
+	Added cleanse_attr() function to LoaddodsProcessing.cc
+
+2010-11-22  Dan Holloway <dholloway@opendap.org>
+
+	Added cleanse_attr() function to replace EOL characters in
+	attributes with SPACE characters.
+
+2010-07-20  James Gallagher <jgallagher@opendap.org>
+
+	Fixed matlabver.m4 so that it works with ML's 2010a version
+	number (7.10). I had to expand the regex so that it looks for more
+	digits - actually, not the regex that tests for the numbers, but
+	the case statment used to return an error or parse the numbers to
+	major and minor versions.
+
+2009-12-23  rduncan
+
+	win32 build for 3.7.0
+
+2009-12-22  James Gallagher <jgallagher@opendap.org>
+
+	Updated the README file to correct the broken URL and bad example with
+	'whodap' which only works on the PC.
+
+	M    OSX_Resources/Info.plist
+	M    OSX_Resources/ReadMe.txt
+	M    OSX_Resources/Welcome.html
+	M    README
+
+2009-12-09  rduncan
+
+	Build fixes for linux (centOS 5.3)
+
+2009-12-07  rduncan
+
+	Release 3.7.0
+
+2009-12-04  James Gallagher <jgallagher@opendap.org>
+
+	Updated this to use the new packagemaker 3.0
+
+	M    osx_metapackage/build_readme.sh
+	M    osx_metapackage/ReadMe.txt
+	D    osx_metapackage/Contents/extras
+	M    osx_metapackage/Contents/product_info/ReadMe.txt
+	M    osx_metapackage/Contents/product_info/Welcome.html
+	M    osx_metapackage/Makefile
+
+2009-10-08  James Gallagher <jgallagher@opendap.org>
+
+	Added maci64 to set of architectures searched in the Matlab configure m4 macros. Removed the old matlabarch.m4 file as it was not being used and added to the general sense of confusion.
+
+2009-09-29  James Gallagher <jgallagher@opendap.org>
+
+	Fixes to writedap so that it should build against a modern libdap; somehow, an old version found its way into svn again and was using stdout to call a method that no longer supports FILE* pointers. Also fixed some spelling errors.
+
+2009-09-14  James Gallagher <jgallagher@opendap.org>
+
+	Fixed the configure stuff that tests the matlab version. Also there was an
+	old change where cout --> stdout in write_dap.cc for the -A option.
+
+	M    conf/matlabver.m4
+	M    write_dap.cc
+
+2009-09-02  Dan Holloway <dholloway@opendap.org>
+
+	Fixed intern_strings, passing **mxArray into mxSetName() when it expects *mxArray.  Not sure why this wasn't a problem earlier.
+
+2009-09-01  James Gallagher <jgallagher@opendap.org>
+
+	Change to new autotools macros.
+
+	M    configure.ac
+	M    MLVars.h
+	M    whodap.m
+	M    INSTALL
+	M    Makefile.am
+
+2009-09-01  James Gallagher <jgallagher@opendap.org>
+
+	Added Matlab stuff for autoconf; from the net with minor mods for newer
+	Matlab versions
+
+	A    conf/matlab.m4
+	D    conf/depcomp
+	D    conf/compile
+	A    conf/mexext.m4
+	D    conf/config.guess
+	A    conf/noopts.sh
+	A    conf/mexopt.m4
+	A    conf/matlabver.m4
+	D    conf/config.sub
+	A    conf/mex.m4
+	D    conf/missing
+	A    conf/matlabarch.m4
+	D    conf/install-sh
+	A    conf/matlabdir.m4
+
+2009-08-31  Dan Holloway <dholloway@opendap.org>
+
+	Updated to support MATLAB R2009a.  Preprocessor directive 'MATLAB_R2009' used to
+	identify Matlab revision.  This directive is required in order to use the correct
+	API calls for Revision R2009a, or pre-R2009a.
+
+	The Matlab API changed with R2009a, deprecating the direct association of mxArrays
+	and their names.  This association only exists in the workspace the variable is
+	placed as of R2009a.  To support this change MLVars was updated to couple names to
+	mxArrays kept track of thru the MLVar data structure.  Additionally, throughout the
+	client code API specific changes are wrapped with the preprocessor directive to
+	insure the proper call is made depending on the Matlab revision.
+
+;; Local Variables:
+;; coding: utf-8
+;; End:
 2009-08-26  Dan Holloway <d.holloway@gso.uri.edu>
 
 	Updated for 3.7.0

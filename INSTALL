@@ -1,15 +1,20 @@
 
 	$Id$
 
-Updated for version 3.6.1
+Updated for version 3.7.2
 
 Installing the OPeNDAP Matlab client
 
-This version of loaddap has been tested with Matlab 7.5 (2007b) It may build
+This version of loaddap has been tested with Matlab 2012a. It may build
 with versions as old as Matlab 5, but that has not been tested.
 
 Note to maintainers: 'make dist' works but 'make distcheck' fails because
 mex does not find the source files.
+
+On OS/X 10.7 with XCode 4.2 or later, see
+http://www.mathworks.com.au/support/solutions/en/data/1-FR6LXJ/ for
+information about a patch needed so that mex will find the correct compiler.
+This patch is needed even though the default build does not use XCode.
 
 ---------------------------------------------------------------------------
 

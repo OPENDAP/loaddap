@@ -1,5 +1,3 @@
-
-
 # Automake file for asciival
 #
 # 5/17/2005 jhrg

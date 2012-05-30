@@ -2,10 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-# I set this version number to 3.7.0 to reflect changes to add support
-# for MATLAB version R2009a
-AC_INIT([loaddap], [3.7.0], [support@opendap.org])
+AC_INIT([loaddap], [3.7.1], [support@opendap.org])
 AC_CONFIG_AUX_DIR([conf])
+AC_CONFIG_MACRO_DIR([conf])
 
 AM_INIT_AUTOMAKE
 
@@ -33,7 +32,8 @@ AC_PROG_CC
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LEX
-AC_PROG_RANLIB
+# Made redundant by LT_INIT. 
+# AC_PROG_RANLIB
 AC_PROG_YACC
 
 AX_PATH_MEX
