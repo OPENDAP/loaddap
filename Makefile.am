@@ -4,13 +4,15 @@
 #
 # $Id$
 
-AUTOMAKE_OPTIONS = foreign dejagnu
+AUTOMAKE_OPTIONS = foreign
 
 AM_CPPFLAGS = -I$(top_srcdir)
 ACLOCAL_AMFLAGS = -I conf
 
 bin_PROGRAMS = writedap loaddap.$(MEXEXT)
 bin_SCRIPTS = whodap.m loaddap.m
+
+SUBDIRS = . testsuite
 
 SUFFIXES = .$(MEXEXT)
 
@@ -60,8 +62,8 @@ LD_HDRS = MLVars.h defines.h dods_memory.h error.h extend.h variable.h
 
 writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
 
-DEJATOOL = writedap
-RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite
+# DEJATOOL = writedap
+# RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite
 
 EXTRA_DIST = VCPP testsuite $(LD_SRCS) $(LD_HDRS) loaddap.m whodap.m \
 	README INSTALL NEWS loaddap.spec COPYING COPYRIGHT_URI

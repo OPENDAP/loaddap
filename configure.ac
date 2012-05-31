@@ -1,12 +1,13 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.68)
 AC_INIT([loaddap], [3.7.1], [support@opendap.org])
 AC_CONFIG_AUX_DIR([conf])
 AC_CONFIG_MACRO_DIR([conf])
 
 AM_INIT_AUTOMAKE
+AC_CONFIG_TESTDIR([testsuite], [.])
 
 LT_INIT
 AM_PROG_LIBTOOL
@@ -32,8 +33,6 @@ AC_PROG_CC
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LEX
-# Made redundant by LT_INIT. 
-# AC_PROG_RANLIB
 AC_PROG_YACC
 
 AX_PATH_MEX
@@ -85,6 +84,6 @@ AH_BOTTOM([/* Shorthand for gcc's unused attribute feature */
 
 #endif /* _config_h */])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile testsuite/Makefile testsuite/atlocal])
 
 AC_OUTPUT
