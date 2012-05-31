@@ -34,61 +34,39 @@ BUILDING THE SOFTWARE
   1. Type `./configure' at the system prompt. On some systems you may have
      to type `sh configure'.
 
-  2. Type `make' to build the client, `make check' to run the tests. You
-     must have DejaGNU to run `make check.' 
-
-  4. If you have the DejaGNU test software installed, you can type `make
-     check' to test the writedap program. To test loaddap, run matlab and
-     type `test_loaddap'.  You should see messages about various tests and
-     the word `PASS' for each of them.  If a test does not pass, contact the
-     OPeNDAP support center:
-
-       support at opendap.org
+  2. Type `make' to build the client, `make check' to run the helper
+     app tests. You will need to run the loaddap tests from within
+     Matlab itself. To do so, start Matlab and add the path to the
+     source directory ('src') and $src/testsuite/matlab using the
+     addpath command. The run the script 'test_loaddap'.
 
   3. Type `make install' to install the client binary and it's helper
      programs. By default the software installs in /usr/local/bin. To
      change the root directory from /usr/local to something else, use
      the --prefix option of configure.
 
-  SGI Note:
-     If you are building on an SGI machine, it is possible that your build
-     of loaddap.mex* will fail due to architecture incompatibilities.
-     See our "How do I build the Matlab server and client on SGI?" FAQ
-     for details on how to complete the build:
-   
-       http://opendap.org/faq/index.html#sgiMatlab
-
 Building from Our SVN Repository
 
-  If you are building from a SVN checkout, run 'autoreconf --install' before
+  If you are building from a SVN checkout, run 'autoreconf --force --install' before
   './configure; make'. If you try to run autoconf, et c., by hand and wind up
   with build files that don't work, use 'autoreconf --force --install' and
-  then './configure; make; make instal'.
+  then './configure; make; make install'.
 
 REQUIREMENTS
 
-  o To build from a fresh SVN checkout, you'll need automake 1.9.2, autoconf
-    2.59 (2.57 will probably work and that's what's listed in the configure.ac
-    file) and libtool 1.5.6. Earlier versions may work, but may cause
+  o To build from a fresh SVN checkout, you'll need automake 1.11, autoconf
+    2.68 and libtool 2.4. Earlier versions may work, but may cause
     problems, particularly with the 'distcheck' target for make. Given those
-    requirements, use 'autoreconf --force --verbose' and then build as
+    requirements, use 'autoreconf --force --install' and then build as
     described above.
     
-    If you're building on Mac OS/X 10.4 (Tiger), you will need to install
-    all three of these tools before building even though OS/X includes them.
-
   o The software requires libdap 3.8.0 or newer.
   
   o We test loaddap using Matlab 7 although it's possible the software will
     work with Matlab 5 or 6. The $MATLAB/bin directory must be on your path
     or given to configure using the --with-matlab option.
 
-  o You should have gcc/g++ 2.95.x or greater. You'll also need to get the
-    stdc++ library that matches the compiler (whatever version). NB: gcc
-    2.8.x and earlier *won't* build the software. We're working on modifying
-    the software so that it will build with a variety of compilers. As of
-    03/12/08 we have built the code using Microsoft's Visual C++ 6.0 and GNU
-    gcc/++ 4.1
+  o You should have gcc/g++ 4.1 or greater.
 
 NOTES
 

@@ -39,7 +39,7 @@ m4_define([fnoc_2_ce], [u[[0:0]][[0:9]][[0:9]]])
 m4_define([fnoc_3],[http://test.opendap.org/dap/data/nc/fnoc3.nc])
 m4_define([fnoc_3_ce], [u[[0:0]][[0:9]][[0:9]],v[[0:0]][[4:9]][[4:9]]])
 
-m4_define([data_dir],[$abs_builddir/data/writedap])
+m4_define([data_dir],[$abs_srcdir/data/writedap])
 
 WRITEDAP_TEST([-a], [fnoc_1?fnoc_1_ce -r u:u1], [data_dir/data.1.data])
 		    

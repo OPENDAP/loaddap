@@ -1,10 +1,15 @@
+News for 3.7.2, 31 May 2012
+
+Fixes for building with Matlab 2012.
+The tests work again and no longer require DejaGNU.
+
 News for 3.7.0, 26 August 2009
 
 Many changes, see the ChangeLog. Summary: now works with MATLAB R2009a.
 Compile switch 'MATLAB_R2009' used during preprocessing to replace pre R2009a
 API calls with updated R2009a API calls.
  
-News for 3.6,1, 11 June 2008
+News for 3.6.1, 11 June 2008
 
 Documentation fixes (the online docs)
 

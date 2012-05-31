@@ -1,5 +1,12 @@
 
  $Id$
+Updated for loaddap 3.7.1
+
+The configure script seems to be fixed for the recent versions of Matlab (2010 and onward).
+
+Tests updated - they should all now pass.
+
+When an incompatible binary mex file is present the error message is now much more clear.
 
 Updated for loaddap 3.7.0
 

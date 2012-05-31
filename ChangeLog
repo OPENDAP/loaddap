@@ -1,3 +1,68 @@
+2012-05-31  James Gallagher <jgallagher@opendap.org>
+
+	Added
+
+	A    writedap/coads.dds
+
+2012-05-31  James Gallagher <jgallagher@opendap.org>
+
+	Fixed the matlab tests.
+
+	M    test_loaddap.m
+	M    testsuite/matlab/sequence_data.mat
+	D    testsuite/matlab/attributes1.mat
+	M    testsuite/matlab/attributes2.mat
+	M    testsuite/matlab/attributes1.m
+	M    testsuite/matlab/sequence.m
+
+2012-05-31  James Gallagher <jgallagher@opendap.org>
+
+	Updated for the replacement autotest tests.
+
+	M    configure.ac
+	M    Makefile.am
+
+2012-05-31  James Gallagher <jgallagher@opendap.org>
+
+	Conversion from dejaGNU to autotest; removeal of the DSP tests since those
+	datasets are no longer available.
+
+	A    testsuite/writedap_test.at
+	A    testsuite/atlocal.in
+	D    testsuite/common_tests.exp
+	D    testsuite/config
+	D    testsuite/data/writedap/dsp_2.data
+	D    testsuite/data/writedap/dsp_1.data2
+	D    testsuite/data/writedap/dsp_1.data3
+	D    testsuite/data/writedap/dsp_2.data2
+	D    testsuite/data/writedap/dsp_2.data3
+	M    testsuite/data/writedap/coads.data3
+	D    testsuite/data/writedap/dsp_1.data
+	A    testsuite/Makefile.am
+	A    testsuite/atconfig
+	D    testsuite/writedap.1
+
+2012-05-30  James Gallagher <jgallagher@opendap.org>
+
+	Various updates.
+
+	M    loaddap.spec
+	M    configure.ac
+	M    ChangeLog
+	M    OSX_Resources/Info.plist
+	M    whodap.m
+	M    INSTALL
+	M    Makefile.am
+
+2012-05-30  James Gallagher <jgallagher@opendap.org>
+
+	Fixed a problem that's be around for years - the loaddap.m file has the help
+	info in it. However, if the mex binary is not compatible with the computer
+	or ML version, the loaddap.m file is run, producing odd error messages and
+	generally confusing users. I fixed this by adding error messge text.
+
+	M    loaddap.m
+
 2011-08-02  James Gallagher <jgallagher@opendap.org>
 
 	Added LT_INIT so that configure supports --disable-shared.
