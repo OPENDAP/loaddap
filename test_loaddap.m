@@ -5,7 +5,10 @@
 % Run the matlab tests.
 
 %% BROKEN tests comments out. jhrg 6/11/08
-addpath testsuite/matlab;
+
+disp(['If this script returns an error about files not found, be ' ...
+      'sure to add the .../testsuite/matlab directory to matlabpath ' ...
+      'using the addpath command.'])
 
 disp 'Testing various datatypes';
 
@@ -20,9 +23,5 @@ threeD_int16_array;
 grid;
 grid2scalar;
 multiple_arrays;
-%% sequence;
+sequence;
 attributes1;
-
-% disp 'Testing various command options';
-
-% disp 'Testing multiple loads for memory leaks';

@@ -15,10 +15,11 @@ disp 'Test sequence load: ';
 load testsuite/matlab/sequence_data.mat;
 
 base_url = 'http://test.opendap.org/opendap';
-hdf1 = [base_url '/data/hdf/S2000415.HDF?Low_Wind_Speed_Flag__0,High_Wind_Speed_Flag__0'];
-loaddap(hdf1);
+%opendap/hyrax/data/ff/1998-6-avhrr.dat?GSO_AVHRR.year,GSO_AVHRR.day_num,GSO_AVHRR.DODS_URL
+ff1 = [base_url '/data/ff/1998-6-avhrr.dat?year,day_num,DODS_URL'];
+loaddap(ff1);
 
-if all(wvc_row_time__0 == wvc_row_time__0_data)
+if isequal(GSO_AVHRR, GSO_AVHRR_d)
    disp 'PASS';
 else
    disp 'FAIL';
