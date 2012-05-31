@@ -1,0 +1,70 @@
+# Process with autom4te to create an -*- Autotest -*- test suite.
+
+AT_INIT([writedap-test])
+
+# Usage: WRITEDAP_TEST(<options>, <URLs_and_options>, <baseline>, <xfail?>)
+
+m4_define([WRITEDAP_TEST], [
+    AT_SETUP([writedap $1 -- $2])
+    AT_KEYWORDS([writedap])
+
+    # Added || true so that we can test cases where writedap returns an
+    # error.
+
+    AT_CHECK([$abs_top_builddir/writedap $1 -- $2 || true], [], [stdout], [stderr])
+    AT_CHECK([diff -b -B $3 stdout || diff -b -B $3 stderr], [], [ignore],[],[])
+    AT_XFAIL_IF([test "$4" = "xfail"])
+    AT_CLEANUP
+])
+
+m4_define([WRITEDAP_MATCH], [
+    AT_SETUP([writedap $1 -- $2])
+    AT_KEYWORDS([writedap])
+
+    # Added || true so that we can test cases where writedap returns an
+    # error.
+
+    AT_CHECK([$abs_top_builddir/writedap $1 -- $2 || true], [], [stdout], [stderr])
+    AT_CHECK([grep -q -e "`cat $3`" stdout], [], [ignore],[],[])
+    AT_XFAIL_IF([test "$4" = "xfail"])
+    AT_CLEANUP
+])
+
+m4_define([fnoc_1], [http://test.opendap.org/dap/data/nc/fnoc1.nc])
+m4_define([fnoc_1_ce], [u[[0:0]][[0:9]][[0:9]] ])
+
+m4_define([fnoc_2],[http://test.opendap.org/dap/data/nc/fnoc2.nc])
+m4_define([fnoc_2_ce], [u[[0:0]][[0:9]][[0:9]]])
+
+m4_define([fnoc_3],[http://test.opendap.org/dap/data/nc/fnoc3.nc])
+m4_define([fnoc_3_ce], [u[[0:0]][[0:9]][[0:9]],v[[0:0]][[4:9]][[4:9]]])
+
+m4_define([data_dir],[$abs_builddir/data/writedap])
+
+WRITEDAP_TEST([-a], [fnoc_1?fnoc_1_ce -r u:u1], [data_dir/data.1.data])
+		    
+WRITEDAP_TEST([-a], [fnoc_1?fnoc_1_ce -r u:u1 fnoc_2?fnoc_2_ce -r u:u2],
+		    [data_dir/data.1.data2])
+
+WRITEDAP_TEST([-a], [fnoc_1 -c fnoc_1_ce -r u:u1 fnoc_2 -c fnoc_2_ce -r u:u2],
+		    [data_dir/data.1.data2])
+
+WRITEDAP_TEST([-a],  [fnoc_3 -c fnoc_3_ce -r u:u3 -r v:v3],
+		     [data_dir/data.1.data3])
+
+WRITEDAP_TEST([-a],
+	[fnoc_3 -c fnoc_3_ce -r u:u3 -r v:v3 fnoc_2 -c fnoc_2_ce -r u:u2],
+	[data_dir/data.1.data4])	    
+
+m4_define([coads_dataset],
+	[http://test.opendap.org/dap/data/nc/coads_climatology.nc])
+m4_define([coads_sst_ce], [SST[[0:0]][[10:20]][[50:60]]])
+
+WRITEDAP_TEST([-D],[coads_dataset],[data_dir/coads.dds])
+
+WRITEDAP_TEST([-a -f],[coads_dataset?coads_sst_ce],[data_dir/coads.data])
+
+WRITEDAP_TEST([-a],[coads_dataset?coads_sst_ce],[data_dir/coads.data2])
+
+WRITEDAP_MATCH([-v],[coads_dataset?coads_sst_ce],[data_dir/coads.data3])
+

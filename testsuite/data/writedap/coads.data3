@@ -1,4 +1,4 @@
 
 Reading: http://test.opendap.org/opendap/nph-dods/data/nc/coads_climatology.nc
   Constraint: SST\[0:0\]\[10:20\]\[50:60\]
-Server version: *
+Server version: .*
