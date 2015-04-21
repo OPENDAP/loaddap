@@ -77,9 +77,9 @@ ClientFloat64::print_val(FILE *os, string, bool print_decl_p)
       fprintf(os, "%s\n%s\n", type_name().c_str(), get_matlab_name().c_str());
 
         if (ascii)
-            fprintf(os, "%lf ", _buf);
+            fprintf(os, "%lf ", d_buf);
         else
-            fwrite((void *)&_buf, sizeof(dods_float64), 1, os);
+            fwrite((void *)&d_buf, sizeof(dods_float64), 1, os);
 }
 
 AttrTable &

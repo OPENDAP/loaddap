@@ -83,7 +83,7 @@ ClientFloat32::print_val(FILE *os, string, bool print_decl_p)
     DBG( cerr << "CF32: Translate: " << translate << ";" << endl;)
 
     if (translate) {
-        dods_float64 df = _buf;
+        dods_float64 df = d_buf;
         if (ascii)
             fprintf(os, "%lg ", df);
         else
@@ -91,9 +91,9 @@ ClientFloat32::print_val(FILE *os, string, bool print_decl_p)
     }
     else {
         if (ascii)
-            fprintf(os, "%g ", (dods_float32)_buf);
+            fprintf(os, "%g ", (dods_float32)d_buf);
         else
-            fwrite((void *)&_buf, sizeof(dods_float32), 1, os);
+            fwrite((void *)&d_buf, sizeof(dods_float32), 1, os);
     }   
 }
 

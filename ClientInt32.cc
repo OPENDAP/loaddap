@@ -77,7 +77,7 @@ ClientInt32::print_val(FILE *os, string, bool print_decl_p)
       fprintf(os, "%s\n%s\n", type_name().c_str(), get_matlab_name().c_str());
 
     if (numeric_to_float) {
-        dods_float64 df = _buf;
+        dods_float64 df = d_buf;
         if (ascii)
             fprintf(os, "%lf ", df);
         else
@@ -85,9 +85,9 @@ ClientInt32::print_val(FILE *os, string, bool print_decl_p)
     }
     else {
         if (ascii)
-            fprintf(os, "%d ", (unsigned int)_buf);
+            fprintf(os, "%d ", (unsigned int)d_buf);
         else
-            (void)fwrite((void *)&_buf, sizeof(dods_int32), 1, os);
+            (void)fwrite((void *)&d_buf, sizeof(dods_int32), 1, os);
     }
 }
 

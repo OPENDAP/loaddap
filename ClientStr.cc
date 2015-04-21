@@ -105,7 +105,7 @@ ClientStr::print_val(FILE *os, string, bool print_decl_p)
     // Translate all string variables to Floats. jhrg 1/9/98.
     if (string_to_float) {
 	char *ptr = NULL;
-	const char *str = _buf.c_str();
+	const char *str = d_buf.c_str();
 	val = strtod(str, &ptr);
 	print_as_float = !(val == 0.0 && (ptr == str));
 
@@ -113,7 +113,7 @@ ClientStr::print_val(FILE *os, string, bool print_decl_p)
 	    val = MakeNaN();
 	    print_as_float = true;
 	    if (warning) {
-		cerr << "Could not translate `" << _buf << "' to a Float64,"
+		cerr << "Could not translate `" << d_buf << "' to a Float64,"
 		     << endl;
 		cerr << "interning as NaN (not a number: " << val 
 		     << ")" << endl;
@@ -140,8 +140,8 @@ ClientStr::print_val(FILE *os, string, bool print_decl_p)
 //	    os << type_name() << endl << get_matlab_name() << endl;
 
         // There's no special case for ASCII since this is a String.
-        fprintf(os, "%s\n", _buf.c_str());
-//	os << _buf << endl;
+        fprintf(os, "%s\n", d_buf.c_str());
+//	os << d_buf << endl;
     }
 }
 
