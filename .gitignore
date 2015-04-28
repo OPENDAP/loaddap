@@ -1,1 +1,15 @@
 *.o
+/autom4te.cache/
+/tmp/
+/aclocal.m4
+/config.h.in
+/config.log
+/config.status
+/configure
+/Makefile
+/Makefile.in
+/stamp-h1
+/svn2git.log
+/writedap
+/libtool
+/config.h
