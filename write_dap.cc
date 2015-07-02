@@ -38,7 +38,7 @@
 #include <windows.h>
 #endif
 
-#include "config_writedap.h"
+#include "config.h"
 
 static char rcsid[] not_used = {"$Id$"};
 

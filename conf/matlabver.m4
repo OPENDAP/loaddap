@@ -51,6 +51,7 @@ else
 	        # shared library.
 	        ax_matlab_exec_2=`find $MATLAB/bin/$ax_arch -type f -name libmwservices\* -print 2> /dev/null`
 	        if test -n "$ax_matlab_exec_2" ; then
+	        echo "strings $ax_matlab_exec_2: "; strings $ax_matlab_exec_2
 		    ax_cv_matlab_version=`strings $ax_matlab_exec_2 2> /dev/null | egrep '^\|build_version_\|@<:@0-9@:>@+\.@<:@0-9@:>@+\.@<:@0-9@:>@+\.@<:@0-9@:>@+' | head -1 | sed 's/^|build_version_|\(@<:@0-9@:>@*\.@<:@0-9@:>@*\).*/\1/'`
 		    if test -n "$ax_cv_matlab_version" ; then
 		        break

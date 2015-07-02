@@ -44,12 +44,11 @@
  @author jhrg 3/5/97 
  */
 
-static char id[]= { "$Id$" };
-
 #include <stdio.h>
 #include <string.h>
 
 #include <mex.h>
+#include <matrix.h>
 
 #if DMALLOC
 // #include "dods_memory.h"
@@ -483,13 +482,8 @@ static int extend_array(const char *name, const int ndims, const int dims[],
 	mxSetPr(m2, pr);
 	mxSetPi(m2, 0);
 
-#ifdef MATLAB_R2009
 	mexPutVariable("caller", name, m2);
-#else
-	mxSetName(m2, name);
-	/* Intern */
-	mexPutArray(m2, "caller");
-#endif
+
 	return TRUE;
 }
 
@@ -498,11 +492,8 @@ static int extend_array(const char *name, const int ndims, const int dims[],
  TRUE. */
 
 static int extend_strings(const char *name, int m, char **s) {
-#ifdef MATLAB_R2009
         const mxArray *mp = mexGetVariable("caller", name);
-#else
-	const mxArray *mp = mexGetArrayPtr(name, "caller");
-#endif
+
 	mxArray *array_ptr;
 	int rows = mxGetM(mp);
 	int max_len = mxGetN(mp);
@@ -529,12 +520,8 @@ static int extend_strings(const char *name, int m, char **s) {
 	array_ptr = mxCreateCharMatrixFromStrings(rows + m,
 			(const char **)new_strings);
 	
-#ifdef MATLAB_R2009
 	status = (mexPutVariable("caller", name, array_ptr) == 0);
-#else
-	mxSetName(array_ptr, name);
-	status = (mexPutArray(array_ptr, "caller") == 0);
-#endif
+
 	return status;
 }
 
@@ -665,10 +652,6 @@ mxArray * build_var(const char *name, const int ndims, const int dims[],
 	}
 
 	rm2cm(mxGetPr(array_ptr), yp, ndims, dims);
-
-#ifndef MATLAB_R2009
-	   mxSetName(array_ptr, name);
-#endif
 
 	return array_ptr;
 }
@@ -805,23 +788,15 @@ mxArray * build_ml_vars(const char *name, MLVars *vars) {
 		mxArray *v = first_ml_var(vars);
 		while (v) 
 		{
-#ifdef MATLAB_R2009
 		        names[i++] = get_mxarray_name( get_current_ml_vars(vars) );
 		        DBG2(msg("build_ml_vars: name[%d]: %s\n",i-1,names[i-1]));
-#else
-		        names[i++] = mxGetName(v);
-		        DBG2(msg("build_ml_vars: name[%d]: %s\n",i-1,mxGetName(v)));
-#endif
+
 			v = next_ml_var(vars);
 		}
 	}
 
 	DBG2(msg("build_ml_vars: %d\n",vars));
 	ret_array = mxCreateStructMatrix(1, 1, num_vars, names);
-
-#ifndef MATLAB_R2009
-	mxSetName(ret_array, name);
-#endif
 
 	/*iterate over the vars list adding each mxArray */
 	{
@@ -854,12 +829,9 @@ MLVars * transfer_variables(const char *lName, MLVars *vars) {
 	v = first_ml_var(vars);
 	while (v) 
 	{
-#ifdef MATLAB_R2009
 	        name = get_mxarray_name( get_current_ml_vars(vars) );
 		DBG2(msg("transfer_vars: name: %s\n",name));
-#else
-	        name = mxGetName(v);
-#endif
+
 		v = next_ml_var(vars);
 	}
 
@@ -867,24 +839,17 @@ MLVars * transfer_variables(const char *lName, MLVars *vars) {
 
 	v = first_ml_var(vars);
 	while (v) {
-#ifdef MATLAB_R2009
 	        name = get_mxarray_name( get_current_ml_vars(vars) );
 		DBG2(msg("transfer_vars: name: %s\n",name));
-#else
-	        name = mxGetName(v);
-#endif
+
 		for (i=0; i<count; i++) {
 			if (strcmp(names[i], name)==0) {
 				Found = true;
 			}
 		}
 		if ( !Found ) {
-#ifdef MATLAB_R2009
 	                names[count++] = get_mxarray_name( get_current_ml_vars(vars) );
 		        DBG2(msg("transfer_vars: name: %s\n",names[count-1]));
-#else
-	                names[count++] = mxGetName(v);
-#endif
 		}
 		v = next_ml_var(vars);
 	}
@@ -897,9 +862,7 @@ MLVars * transfer_variables(const char *lName, MLVars *vars) {
 	structArray = init_ml_vars();
 
 	ret_array = mxCreateStructMatrix(numUniqueVariables, 1, count, &names[0]);
-#ifndef MATLAB_R2009
-	   mxSetName(ret_array, structName);
-#endif
+
 	/* Add exception handling for ret_array == NULL. */
 
 	for(i=0; i<count; i++) {
@@ -940,10 +903,6 @@ mxArray * build_string_var(const char *name, int m, char **s) {
 		__FILE__, __LINE__);
 		return FALSE;
 	}		
-
-#ifndef MATLAB_R2009
-	mxSetName(array_ptr, name);
-#endif
 
 	return array_ptr;
 }
@@ -986,12 +945,8 @@ int intern_strings(char *name, int m, char **s, int extend, mxArray **array_ptr)
 		return FALSE;
 	}
   
-#ifdef MATLAB_R2009 
 	status = (mexPutVariable("caller", name, *array_ptr) == 0);
-#else
-	mxSetName(*array_ptr, name);
-	status = (mexPutArray(*array_ptr, "caller") == 0);
-#endif
+
 	return TRUE;
 }
 

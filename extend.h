@@ -50,6 +50,8 @@ extern "C" {
 
     extern mxArray *build_ml_vars(const char *name, MLVars *vars);
 
+    extern int create_vector(const char *name, int ndims, int dims[], double *yp,
+			     int extend, mxArray **array_ptr);
 #ifdef __cplusplus
 }
 #endif

@@ -38,7 +38,7 @@
    value (e.g., the queue id) to indicate success.
 */
 
-static char id[]={"$Id$"};
+#include "config.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -51,7 +51,6 @@ static char id[]={"$Id$"};
 
 #include "debug.h"
 
-#include "config_writedap.h"
 #include "queue.h"
 
 typedef struct {

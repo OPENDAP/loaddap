@@ -44,8 +44,6 @@
 
     @author jhrg */
 
-static char id[]={"$Id$"};
-
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>

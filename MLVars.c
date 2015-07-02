@@ -40,10 +40,11 @@
     status of these function calls.
 */
 
+#include "config.h"
+
 #include <mex.h>
 #include <string.h>
 
-#include "config_writedap.h"
 #include "MLVars.h"
 
 #if DMALLOC
@@ -162,4 +163,6 @@ get_mxarray_name(_MLVar *ml_vars)
 
     if (ml_vars != NULL)
         return ml_vars->_vname;
+    else
+	return 0;
 }

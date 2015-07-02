@@ -55,9 +55,7 @@
  @author James Gallagher <jgallagher@gso.uri.edu>
  */
 
-#include "config_writedap.h"
-
-static char id[] not_used = {"$Id$"};
+#include "config.h"
 
 /* I think that all gnu x86 compilers define __i386__. 9/22/2000 jhrg */
 #if defined(__i386__) && defined(__linux__) && defined(__GNUC__)
@@ -78,7 +76,9 @@ static char id[] not_used = {"$Id$"};
 #endif 
 
 #include <mex.h>
+#include <matrix.h>
 
+#include "error.h"
 #include "MLVars.h"
 #include "extend.h"
 #include "variable.h"
@@ -402,9 +402,6 @@ static char * init(int nlhs, mxArray *plhs[], const int nrhs,
 				strcat(ver, "loaddap: ");
 				strcat(ver, dods_version);
 				plhs[0] = mxCreateString(ver);
-#ifndef MATLAB_R2009
-				mxSetName(plhs[0], "dods_version");
-#endif
 				}
 			}
 			else {

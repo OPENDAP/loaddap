@@ -33,12 +33,12 @@
 //
 // jhrg 9/25/96
 
+#include "config.h"
+
 #include <assert.h>
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
-
-#include "config_writedap.h"	// was first caused LITTLE_ENDIAN error
 
 #include <iostream>
 #include <string>

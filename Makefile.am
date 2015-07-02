@@ -48,7 +48,7 @@ CLIENTSRCS = ClientByte.cc ClientInt32.cc ClientFloat64.cc ClientStr.cc	\
 
 WV_SRCS = write_dap.cc name_map.cc MetadataProcessing.cc		\
 	LoaddodsProcessing.cc LoaddodsProcessing.h			\
-	MetadataProcessing.h config_writedap.h nan_hack.h name_map.h
+	MetadataProcessing.h nan_hack.h name_map.h
 
 # Added $(top_srcdir) so distcheck will build. 3/1/08 jhrg
 LD_SRCS = $(top_srcdir)/loaddap.c $(top_srcdir)/variable.c \
@@ -61,9 +61,6 @@ LD_HDRS = MLVars.h defines.h dods_memory.h error.h extend.h variable.h
 # queue.h queue.c
 
 writedap_SOURCES = $(CLIENTSRCS) $(WV_SRCS)
-
-# DEJATOOL = writedap
-# RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir testsuite
 
 EXTRA_DIST = VCPP testsuite $(LD_SRCS) $(LD_HDRS) loaddap.m whodap.m \
 	README INSTALL NEWS loaddap.spec COPYING COPYRIGHT_URI
@@ -116,4 +113,3 @@ pkg-dmg:
 
 pkg: clean-pkg pkg-build pkg-main pkg-dmg
 
-# LocalWords:  mex Mathworks automake loaddap jhrg

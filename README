@@ -1,8 +1,10 @@
 
- $Id$
-Updated for loaddap 3.7.1
+Updated for loaddap 3.7.3
 
 The configure script seems to be fixed for the recent versions of Matlab (2010 and onward).
+However, it no longer checks the matlab version. This code will not compile unless Matlab
+2009 or newer is present. Also note that it relies on what Mathworks now (mid-2015) terms
+'legacy' mex functionality.
 
 Tests updated - they should all now pass.
 

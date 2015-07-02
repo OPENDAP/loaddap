@@ -33,7 +33,7 @@
 //
 // jhrg 9/24/96
 
-#include "config_writedap.h"
+#include "config.h"
 
 #include <stdio.h>
 
