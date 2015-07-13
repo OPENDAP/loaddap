@@ -14,3 +14,7 @@
 /libtool
 /config.h
 /.deps/
+/.cproject
+/.project
+/loaddap-3.7.3.tar.gz
+/loaddap-3.7.3.tar.gz.sig
