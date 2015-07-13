@@ -1,3 +1,20 @@
+2015-07-02  James Gallagher  <jgallagher@opendap.org>
+
+	Now builds against Matlab 2015a
+	...and assumes that we're building against ML 2009 or newer. The
+	configure script no longer checks the version number and simply
+	assumes a certain set of libraries. It's twenty years old...
+
+2015-04-28  James Gallagher  <jgallagher@opendap.org>
+
+	Added gitignore
+
+2015-04-21  James Gallagher  <jgallagher@opendap.org>
+
+	Added gitignore
+
+	Updated Client*.cc for newer libdap
+
 2012-05-31  James Gallagher <jgallagher@opendap.org>
 
 	Added

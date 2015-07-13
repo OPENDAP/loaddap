@@ -1,3 +1,9 @@
+News for 3.7.3, 7/6/2015
+
+Now builds against Matlab 2015a. Less safe than before in the sense that 
+it does not check the Matlab version but jsut assumes a version at or 
+newer than 2009.
+
 News for 3.7.2, 31 May 2012
 
 Fixes for building with Matlab 2012.
